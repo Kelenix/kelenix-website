@@ -1,0 +1,254 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(EDITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  MODERATOR
+}
+
+model Service {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  titleFr          String
+  titleEn          String
+  shortDescFr      String   @db.Text
+  shortDescEn      String   @db.Text
+  longDescFr       String   @db.LongText
+  longDescEn       String   @db.LongText
+  icon             String
+  image            String?
+  technologies     String   @db.Text
+  faqFr            String   @db.LongText
+  faqEn            String   @db.LongText
+  order            Int      @default(0)
+  published        Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("services")
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  titleFr      String
+  titleEn      String
+  client       String
+  category     ProjectCategory
+  descFr       String        @db.LongText
+  descEn       String        @db.LongText
+  problemFr    String        @db.Text
+  problemEn    String        @db.Text
+  solutionFr   String        @db.Text
+  solutionEn   String        @db.Text
+  resultsFr    String        @db.Text
+  resultsEn    String        @db.Text
+  technologies String        @db.Text
+  coverImage   String
+  gallery      String        @db.Text
+  link         String?
+  featured     Boolean       @default(false)
+  published    Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("projects")
+}
+
+enum ProjectCategory {
+  WEB
+  MOBILE
+  AI
+  SOFTWARE
+  CONSULTING
+  TRAINING
+}
+
+model BlogPost {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  titleFr     String
+  titleEn     String
+  contentFr   String      @db.LongText
+  contentEn   String      @db.LongText
+  excerptFr   String      @db.Text
+  excerptEn   String      @db.Text
+  coverImage  String?
+  authorName  String
+  authorImage String?
+  authorBio   String?     @db.Text
+  category    BlogCategory
+  tags        String      @db.Text
+  published   Boolean     @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("blog_posts")
+}
+
+enum BlogCategory {
+  DEVELOPMENT
+  AI
+  DIGITAL
+  NEWS
+  GUIDES
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  company     String
+  position    String
+  photo       String?
+  textFr      String   @db.Text
+  textEn      String   @db.Text
+  rating      Int      @default(5)
+  showOnHome  Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  company   String?
+  service   String?
+  budget    String?
+  message   String        @db.Text
+  attachment String?
+  status    MessageStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("contact_messages")
+}
+
+model QuoteRequest {
+  id           String        @id @default(cuid())
+  serviceType  String
+  projectName  String
+  projectDesc  String        @db.Text
+  projectGoals String?       @db.Text
+  budget       String
+  deadline     String
+  firstName    String
+  lastName     String
+  email        String
+  phone        String?
+  company      String?
+  status       MessageStatus @default(NEW)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("quote_requests")
+}
+
+enum MessageStatus {
+  NEW
+  READ
+  IN_PROGRESS
+  TREATED
+  ARCHIVED
+}
+
+model Newsletter {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  active      Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+
+  @@map("newsletter_subscribers")
+}
+
+model SiteSettings {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  value        String   @db.LongText
+  updatedAt    DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model JobPosting {
+  id          String   @id @default(cuid())
+  titleFr     String
+  titleEn     String
+  descFr      String   @db.LongText
+  descEn      String   @db.LongText
+  location    String
+  contractType String
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("job_postings")
+}
+
+model PartnerRequest {
+  id          String   @id @default(cuid())
+  company     String
+  name        String
+  email       String
+  phone       String?
+  partnerType String
+  message     String   @db.Text
+  status      MessageStatus @default(NEW)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("partner_requests")
+}
+
+model JobApplication {
+  id          String        @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  position    String?
+  message     String        @db.Text
+  cvPath      String?
+  status      MessageStatus @default(NEW)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("job_applications")
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  userEmail String
+  action    String
+  resource  String
+  details   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("activity_logs")
+}

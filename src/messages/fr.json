@@ -1,0 +1,388 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "testimonials": "Témoignages",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "careers": "Carrières",
+    "partners": "Partenaires",
+    "quote": "Demander un devis",
+    "language": "Langue"
+  },
+  "hero": {
+    "badge": "Innovation & Excellence Technologique",
+    "title": "L'intelligence au service de",
+    "titleHighlight": "l'innovation mondiale",
+    "subtitle": "Kelenix accompagne les entreprises, PME et startups dans leur transformation numérique grâce à des solutions technologiques innovantes, fiables et accessibles.",
+    "cta1": "Demander un devis",
+    "cta2": "Découvrir nos services",
+    "stat1Value": "150+",
+    "stat1Label": "Projets livrés",
+    "stat2Value": "80+",
+    "stat2Label": "Clients satisfaits",
+    "stat3Value": "5+",
+    "stat3Label": "Années d'expérience",
+    "stat4Value": "15+",
+    "stat4Label": "Technologies maîtrisées"
+  },
+  "trust": {
+    "title": "Ils nous font confiance",
+    "subtitle": "Des entreprises de toutes tailles nous font confiance pour leurs projets technologiques"
+  },
+  "services": {
+    "badge": "Nos Services",
+    "title": "Solutions technologiques",
+    "titleHighlight": "sur mesure",
+    "subtitle": "Nous offrons une gamme complète de services pour répondre à tous vos besoins numériques",
+    "viewAll": "Voir tous nos services",
+    "learnMore": "En savoir plus",
+    "items": {
+      "software": {
+        "title": "Développement Logiciel",
+        "description": "Applications sur mesure adaptées à vos besoins métier spécifiques"
+      },
+      "web": {
+        "title": "Création de Sites Web",
+        "description": "Sites professionnels, rapides et optimisés pour le référencement"
+      },
+      "webapp": {
+        "title": "Applications Web",
+        "description": "Applications web modernes, réactives et évolutives"
+      },
+      "mobile": {
+        "title": "Applications Mobiles",
+        "description": "Applications iOS et Android natives et cross-platform"
+      },
+      "ai": {
+        "title": "Intelligence Artificielle",
+        "description": "Solutions IA et machine learning pour automatiser et innover"
+      },
+      "consulting": {
+        "title": "Consulting IT",
+        "description": "Stratégie digitale et accompagnement technologique"
+      },
+      "training": {
+        "title": "Formation Tech",
+        "description": "Formation en programmation et nouvelles technologies"
+      }
+    }
+  },
+  "whyUs": {
+    "badge": "Pourquoi Kelenix ?",
+    "title": "Ce qui nous",
+    "titleHighlight": "distingue",
+    "subtitle": "Nous combinons expertise technique et approche centrée client pour livrer des solutions d'excellence",
+    "items": {
+      "expertise": {
+        "title": "Expertise Reconnue",
+        "description": "Une équipe de développeurs seniors avec plus de 5 ans d'expérience dans les technologies les plus avancées"
+      },
+      "agile": {
+        "title": "Approche Agile",
+        "description": "Méthodologie agile pour des livraisons rapides, itératives et alignées avec vos objectifs"
+      },
+      "support": {
+        "title": "Support 24/7",
+        "description": "Accompagnement continu et support technique disponible pour garantir la continuité de vos services"
+      },
+      "quality": {
+        "title": "Qualité Garantie",
+        "description": "Code testé, documenté et maintenu selon les meilleures pratiques de l'industrie"
+      },
+      "international": {
+        "title": "Portée Internationale",
+        "description": "Expertise pour des projets à vocation mondiale avec une équipe multilingue et multiculturelle"
+      },
+      "accessible": {
+        "title": "Solutions Accessibles",
+        "description": "Des tarifs compétitifs sans compromis sur la qualité, adaptés à toutes les tailles d'entreprise"
+      }
+    }
+  },
+  "stats": {
+    "badge": "Nos Chiffres",
+    "title": "Des résultats qui",
+    "titleHighlight": "parlent d'eux-mêmes",
+    "projects": "Projets livrés",
+    "clients": "Clients satisfaits",
+    "years": "Années d'expérience",
+    "technologies": "Technologies maîtrisées",
+    "satisfaction": "Taux de satisfaction"
+  },
+  "portfolio": {
+    "badge": "Portfolio",
+    "title": "Nos",
+    "titleHighlight": "réalisations",
+    "subtitle": "Découvrez quelques-uns de nos projets les plus récents et impactants",
+    "viewAll": "Voir tout le portfolio",
+    "viewProject": "Voir le projet",
+    "filters": {
+      "all": "Tous",
+      "web": "Web",
+      "mobile": "Mobile",
+      "ai": "IA",
+      "software": "Logiciel",
+      "consulting": "Consulting"
+    }
+  },
+  "testimonials": {
+    "badge": "Témoignages",
+    "title": "Ce que disent",
+    "titleHighlight": "nos clients",
+    "subtitle": "La satisfaction de nos clients est notre plus grande récompense",
+    "viewAll": "Voir tous les témoignages"
+  },
+  "blog": {
+    "badge": "Blog",
+    "title": "Actualités &",
+    "titleHighlight": "insights tech",
+    "subtitle": "Restez à la pointe de la technologie avec nos articles et guides experts",
+    "viewAll": "Voir tous les articles",
+    "readMore": "Lire l'article",
+    "by": "Par",
+    "publishedOn": "Publié le",
+    "categories": {
+      "development": "Développement",
+      "ai": "Intelligence Artificielle",
+      "digital": "Stratégie Digitale",
+      "news": "Actualités Tech",
+      "guides": "Guides"
+    }
+  },
+  "contactCta": {
+    "title": "Prêt à lancer votre",
+    "titleHighlight": "projet ?",
+    "subtitle": "Contactez-nous dès aujourd'hui pour discuter de vos besoins et obtenir un devis personnalisé gratuit.",
+    "cta1": "Démarrer mon projet",
+    "cta2": "Nous contacter"
+  },
+  "contact": {
+    "badge": "Contact",
+    "title": "Parlons de votre",
+    "titleHighlight": "projet",
+    "subtitle": "Notre équipe est disponible pour répondre à toutes vos questions et vous accompagner dans votre transformation numérique",
+    "form": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email professionnel",
+      "phone": "Téléphone",
+      "company": "Entreprise",
+      "service": "Service souhaité",
+      "budget": "Budget estimé",
+      "message": "Votre message",
+      "attachment": "Pièce jointe (optionnel)",
+      "submit": "Envoyer le message",
+      "sending": "Envoi en cours...",
+      "success": "Message envoyé avec succès ! Nous vous répondrons dans les 24h.",
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "selectService": "Sélectionner un service",
+      "selectBudget": "Sélectionner un budget"
+    },
+    "info": {
+      "email": "contact@kelenix.com",
+      "phone": "+33 1 23 45 67 89",
+      "whatsapp": "+33 6 12 34 56 78",
+      "address": "Paris, France",
+      "hours": "Lun - Ven : 9h00 - 18h00"
+    }
+  },
+  "quote": {
+    "badge": "Devis Gratuit",
+    "title": "Demandez votre",
+    "titleHighlight": "devis personnalisé",
+    "subtitle": "En 5 étapes simples, décrivez votre projet et recevez une estimation personnalisée sous 48h",
+    "steps": {
+      "service": "Type de service",
+      "project": "Votre projet",
+      "budget": "Budget & délais",
+      "contact": "Coordonnées",
+      "confirm": "Confirmation"
+    },
+    "form": {
+      "serviceType": "Quel type de service recherchez-vous ?",
+      "projectName": "Nom du projet",
+      "projectDesc": "Description de votre projet",
+      "projectGoals": "Objectifs principaux",
+      "budget": "Budget estimé",
+      "deadline": "Délai souhaité",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "company": "Entreprise",
+      "next": "Suivant",
+      "prev": "Précédent",
+      "submit": "Envoyer ma demande",
+      "successTitle": "Demande envoyée !",
+      "successMessage": "Merci pour votre demande. Notre équipe vous contactera sous 48h avec un devis détaillé."
+    }
+  },
+  "about": {
+    "badge": "Notre Histoire",
+    "title": "À propos de",
+    "titleHighlight": "Kelenix",
+    "subtitle": "Une entreprise technologique née d'une passion pour l'innovation et d'un engagement envers l'excellence",
+    "story": "Kelenix a été fondée avec une vision claire : rendre la technologie accessible à tous et accompagner les entreprises dans leur transformation numérique. Depuis nos débuts, nous avons construit une équipe d'experts passionnés, dédiés à créer des solutions innovantes qui génèrent un impact réel.",
+    "mission": {
+      "title": "Notre Mission",
+      "description": "Accompagner les particuliers, les PME, les startups et les établissements éducatifs dans leur transformation numérique grâce à des solutions technologiques innovantes, fiables et accessibles."
+    },
+    "vision": {
+      "title": "Notre Vision",
+      "description": "Devenir un leader mondial de la technologie, reconnu pour ses innovations en intelligence artificielle, en développement logiciel et en transformation numérique."
+    },
+    "values": {
+      "title": "Nos Valeurs",
+      "innovation": "Innovation continue",
+      "excellence": "Excellence opérationnelle",
+      "reliability": "Fiabilité et rigueur",
+      "accessibility": "Accessibilité des solutions",
+      "impact": "Impact social et économique",
+      "ambition": "Ambition internationale"
+    },
+    "team": {
+      "title": "Notre Équipe",
+      "subtitle": "Des experts passionnés au service de votre réussite"
+    },
+    "timeline": {
+      "title": "Notre Parcours",
+      "subtitle": "Les étapes clés de notre évolution"
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Questions",
+    "titleHighlight": "fréquentes",
+    "subtitle": "Trouvez rapidement les réponses à vos questions",
+    "searchPlaceholder": "Rechercher une question...",
+    "notFound": "Aucune question ne correspond à votre recherche.",
+    "contactUs": "Vous n'avez pas trouvé votre réponse ?",
+    "contactLink": "Contactez-nous directement",
+    "categories": {
+      "services": "Services",
+      "pricing": "Tarification",
+      "process": "Process",
+      "delays": "Délais",
+      "support": "Support"
+    }
+  },
+  "careers": {
+    "badge": "Carrières",
+    "title": "Rejoignez",
+    "titleHighlight": "l'aventure Kelenix",
+    "subtitle": "Construisons ensemble l'avenir de la technologie",
+    "culture": {
+      "title": "Notre Culture",
+      "description": "Chez Kelenix, nous croyons en un environnement de travail stimulant où chaque talent peut s'épanouir et contribuer à des projets qui ont un impact réel."
+    },
+    "openPositions": "Postes ouverts",
+    "spontaneous": {
+      "title": "Candidature spontanée",
+      "description": "Vous ne trouvez pas le poste idéal ? Envoyez-nous votre candidature spontanée."
+    },
+    "form": {
+      "name": "Nom complet",
+      "email": "Email",
+      "phone": "Téléphone",
+      "position": "Poste visé",
+      "message": "Lettre de motivation",
+      "cv": "CV (PDF)",
+      "submit": "Envoyer ma candidature"
+    }
+  },
+  "partners": {
+    "badge": "Partenaires",
+    "title": "Programme",
+    "titleHighlight": "Partenaires",
+    "subtitle": "Rejoignez notre réseau de partenaires et développez votre activité ensemble",
+    "benefits": {
+      "title": "Avantages du partenariat"
+    },
+    "form": {
+      "company": "Entreprise",
+      "name": "Nom du contact",
+      "email": "Email",
+      "phone": "Téléphone",
+      "partnerType": "Type de partenariat",
+      "message": "Décrivez votre projet de partenariat",
+      "submit": "Soumettre ma demande"
+    }
+  },
+  "footer": {
+    "description": "Kelenix accompagne les entreprises dans leur transformation numérique grâce à des solutions technologiques innovantes et fiables.",
+    "quickLinks": "Liens rapides",
+    "ourServices": "Nos Services",
+    "contactUs": "Contact",
+    "newsletter": {
+      "title": "Newsletter",
+      "placeholder": "Votre email",
+      "subscribe": "S'abonner",
+      "success": "Merci pour votre inscription !",
+      "alreadySubscribed": "Vous êtes déjà abonné."
+    },
+    "legal": {
+      "mentions": "Mentions légales",
+      "privacy": "Confidentialité",
+      "cgu": "CGU",
+      "cookies": "Cookies"
+    },
+    "copyright": "Tous droits réservés.",
+    "social": {
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "twitter": "Twitter / X"
+    }
+  },
+  "cookies": {
+    "message": "Nous utilisons des cookies pour améliorer votre expérience. En continuant à naviguer, vous acceptez notre",
+    "policyLink": "politique de cookies",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "customize": "Personnaliser",
+    "essential": "Essentiels",
+    "analytics": "Analytiques",
+    "marketing": "Marketing",
+    "save": "Enregistrer mes préférences"
+  },
+  "whatsapp": {
+    "tooltip": "Discutez avec nous sur WhatsApp",
+    "message": "Bonjour ! Je souhaite en savoir plus sur vos services."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "notFound": "Page introuvable",
+    "backHome": "Retour à l'accueil",
+    "backToBlog": "Retour au blog",
+    "backToPortfolio": "Retour au portfolio",
+    "backToServices": "Retour aux services",
+    "scrollTop": "Retour en haut",
+    "seeMore": "Voir plus",
+    "seeLess": "Voir moins",
+    "all": "Tous",
+    "search": "Rechercher",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "send": "Envoyer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "learnMore": "En savoir plus",
+    "viewAll": "Voir tout",
+    "share": "Partager",
+    "copy": "Copier",
+    "download": "Télécharger",
+    "required": "Ce champ est requis",
+    "invalidEmail": "Email invalide",
+    "invalidPhone": "Numéro de téléphone invalide"
+  }
+}

@@ -1,26 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Open+Sans:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* =========================================================
+   Tailwind v4 — @theme (remplace tailwind.config.ts)
+   ========================================================= */
+@theme {
+  /* --- Couleurs --- */
+  --color-sky:           #2FA8FF;
+  --color-sky-light:     #6CC4FF;
+  --color-sky-dark:      #0A8FE8;
+  --color-gold:          #FFC107;
+  --color-gold-light:    #FFD54F;
+  --color-gold-dark:     #F9A825;
+  --color-navy:          #0B1F3A;
+  --color-navy-light:    #122848;
+  --color-navy-dark:     #060F1C;
+  --color-neutral-light: #F5F7FA;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* --- Polices --- */
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body:    'Open Sans', sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* --- Ombres --- */
+  --shadow-card:       0 4px 24px rgba(11,31,58,0.08);
+  --shadow-card-hover: 0 8px 40px rgba(47,168,255,0.18);
+  --shadow-glow:       0 0 30px rgba(47,168,255,0.30);
+
+  /* --- Animations --- */
+  --animate-fade-in:  fadeIn 0.6s ease-out both;
+  --animate-slide-up: slideUp 0.6s ease-out both;
+  --animate-float:    float 3s ease-in-out infinite;
+
+  /* --- Keyframes --- */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-10px); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 }
 
+/* =========================================================
+   Utilitaires personnalisés (gradients, etc.)
+   ========================================================= */
+@utility bg-gradient-hero {
+  background-image: linear-gradient(135deg, #0B1F3A 0%, #122848 50%, #0A8FE8 100%);
+}
+@utility bg-gradient-brand {
+  background-image: linear-gradient(135deg, #2FA8FF 0%, #0B1F3A 100%);
+}
+@utility bg-gradient-cta {
+  background-image: linear-gradient(90deg, #2FA8FF 0%, #0B1F3A 100%);
+}
+
+/* =========================================================
+   Reset & Base
+   ========================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  color: #1a1a1a;
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* =========================================================
+   Scrollbar
+   ========================================================= */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #F5F7FA; }
+::-webkit-scrollbar-thumb { background: #2FA8FF; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #0B1F3A; }
+
+/* =========================================================
+   Prose (blog)
+   ========================================================= */
+.prose-kelenix h1,
+.prose-kelenix h2,
+.prose-kelenix h3,
+.prose-kelenix h4 {
+  font-family: var(--font-heading);
+  color: #0B1F3A;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.prose-kelenix h2 { font-size: 1.5rem; font-weight: 700; }
+.prose-kelenix h3 { font-size: 1.25rem; font-weight: 600; }
+.prose-kelenix p  { margin-bottom: 1em; line-height: 1.8; color: #374151; }
+.prose-kelenix ul,
+.prose-kelenix ol { padding-left: 1.5em; margin-bottom: 1em; }
+.prose-kelenix li { margin-bottom: 0.4em; line-height: 1.7; color: #374151; }
+.prose-kelenix strong { color: #0B1F3A; font-weight: 700; }
+.prose-kelenix a  { color: #2FA8FF; text-decoration: underline; }
+.prose-kelenix blockquote {
+  border-left: 4px solid #2FA8FF;
+  padding: 1em 1.5em;
+  background: #F5F7FA;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5em 0;
+}
+.prose-kelenix code {
+  background: #F5F7FA;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  color: #2FA8FF;
+}
+
+/* =========================================================
+   Utilitaires d'animation
+   ========================================================= */
+.animate-fade-in  { animation: fadeIn  0.6s ease-out both; }
+.animate-slide-up { animation: slideUp 0.6s ease-out both; }
+.animate-slide-down { animation: slideDown 0.3s ease-out both; }
+.animate-float    { animation: float   3s ease-in-out infinite; }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =========================================================
+   TipTap editor
+   ========================================================= */
+.ProseMirror {
+  outline: none;
+  min-height: 300px;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #9ca3af;
+  pointer-events: none;
+  height: 0;
 }

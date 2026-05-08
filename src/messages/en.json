@@ -1,0 +1,388 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "testimonials": "Testimonials",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "careers": "Careers",
+    "partners": "Partners",
+    "quote": "Get a Quote",
+    "language": "Language"
+  },
+  "hero": {
+    "badge": "Innovation & Technological Excellence",
+    "title": "Intelligence in service of",
+    "titleHighlight": "global innovation",
+    "subtitle": "Kelenix supports businesses, SMEs and startups in their digital transformation through innovative, reliable and accessible technology solutions.",
+    "cta1": "Get a Quote",
+    "cta2": "Discover our services",
+    "stat1Value": "150+",
+    "stat1Label": "Projects delivered",
+    "stat2Value": "80+",
+    "stat2Label": "Satisfied clients",
+    "stat3Value": "5+",
+    "stat3Label": "Years of experience",
+    "stat4Value": "15+",
+    "stat4Label": "Technologies mastered"
+  },
+  "trust": {
+    "title": "They trust us",
+    "subtitle": "Companies of all sizes trust us for their technology projects"
+  },
+  "services": {
+    "badge": "Our Services",
+    "title": "Custom technology",
+    "titleHighlight": "solutions",
+    "subtitle": "We offer a comprehensive range of services to meet all your digital needs",
+    "viewAll": "View all our services",
+    "learnMore": "Learn more",
+    "items": {
+      "software": {
+        "title": "Software Development",
+        "description": "Custom applications tailored to your specific business needs"
+      },
+      "web": {
+        "title": "Website Creation",
+        "description": "Professional, fast websites optimized for search engines"
+      },
+      "webapp": {
+        "title": "Web Applications",
+        "description": "Modern, reactive and scalable web applications"
+      },
+      "mobile": {
+        "title": "Mobile Applications",
+        "description": "Native and cross-platform iOS & Android applications"
+      },
+      "ai": {
+        "title": "Artificial Intelligence",
+        "description": "AI and machine learning solutions to automate and innovate"
+      },
+      "consulting": {
+        "title": "IT Consulting",
+        "description": "Digital strategy and technology advisory"
+      },
+      "training": {
+        "title": "Tech Training",
+        "description": "Programming and new technologies training"
+      }
+    }
+  },
+  "whyUs": {
+    "badge": "Why Kelenix?",
+    "title": "What sets us",
+    "titleHighlight": "apart",
+    "subtitle": "We combine technical expertise and a client-centered approach to deliver excellence",
+    "items": {
+      "expertise": {
+        "title": "Recognized Expertise",
+        "description": "A team of senior developers with over 5 years of experience in the most advanced technologies"
+      },
+      "agile": {
+        "title": "Agile Approach",
+        "description": "Agile methodology for fast, iterative deliveries aligned with your objectives"
+      },
+      "support": {
+        "title": "24/7 Support",
+        "description": "Continuous support and technical assistance available to ensure service continuity"
+      },
+      "quality": {
+        "title": "Quality Guaranteed",
+        "description": "Tested, documented and maintained code following industry best practices"
+      },
+      "international": {
+        "title": "International Reach",
+        "description": "Expertise for global projects with a multilingual and multicultural team"
+      },
+      "accessible": {
+        "title": "Accessible Solutions",
+        "description": "Competitive rates without compromising quality, adapted to businesses of all sizes"
+      }
+    }
+  },
+  "stats": {
+    "badge": "Our Numbers",
+    "title": "Results that",
+    "titleHighlight": "speak for themselves",
+    "projects": "Projects delivered",
+    "clients": "Satisfied clients",
+    "years": "Years of experience",
+    "technologies": "Technologies mastered",
+    "satisfaction": "Satisfaction rate"
+  },
+  "portfolio": {
+    "badge": "Portfolio",
+    "title": "Our",
+    "titleHighlight": "achievements",
+    "subtitle": "Discover some of our most recent and impactful projects",
+    "viewAll": "View full portfolio",
+    "viewProject": "View project",
+    "filters": {
+      "all": "All",
+      "web": "Web",
+      "mobile": "Mobile",
+      "ai": "AI",
+      "software": "Software",
+      "consulting": "Consulting"
+    }
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "What our",
+    "titleHighlight": "clients say",
+    "subtitle": "Our clients' satisfaction is our greatest reward",
+    "viewAll": "View all testimonials"
+  },
+  "blog": {
+    "badge": "Blog",
+    "title": "News &",
+    "titleHighlight": "tech insights",
+    "subtitle": "Stay at the forefront of technology with our expert articles and guides",
+    "viewAll": "View all articles",
+    "readMore": "Read article",
+    "by": "By",
+    "publishedOn": "Published on",
+    "categories": {
+      "development": "Development",
+      "ai": "Artificial Intelligence",
+      "digital": "Digital Strategy",
+      "news": "Tech News",
+      "guides": "Guides"
+    }
+  },
+  "contactCta": {
+    "title": "Ready to launch your",
+    "titleHighlight": "project?",
+    "subtitle": "Contact us today to discuss your needs and get a free personalized quote.",
+    "cta1": "Start my project",
+    "cta2": "Contact us"
+  },
+  "contact": {
+    "badge": "Contact",
+    "title": "Let's talk about your",
+    "titleHighlight": "project",
+    "subtitle": "Our team is available to answer all your questions and support you in your digital transformation",
+    "form": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Professional email",
+      "phone": "Phone",
+      "company": "Company",
+      "service": "Desired service",
+      "budget": "Estimated budget",
+      "message": "Your message",
+      "attachment": "Attachment (optional)",
+      "submit": "Send message",
+      "sending": "Sending...",
+      "success": "Message sent successfully! We will respond within 24 hours.",
+      "error": "An error occurred. Please try again.",
+      "selectService": "Select a service",
+      "selectBudget": "Select a budget"
+    },
+    "info": {
+      "email": "contact@kelenix.com",
+      "phone": "+33 1 23 45 67 89",
+      "whatsapp": "+33 6 12 34 56 78",
+      "address": "Paris, France",
+      "hours": "Mon - Fri: 9:00 AM - 6:00 PM"
+    }
+  },
+  "quote": {
+    "badge": "Free Quote",
+    "title": "Request your",
+    "titleHighlight": "personalized quote",
+    "subtitle": "In 5 simple steps, describe your project and receive a personalized estimate within 48 hours",
+    "steps": {
+      "service": "Service type",
+      "project": "Your project",
+      "budget": "Budget & timeline",
+      "contact": "Contact details",
+      "confirm": "Confirmation"
+    },
+    "form": {
+      "serviceType": "What type of service are you looking for?",
+      "projectName": "Project name",
+      "projectDesc": "Project description",
+      "projectGoals": "Main objectives",
+      "budget": "Estimated budget",
+      "deadline": "Desired deadline",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company",
+      "next": "Next",
+      "prev": "Previous",
+      "submit": "Submit my request",
+      "successTitle": "Request submitted!",
+      "successMessage": "Thank you for your request. Our team will contact you within 48 hours with a detailed quote."
+    }
+  },
+  "about": {
+    "badge": "Our Story",
+    "title": "About",
+    "titleHighlight": "Kelenix",
+    "subtitle": "A technology company born from a passion for innovation and a commitment to excellence",
+    "story": "Kelenix was founded with a clear vision: to make technology accessible to everyone and support businesses in their digital transformation. Since our beginnings, we have built a team of passionate experts dedicated to creating innovative solutions that generate real impact.",
+    "mission": {
+      "title": "Our Mission",
+      "description": "To accompany individuals, SMEs, startups and educational institutions in their digital transformation through innovative, reliable and accessible technology solutions."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To become a global technology leader, recognized for innovations in artificial intelligence, software development and digital transformation."
+    },
+    "values": {
+      "title": "Our Values",
+      "innovation": "Continuous innovation",
+      "excellence": "Operational excellence",
+      "reliability": "Reliability and rigor",
+      "accessibility": "Solution accessibility",
+      "impact": "Social and economic impact",
+      "ambition": "International ambition"
+    },
+    "team": {
+      "title": "Our Team",
+      "subtitle": "Passionate experts at the service of your success"
+    },
+    "timeline": {
+      "title": "Our Journey",
+      "subtitle": "Key milestones in our evolution"
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Frequently",
+    "titleHighlight": "asked questions",
+    "subtitle": "Quickly find answers to your questions",
+    "searchPlaceholder": "Search a question...",
+    "notFound": "No question matches your search.",
+    "contactUs": "Didn't find your answer?",
+    "contactLink": "Contact us directly",
+    "categories": {
+      "services": "Services",
+      "pricing": "Pricing",
+      "process": "Process",
+      "delays": "Timelines",
+      "support": "Support"
+    }
+  },
+  "careers": {
+    "badge": "Careers",
+    "title": "Join the",
+    "titleHighlight": "Kelenix adventure",
+    "subtitle": "Let's build the future of technology together",
+    "culture": {
+      "title": "Our Culture",
+      "description": "At Kelenix, we believe in a stimulating work environment where every talent can flourish and contribute to projects that have a real impact."
+    },
+    "openPositions": "Open positions",
+    "spontaneous": {
+      "title": "Spontaneous application",
+      "description": "Can't find the ideal position? Send us your spontaneous application."
+    },
+    "form": {
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "position": "Target position",
+      "message": "Cover letter",
+      "cv": "CV (PDF)",
+      "submit": "Submit my application"
+    }
+  },
+  "partners": {
+    "badge": "Partners",
+    "title": "Partnership",
+    "titleHighlight": "Program",
+    "subtitle": "Join our partner network and grow your business together",
+    "benefits": {
+      "title": "Partnership benefits"
+    },
+    "form": {
+      "company": "Company",
+      "name": "Contact name",
+      "email": "Email",
+      "phone": "Phone",
+      "partnerType": "Partnership type",
+      "message": "Describe your partnership project",
+      "submit": "Submit my request"
+    }
+  },
+  "footer": {
+    "description": "Kelenix supports businesses in their digital transformation through innovative and reliable technology solutions.",
+    "quickLinks": "Quick Links",
+    "ourServices": "Our Services",
+    "contactUs": "Contact",
+    "newsletter": {
+      "title": "Newsletter",
+      "placeholder": "Your email",
+      "subscribe": "Subscribe",
+      "success": "Thank you for subscribing!",
+      "alreadySubscribed": "You are already subscribed."
+    },
+    "legal": {
+      "mentions": "Legal Notice",
+      "privacy": "Privacy Policy",
+      "cgu": "Terms of Use",
+      "cookies": "Cookies"
+    },
+    "copyright": "All rights reserved.",
+    "social": {
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "twitter": "Twitter / X"
+    }
+  },
+  "cookies": {
+    "message": "We use cookies to improve your experience. By continuing to browse, you accept our",
+    "policyLink": "cookie policy",
+    "accept": "Accept",
+    "decline": "Decline",
+    "customize": "Customize",
+    "essential": "Essential",
+    "analytics": "Analytics",
+    "marketing": "Marketing",
+    "save": "Save my preferences"
+  },
+  "whatsapp": {
+    "tooltip": "Chat with us on WhatsApp",
+    "message": "Hello! I would like to learn more about your services."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "notFound": "Page not found",
+    "backHome": "Back to home",
+    "backToBlog": "Back to blog",
+    "backToPortfolio": "Back to portfolio",
+    "backToServices": "Back to services",
+    "scrollTop": "Back to top",
+    "seeMore": "See more",
+    "seeLess": "See less",
+    "all": "All",
+    "search": "Search",
+    "close": "Close",
+    "open": "Open",
+    "send": "Send",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "learnMore": "Learn more",
+    "viewAll": "View all",
+    "share": "Share",
+    "copy": "Copy",
+    "download": "Download",
+    "required": "This field is required",
+    "invalidEmail": "Invalid email",
+    "invalidPhone": "Invalid phone number"
+  }
+}
