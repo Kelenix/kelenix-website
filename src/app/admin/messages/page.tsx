@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { MessageStatus } from "@prisma/client";
@@ -7,6 +8,7 @@ import MessagesClient from "./MessagesClient";
 type Props = { searchParams: Promise<{ tab?: string }> };
 
 export default async function AdminMessagesPage({ searchParams }: Props) {
+  await requireAuth("MODERATOR");
   const { tab } = await searchParams;
   const activeTab = tab === "devis" ? "devis" : "messages";
 

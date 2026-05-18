@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import JobPostingForm from "../JobPostingForm";
@@ -9,6 +10,7 @@ import { notFound } from "next/navigation";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function EditJobPage({ params }: Props) {
+  await requireAuth("MODERATOR");
   const { id } = await params;
   const job = await prisma.jobPosting.findUnique({ where: { id } });
   if (!job) notFound();

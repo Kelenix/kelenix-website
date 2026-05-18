@@ -1,9 +1,11 @@
+import { requireAuth } from "@/lib/require-auth";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import ServiceForm from "../ServiceForm";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
-export default function NewServicePage() {
+export default async function NewServicePage() {
+  await requireAuth("MODERATOR");
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />

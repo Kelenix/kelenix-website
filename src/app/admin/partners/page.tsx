@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Handshake, FileText } from "lucide-react";
@@ -17,6 +18,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default async function AdminPartnersPage() {
+  await requireAuth("MODERATOR");
   const requests = await prisma.partnerRequest.findMany({ orderBy: { createdAt: "desc" } });
   const newCount = requests.filter(r => r.status === "NEW").length;
 

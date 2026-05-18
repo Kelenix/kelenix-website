@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -33,13 +33,13 @@ model Service {
   titleEn          String
   shortDescFr      String   @db.Text
   shortDescEn      String   @db.Text
-  longDescFr       String   @db.LongText
-  longDescEn       String   @db.LongText
+  longDescFr       String   @db.Text
+  longDescEn       String   @db.Text
   icon             String
   image            String?
   technologies     String   @db.Text
-  faqFr            String   @db.LongText
-  faqEn            String   @db.LongText
+  faqFr            String   @db.Text
+  faqEn            String   @db.Text
   order            Int      @default(0)
   published        Boolean  @default(true)
   createdAt        DateTime @default(now())
@@ -55,8 +55,8 @@ model Project {
   titleEn      String
   client       String
   category     ProjectCategory
-  descFr       String        @db.LongText
-  descEn       String        @db.LongText
+  descFr       String        @db.Text
+  descEn       String        @db.Text
   problemFr    String        @db.Text
   problemEn    String        @db.Text
   solutionFr   String        @db.Text
@@ -89,8 +89,8 @@ model BlogPost {
   slug        String      @unique
   titleFr     String
   titleEn     String
-  contentFr   String      @db.LongText
-  contentEn   String      @db.LongText
+  contentFr   String      @db.Text
+  contentEn   String      @db.Text
   excerptFr   String      @db.Text
   excerptEn   String      @db.Text
   coverImage  String?
@@ -190,7 +190,7 @@ model Newsletter {
 model SiteSettings {
   id           String   @id @default(cuid())
   key          String   @unique
-  value        String   @db.LongText
+  value        String   @db.Text
   updatedAt    DateTime @updatedAt
 
   @@map("site_settings")
@@ -200,8 +200,8 @@ model JobPosting {
   id          String   @id @default(cuid())
   titleFr     String
   titleEn     String
-  descFr      String   @db.LongText
-  descEn      String   @db.LongText
+  descFr      String   @db.Text
+  descEn      String   @db.Text
   location    String
   contractType String
   published   Boolean  @default(true)
@@ -239,6 +239,20 @@ model JobApplication {
   updatedAt   DateTime      @updatedAt
 
   @@map("job_applications")
+}
+
+model MobileApp {
+  id        String   @id @default(cuid())
+  name      String
+  initial   String
+  color     String
+  category  String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("mobile_apps")
 }
 
 model ActivityLog {

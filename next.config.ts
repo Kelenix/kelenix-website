@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "ui-avatars.com" },
-      { protocol: "https", hostname: "picsum.photos" },
+      // picsum.photos — dev only, remove in production
+      ...(process.env.NODE_ENV !== "production"
+        ? [{ protocol: "https" as const, hostname: "picsum.photos" }]
+        : []),
     ],
     formats: ["image/webp", "image/avif"],
   },

@@ -1,9 +1,11 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AboutClient from "./AboutClient";
 
 export default async function AdminAboutPage() {
+  await requireAuth("MODERATOR");
   const settings = await prisma.siteSettings.findMany({
     where: { key: { in: ["about_mission_fr", "about_mission_en", "about_vision_fr", "about_vision_en", "about_values_fr", "about_values_en", "about_story_fr", "about_story_en"] } },
   });

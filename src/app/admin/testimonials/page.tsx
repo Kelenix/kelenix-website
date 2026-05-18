@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { Plus, Edit, Star } from "lucide-react";
 import TestimonialDeleteButton from "./TestimonialDeleteButton";
 
 export default async function AdminTestimonialsPage() {
+  await requireAuth("MODERATOR");
   const testimonials = await prisma.testimonial.findMany({
     orderBy: { createdAt: "desc" },
     select: { id: true, name: true, company: true, position: true, rating: true, showOnHome: true, published: true },

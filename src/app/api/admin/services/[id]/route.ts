@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { auth } from "@/lib/auth";
 
 const schema = z.object({
   slug: z.string().min(1).max(100),
@@ -20,6 +21,10 @@ const schema = z.object({
 type Props = { params: Promise<{ id: string }> };
 
 export async function PUT(request: Request, { params }: Props) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
   try {
     const { id } = await params;
     const body = await request.json();
@@ -35,6 +40,10 @@ export async function PUT(request: Request, { params }: Props) {
 }
 
 export async function DELETE(_request: Request, { params }: Props) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
   try {
     const { id } = await params;
     await prisma.service.delete({ where: { id } });

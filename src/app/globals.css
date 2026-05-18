@@ -54,6 +54,12 @@
   }
 }
 
+/* Keyframe global pour le ticker d'apps */
+@keyframes apps-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 /* =========================================================
    Utilitaires personnalisés (gradients, etc.)
    ========================================================= */

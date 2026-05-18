@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { Plus, Edit, Code } from "lucide-react";
 import ServiceDeleteButton from "./ServiceDeleteButton";
 
 export default async function AdminServicesPage() {
+  await requireAuth("MODERATOR");
   const services = await prisma.service.findMany({
     orderBy: { order: "asc" },
     select: { id: true, slug: true, titleFr: true, icon: true, order: true, published: true },

@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import PartnerStatusSelect from "./PartnerStatusSelect";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function PartnerDetailPage({ params }: Props) {
+  await requireAuth("MODERATOR");
   const { id } = await params;
   const req = await prisma.partnerRequest.findUnique({ where: { id } });
   if (!req) notFound();

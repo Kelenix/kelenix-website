@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import PortfolioForm from "../PortfolioForm";
@@ -9,6 +10,7 @@ import { notFound } from "next/navigation";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function EditProjectPage({ params }: Props) {
+  await requireAuth("MODERATOR");
   const { id } = await params;
   const project = await prisma.project.findUnique({ where: { id } });
   if (!project) notFound();

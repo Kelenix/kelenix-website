@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { sendQuoteNotification } from "@/lib/email";
+import { handleApiError } from "@/lib/api-error";
+import { rateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -17,26 +21,28 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  const ip = (await headers()).get("x-forwarded-for") ?? "unknown";
+  if (!rateLimit(`devis:${ip}`, 3, 60_000)) {
+    return NextResponse.json({ error: "Trop de requêtes, réessayez dans une minute." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const parsed = schema.parse(body);
 
-    await prisma.quoteRequest.create({
-      data: {
-        ...parsed,
-        deadline: parsed.deadline ?? "",
-        projectGoals: parsed.projectGoals ?? "",
-        phone: parsed.phone ?? "",
-        company: parsed.company ?? "",
-      },
-    });
+    const saved = {
+      ...parsed,
+      deadline: parsed.deadline ?? "",
+      projectGoals: parsed.projectGoals ?? "",
+      phone: parsed.phone ?? "",
+      company: parsed.company ?? "",
+    };
+
+    await prisma.quoteRequest.create({ data: saved });
+    await sendQuoteNotification(saved);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid data", details: error.errors }, { status: 400 });
-    }
-    console.error("Devis API error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return handleApiError(error);
   }
 }

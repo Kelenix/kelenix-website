@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import Logo from "@/components/ui/Logo";
 import { Eye, EyeOff, Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-navy to-sky/80 px-8 py-10 text-center">
-            <Image src="/logo.png" alt="Kelenix" width={64} height={64} className="h-16 w-16 object-contain rounded-xl mx-auto mb-4" />
+            <Logo size="text-4xl" className="block text-center mb-4" />
             <h1 className="font-heading text-xl font-bold text-white">Interface d&apos;administration</h1>
             <p className="text-white/70 text-sm mt-1">Connectez-vous pour accéder au tableau de bord</p>
           </div>
@@ -102,11 +102,6 @@ export default function AdminLoginPage() {
               </button>
             </form>
 
-            <div className="mt-6 p-4 bg-navy/5 rounded-xl">
-              <p className="text-xs text-gray-500 font-medium mb-1">Compte de démonstration :</p>
-              <p className="text-xs text-gray-600">Email : <code className="text-sky">admin@kelenix.com</code></p>
-              <p className="text-xs text-gray-600">Mot de passe : <code className="text-sky">Kelenix@Admin2024!</code></p>
-            </div>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { Plus, Edit, BookOpen } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 export default async function AdminBlogPage() {
+  await requireAuth("MODERATOR");
   const posts = await prisma.blogPost.findMany({
     orderBy: { createdAt: "desc" },
     select: { id: true, slug: true, titleFr: true, category: true, published: true, publishedAt: true, createdAt: true },

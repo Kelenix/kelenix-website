@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { Link, usePathname } from "@/i18n/navigation";
+import Logo from "@/components/ui/Logo";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
@@ -58,14 +58,7 @@ export default function Header() {
         <nav className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <Image
-              src="/logo.png"
-              alt="Kelenix"
-              width={44}
-              height={44}
-              className="h-11 w-11 object-contain rounded-lg"
-              priority
-            />
+            <Logo size="text-2xl" />
           </Link>
 
           {/* Desktop Nav */}

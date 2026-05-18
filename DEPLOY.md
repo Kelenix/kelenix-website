@@ -3,17 +3,27 @@
 ## Prérequis
 
 - Hébergeur cPanel avec support Node.js (v18+ ou v20+)
-- Accès à phpMyAdmin ou MySQL via cPanel
+- Accès à PostgreSQL (via cPanel ou serveur externe)
 - Domaine configuré (ex: kelenix.com)
 
 ---
 
-## 1. Préparer la base de données MySQL
+## 1. Préparer la base de données PostgreSQL
 
-1. Dans cPanel → **MySQL Databases**
-2. Créer une base de données : `kelenix_db`
-3. Créer un utilisateur MySQL avec tous les privilèges sur cette base
-4. Noter : `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+### Option A — PostgreSQL sur le même serveur (SSH requis)
+```bash
+sudo -u postgres psql
+CREATE DATABASE kelenix_db;
+CREATE USER kelenix_user WITH ENCRYPTED PASSWORD 'votre_mot_de_passe';
+GRANT ALL PRIVILEGES ON DATABASE kelenix_db TO kelenix_user;
+\q
+```
+
+### Option B — PostgreSQL managé (Supabase, Neon, Railway…)
+Créer une base de données et récupérer l'URL de connexion au format :
+```
+postgresql://USER:PASSWORD@HOST:5432/kelenix_db
+```
 
 ---
 
@@ -22,7 +32,7 @@
 Copier `.env.example` en `.env.local` et remplir :
 
 ```env
-DATABASE_URL="mysql://DB_USER:DB_PASSWORD@localhost:3306/kelenix_db"
+DATABASE_URL="postgresql://kelenix_user:votre_mot_de_passe@localhost:5432/kelenix_db"
 NEXTAUTH_SECRET="une_cle_secrete_longue_et_aleatoire"
 NEXTAUTH_URL="https://kelenix.com"
 NEXT_PUBLIC_BASE_URL="https://kelenix.com"
@@ -30,7 +40,7 @@ NEXT_PUBLIC_BASE_URL="https://kelenix.com"
 
 Pour générer `NEXTAUTH_SECRET` :
 ```bash
-openssl rand -base64 32
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
 ---
@@ -76,16 +86,13 @@ npm run build
 ## 6. Initialiser la base de données
 
 ```bash
-# Pousser le schéma Prisma vers MySQL
+# Pousser le schéma Prisma vers PostgreSQL
 npx prisma db push
 
 # Insérer les données initiales (services, projets, admin...)
-npm run db:seed
+# Personnaliser les credentials admin via variables d'env :
+SEED_ADMIN_EMAIL="votre@email.com" SEED_ADMIN_PASSWORD="VotreMotDePasse!" npm run db:seed
 ```
-
-L'utilisateur admin créé par le seed :
-- **Email** : `admin@kelenix.com`
-- **Mot de passe** : `Kelenix@Admin2024!`
 
 > ⚠️ Changer le mot de passe immédiatement après le premier login sur `/admin`
 
@@ -152,6 +159,12 @@ pm2 restart kelenix
 ```bash
 npx prisma db push
 npm run db:seed
+```
+
+### Erreur de connexion PostgreSQL
+Vérifier que PostgreSQL est démarré et que `DATABASE_URL` est correct :
+```bash
+psql "$DATABASE_URL" -c "SELECT 1"
 ```
 
 ### Port 3000 déjà utilisé

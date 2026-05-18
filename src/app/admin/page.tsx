@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import { MessageStatus } from "@prisma/client";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -6,6 +7,8 @@ import { Mail, FileText, BookOpen, Users, MessageCircle, Star, TrendingUp, Brief
 import Link from "next/link";
 
 export default async function AdminDashboardPage() {
+  await requireAuth("MODERATOR");
+
   const [
     newMessages,
     newQuotes,

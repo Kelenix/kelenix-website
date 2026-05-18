@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { Plus, Edit, Briefcase } from "lucide-react";
 import PortfolioDeleteButton from "./PortfolioDeleteButton";
 
 export default async function AdminPortfolioPage() {
+  await requireAuth("MODERATOR");
   const projects = await prisma.project.findMany({
     orderBy: { createdAt: "desc" },
     select: { id: true, slug: true, titleFr: true, category: true, client: true, featured: true, published: true },

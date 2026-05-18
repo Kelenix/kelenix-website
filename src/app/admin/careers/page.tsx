@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
@@ -18,6 +19,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default async function AdminCareersPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  await requireAuth("MODERATOR");
   const { tab = "jobs" } = await searchParams;
 
   const [jobs, applications] = await Promise.all([

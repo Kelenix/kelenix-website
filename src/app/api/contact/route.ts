@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { sendContactNotification } from "@/lib/email";
+import { handleApiError } from "@/lib/api-error";
+import { rateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -14,18 +18,20 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  const ip = (await headers()).get("x-forwarded-for") ?? "unknown";
+  if (!rateLimit(`contact:${ip}`, 5, 60_000)) {
+    return NextResponse.json({ error: "Trop de requêtes, réessayez dans une minute." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const data = schema.parse(body);
 
     await prisma.contactMessage.create({ data });
+    await sendContactNotification(data);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid data", details: error.errors }, { status: 400 });
-    }
-    console.error("Contact API error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return handleApiError(error);
   }
 }

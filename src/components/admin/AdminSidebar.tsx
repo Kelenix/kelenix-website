@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Logo from "@/components/ui/Logo";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Code, Briefcase, BookOpen, Star, Mail,
   Newspaper, Settings, LogOut, Menu, X, Search,
-  Users, Handshake, Info
+  Users, Handshake, Info, Smartphone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/admin/portfolio", label: "Portfolio", icon: Briefcase },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/testimonials", label: "Témoignages", icon: Star },
+  { href: "/admin/apps", label: "Apps mobiles", icon: Smartphone },
   { href: "/admin/careers", label: "Carrières", icon: Users },
   { href: "/admin/partners", label: "Partenaires", icon: Handshake },
   { href: "/admin/messages", label: "Messages", icon: Mail },
@@ -34,7 +35,7 @@ export default function AdminSidebar() {
     <>
       <div className="p-5 border-b border-white/10">
         <Link href="/admin" className="flex items-center gap-3">
-          <Image src="/logo.png" alt="Kelenix" width={36} height={36} className="h-9 w-9 object-contain rounded-md" />
+          <Logo size="text-xl" />
         </Link>
         <p className="text-xs text-gray-400 mt-1">Administration</p>
       </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { auth } from "@/lib/auth";
 
 const schema = z.object({
   titleFr: z.string().min(1).max(200),
@@ -13,6 +14,10 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
   try {
     const parsed = schema.parse(await request.json());
     const job = await prisma.jobPosting.create({ data: parsed });

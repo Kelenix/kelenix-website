@@ -1,9 +1,11 @@
+import { requireAuth } from "@/lib/require-auth";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import JobPostingForm from "../JobPostingForm";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
-export default function NewJobPage() {
+export default async function NewJobPage() {
+  await requireAuth("MODERATOR");
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />

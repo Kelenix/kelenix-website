@@ -1,10 +1,12 @@
 export const dynamic = "force-dynamic";
+import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Users, Download } from "lucide-react";
 import NewsletterClient from "./NewsletterClient";
 
 export default async function AdminNewsletterPage() {
+  await requireAuth("MODERATOR");
   const subscribers = await prisma.newsletter.findMany({
     orderBy: { subscribedAt: "desc" },
   });

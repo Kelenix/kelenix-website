@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
+import AppsTicker from "@/components/home/AppsTicker";
 import ServicesSection from "@/components/home/ServicesSection";
 import WhyUsSection from "@/components/home/WhyUsSection";
 import StatsSection from "@/components/home/StatsSection";
@@ -66,7 +67,12 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      <HeroSection />
+      <div className="relative">
+        <HeroSection />
+        <div className="absolute top-10 left-0 right-0 z-20">
+          <AppsTicker />
+        </div>
+      </div>
       <ServicesSection />
       <WhyUsSection />
       <StatsSection />
