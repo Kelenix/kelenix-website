@@ -69,7 +69,7 @@ export default async function HomePage({ params }: Props) {
     <>
       <div className="relative">
         <HeroSection />
-        <div className="absolute top-10 left-0 right-0 z-20">
+        <div className="absolute top-0 left-0 right-0 z-20">
           <AppsTicker />
         </div>
       </div>

@@ -1,23 +1,26 @@
-import type { NextConfig } from "next";
+import path from "path";
+import { fileURLToPath } from "url";
 import createNextIntlPlugin from "next-intl/plugin";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   devIndicators: false,
   turbopack: {
     resolveAlias: {
       "next-intl/config": "./src/i18n/request.ts",
     },
   },
+  webpack: (config) => {
+    config.resolve.alias["next-intl/config"] = path.join(__dirname, "src/i18n/request.ts");
+    return config;
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "ui-avatars.com" },
-      // picsum.photos — dev only, remove in production
-      ...(process.env.NODE_ENV !== "production"
-        ? [{ protocol: "https" as const, hostname: "picsum.photos" }]
-        : []),
     ],
     formats: ["image/webp", "image/avif"],
   },
