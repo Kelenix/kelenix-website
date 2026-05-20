@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { prisma } from "@/lib/prisma";
 import CookieBanner from "@/components/layout/CookieBanner";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -70,6 +71,22 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   const messages = await getMessages();
 
+  const settingsRows = await prisma.siteSettings.findMany({
+    where: { key: { in: ["company_email","company_phone","company_whatsapp","company_address","company_linkedin","company_facebook","company_instagram","company_youtube","company_twitter"] } },
+  });
+  const s = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
+  const footerSettings = {
+    email:     s.company_email     || "contact@kelenix.com",
+    phone:     s.company_phone     || "+33 1 23 45 67 89",
+    whatsapp:  s.company_whatsapp  || "33612345678",
+    address:   s.company_address   || "Paris, France",
+    linkedin:  s.company_linkedin  || "https://linkedin.com/company/kelenix",
+    facebook:  s.company_facebook  || "https://facebook.com/kelenix",
+    instagram: s.company_instagram || "https://instagram.com/kelenix",
+    youtube:   s.company_youtube   || "https://youtube.com/@kelenix",
+    twitter:   s.company_twitter   || "https://x.com/kelenix",
+  };
+
   return (
     <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
@@ -83,7 +100,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <main className="min-h-screen pt-16">
             {children}
           </main>
-          <Footer />
+          <Footer settings={footerSettings} />
           <WhatsAppButton />
           <ScrollToTop />
           <CookieBanner />

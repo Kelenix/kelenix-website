@@ -34,7 +34,9 @@ const SocialIcons = {
   ),
 };
 
-export default function Footer() {
+type FooterSettings = { email: string; phone: string; whatsapp: string; address: string; linkedin: string; facebook: string; instagram: string; youtube: string; twitter: string };
+
+export default function Footer({ settings }: { settings: FooterSettings }) {
   const t = useTranslations("footer");
   const tNav = useTranslations("nav");
   const tServices = useTranslations("services");
@@ -86,11 +88,11 @@ export default function Footer() {
   ];
 
   const socials = [
-    { icon: SocialIcons.linkedin, href: "https://linkedin.com/company/kelenix", label: "LinkedIn" },
-    { icon: SocialIcons.facebook, href: "https://facebook.com/kelenix", label: "Facebook" },
-    { icon: SocialIcons.instagram, href: "https://instagram.com/kelenix", label: "Instagram" },
-    { icon: SocialIcons.youtube, href: "https://youtube.com/@kelenix", label: "YouTube" },
-    { icon: SocialIcons.twitter, href: "https://x.com/kelenix", label: "Twitter/X" },
+    { icon: SocialIcons.linkedin,  href: settings.linkedin,  label: "LinkedIn" },
+    { icon: SocialIcons.facebook,  href: settings.facebook,  label: "Facebook" },
+    { icon: SocialIcons.instagram, href: settings.instagram, label: "Instagram" },
+    { icon: SocialIcons.youtube,   href: settings.youtube,   label: "YouTube" },
+    { icon: SocialIcons.twitter,   href: settings.twitter,   label: "Twitter/X" },
   ];
 
   return (
@@ -165,29 +167,29 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="mailto:contact@kelenix.com"
+                  href={`mailto:${settings.email}`}
                   className="flex items-start gap-3 hover:text-sky transition-colors group"
                 >
                   <div className="w-8 h-8 rounded-lg bg-sky/10 flex items-center justify-center shrink-0 group-hover:bg-sky/20">
                     <Mail size={14} className="text-sky" />
                   </div>
-                  <span className="text-sm pt-1">contact@kelenix.com</span>
+                  <span className="text-sm pt-1">{settings.email}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="tel:+33123456789"
+                  href={`tel:${settings.phone}`}
                   className="flex items-start gap-3 hover:text-sky transition-colors group"
                 >
                   <div className="w-8 h-8 rounded-lg bg-sky/10 flex items-center justify-center shrink-0 group-hover:bg-sky/20">
                     <Phone size={14} className="text-sky" />
                   </div>
-                  <span className="text-sm pt-1">+33 1 23 45 67 89</span>
+                  <span className="text-sm pt-1">{settings.phone}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="https://wa.me/33612345678"
+                  href={`https://wa.me/${settings.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-3 hover:text-sky transition-colors group"
@@ -204,7 +206,7 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-lg bg-sky/10 flex items-center justify-center shrink-0">
                   <MapPin size={14} className="text-sky" />
                 </div>
-                <span className="text-sm pt-1">Paris, France</span>
+                <span className="text-sm pt-1">{settings.address}</span>
               </li>
             </ul>
           </div>
