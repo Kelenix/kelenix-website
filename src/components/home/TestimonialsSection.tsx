@@ -72,7 +72,7 @@ export default function TestimonialsSection({ testimonials, locale }: { testimon
     if (!track) return;
     let x = window.innerWidth;
     const step = () => {
-      x -= 0.5;
+      x -= 1.2;
       const half = track.scrollWidth / 2;
       if (x <= -half) x += half;
       track.style.transform = `translateX(${x}px)`;
