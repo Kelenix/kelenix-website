@@ -8,7 +8,7 @@ type Fields = Record<string, string>;
 
 type TeamMember = {
   id: string; name: string; roleFr: string; roleEn: string;
-  bioFr: string; bioEn: string; avatar: string; linkedin: string; order: number; published: boolean;
+  bioFr: string; bioEn: string; avatar: string | null; linkedin: string | null; order: number; published: boolean;
 };
 type TimelineItem = {
   id: string; year: string; titleFr: string; titleEn: string; descFr: string; descEn: string; order: number;
@@ -170,7 +170,7 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
             <Field label="Nom" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
             <Field label="Rôle (FR)" value={form.roleFr} onChange={v => setForm(p => ({ ...p, roleFr: v }))} />
             <Field label="Rôle (EN)" value={form.roleEn} onChange={v => setForm(p => ({ ...p, roleEn: v }))} />
-            <Field label="LinkedIn (URL)" value={form.linkedin} onChange={v => setForm(p => ({ ...p, linkedin: v }))} />
+            <Field label="LinkedIn (URL)" value={form.linkedin ?? ""} onChange={v => setForm(p => ({ ...p, linkedin: v }))} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <TextareaField label="Bio (FR)" value={form.bioFr} onChange={v => setForm(p => ({ ...p, bioFr: v }))} rows={3} />
@@ -179,7 +179,7 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
           <div className="mb-4">
             <label className="block text-sm font-semibold text-navy mb-2">Photo (URL ou upload)</label>
             <div className="flex gap-2">
-              <input value={form.avatar} onChange={e => setForm(p => ({ ...p, avatar: e.target.value }))} placeholder="https://..." className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+              <input value={form.avatar ?? ""} onChange={e => setForm(p => ({ ...p, avatar: e.target.value }))} placeholder="https://..." className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
               <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="flex items-center gap-1.5 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-60">
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
               </button>
@@ -240,8 +240,8 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
       <ConfirmDialog
         open={deleteId !== null}
         title="Supprimer ce membre ?"
-        description="Cette action est irréversible."
-        onConfirm={() => deleteId && remove(deleteId)}
+        message="Cette action est irréversible."
+        onConfirm={() => { if (deleteId) remove(deleteId); }}
         onCancel={() => setDeleteId(null)}
       />
     </div>
@@ -352,8 +352,8 @@ function TimelineTab({ initialItems }: { initialItems: TimelineItem[] }) {
       <ConfirmDialog
         open={deleteId !== null}
         title="Supprimer cette étape ?"
-        description="Cette action est irréversible."
-        onConfirm={() => deleteId && remove(deleteId)}
+        message="Cette action est irréversible."
+        onConfirm={() => { if (deleteId) remove(deleteId); }}
         onCancel={() => setDeleteId(null)}
       />
     </div>
@@ -471,8 +471,8 @@ function WhyTab({ initialPoints }: { initialPoints: WhyPoint[] }) {
       <ConfirmDialog
         open={deleteId !== null}
         title="Supprimer cet argument ?"
-        description="Cette action est irréversible."
-        onConfirm={() => deleteId && remove(deleteId)}
+        message="Cette action est irréversible."
+        onConfirm={() => { if (deleteId) remove(deleteId); }}
         onCancel={() => setDeleteId(null)}
       />
     </div>

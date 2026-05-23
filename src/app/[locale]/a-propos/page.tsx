@@ -48,7 +48,7 @@ const defaultWhyPoints = [
 ];
 
 function DynIcon({ name, size = 22, className = "" }: { name: string; size?: number; className?: string }) {
-  const IconComp = (Icons as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name];
+  const IconComp = (Icons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name];
   if (!IconComp) return <Award size={size} className={className} />;
   return <IconComp size={size} className={className} />;
 }
