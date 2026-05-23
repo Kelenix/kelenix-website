@@ -11,8 +11,8 @@ export default function AppsTickerClient({ apps }: { apps: App[] }) {
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    let x = window.innerWidth; // track starts completely off-screen to the right
-    track.style.transform = `translateX(${x}px)`; // apply immediately — no flash at pos=0
+    // x starts at viewport width (track is off-screen right from the CSS initial value)
+    let x = window.innerWidth;
     const step = () => {
       x -= 0.5;
       const half = track.scrollWidth / 2;
@@ -28,13 +28,22 @@ export default function AppsTickerClient({ apps }: { apps: App[] }) {
 
   return (
     <div style={{ paddingTop: 6 }}>
-      {/* Titre centré */}
       <p style={{ textAlign: "center", color: "#fff", fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 5 }}>
         Mes applications mobiles
       </p>
-      {/* Bande défilante */}
       <div style={{ overflowX: "hidden" }}>
-        <div ref={trackRef} style={{ display: "flex", alignItems: "center", width: "max-content", willChange: "transform", padding: "4px 0 8px" }}>
+        {/* transform: translateX(100vw) keeps items off-screen RIGHT before JS loads */}
+        <div
+          ref={trackRef}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "max-content",
+            willChange: "transform",
+            padding: "4px 0 8px",
+            transform: "translateX(100vw)",
+          }}
+        >
           {doubled.map((app, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 22px", flexShrink: 0 }}>
               <div style={{ width: 24, height: 24, borderRadius: 6, background: app.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: 10, color: "#fff", flexShrink: 0, boxShadow: `0 0 8px ${app.color}55` }}>
