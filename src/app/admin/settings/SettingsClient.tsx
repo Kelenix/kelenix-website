@@ -16,6 +16,7 @@ const sections: Section[] = [
       { key: "company_phone", label: "Téléphone" },
       { key: "company_whatsapp", label: "WhatsApp (numéro sans +)" },
       { key: "company_address", label: "Adresse" },
+      { key: "company_hours", label: "Horaires (ex: Lun - Ven : 9h00 - 18h00)" },
     ],
   },
   {

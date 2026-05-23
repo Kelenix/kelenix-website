@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Mail, Phone, MapPin, Clock, MessageCircle } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 import ContactForm from "./ContactForm";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -19,22 +20,33 @@ export default async function ContactPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "contact" });
 
+  const settingsRows = await prisma.siteSettings.findMany({
+    where: { key: { in: ["company_email", "company_phone", "company_whatsapp", "company_address", "company_hours"] } },
+  });
+  const s = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
+
+  const email = s.company_email || t("info.email");
+  const phone = s.company_phone || t("info.phone");
+  const whatsapp = s.company_whatsapp || "33612345678";
+  const address = s.company_address || t("info.address");
+  const hours = s.company_hours || t("info.hours");
+
   const infos = [
-    { icon: Mail, label: t("info.email"), href: `mailto:${t("info.email")}` },
-    { icon: Phone, label: t("info.phone"), href: `tel:${t("info.phone").replace(/\s/g, "")}` },
+    { icon: Mail, label: email, href: `mailto:${email}` },
+    { icon: Phone, label: phone, href: `tel:${phone.replace(/\s/g, "")}` },
     {
       icon: MessageCircle,
       label: "WhatsApp Business",
-      href: `https://wa.me/33612345678?text=${encodeURIComponent(locale === "fr" ? "Bonjour, je souhaite discuter d'un projet." : "Hello, I would like to discuss a project.")}`,
+      href: `https://wa.me/${whatsapp}?text=${encodeURIComponent(locale === "fr" ? "Bonjour, je souhaite discuter d'un projet." : "Hello, I would like to discuss a project.")}`,
     },
-    { icon: MapPin, label: t("info.address"), href: undefined },
-    { icon: Clock, label: t("info.hours"), href: undefined },
+    { icon: MapPin, label: address, href: undefined },
+    { icon: Clock, label: hours, href: undefined },
   ];
 
   return (
     <>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-navy to-navy-light py-20">
+      <section className="bg-linear-to-br from-navy to-navy-light py-20">
         <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
           <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
             {t("badge")}
@@ -70,7 +82,7 @@ export default async function ContactPage({ params }: Props) {
                 </div>
               ))}
 
-              {/* Map placeholder */}
+              {/* Map */}
               <div className="bg-white rounded-2xl overflow-hidden shadow-card h-48 relative">
                 <iframe
                   src="https://www.openstreetmap.org/export/embed.html?bbox=2.2,48.8,2.4,48.9&layer=mapnik"

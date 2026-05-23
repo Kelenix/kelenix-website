@@ -6,18 +6,18 @@ type App = { id: string; name: string; initial: string; color: string; category:
 
 export default function AppsTickerClient({ apps }: { apps: App[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const pos = useRef(0);
   const raf = useRef(0);
 
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    pos.current = -window.innerWidth; // items start off-screen to the right
+    let x = window.innerWidth; // track starts completely off-screen to the right
+    track.style.transform = `translateX(${x}px)`; // apply immediately — no flash at pos=0
     const step = () => {
-      pos.current += 0.5;
+      x -= 0.5;
       const half = track.scrollWidth / 2;
-      if (pos.current >= half) pos.current -= half;
-      track.style.transform = `translateX(-${pos.current}px)`;
+      if (x <= -half) x += half;
+      track.style.transform = `translateX(${x}px)`;
       raf.current = requestAnimationFrame(step);
     };
     raf.current = requestAnimationFrame(step);

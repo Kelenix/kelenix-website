@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -21,6 +21,14 @@ type Testimonial = {
 export default function TestimonialsSection({ testimonials, locale }: { testimonials: Testimonial[]; locale: string }) {
   const t = useTranslations("testimonials");
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent(c => (c < testimonials.length - 1 ? c + 1 : 0));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
 
   if (!testimonials.length) return null;
 
