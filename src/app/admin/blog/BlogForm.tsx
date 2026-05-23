@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Save, Loader2, Bold, Italic, List, ListOrdered, Heading2, Heading3, Quote } from "lucide-react";
+import { Save, Loader2, Bold, Italic, List, ListOrdered, Heading2, Heading3, Quote, Upload, X } from "lucide-react";
 
 type BlogData = {
   id?: string;
@@ -63,8 +63,10 @@ export default function BlogForm({ post }: { post?: BlogData }) {
   const router = useRouter();
   const [form, setForm] = useState<BlogData>(post ?? defaultData);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [activeLang, setActiveLang] = useState<"fr" | "en">("fr");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editorFr = useEditor({
     extensions: [StarterKit],
@@ -84,6 +86,24 @@ export default function BlogForm({ post }: { post?: BlogData }) {
       ...prev,
       [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    const data = await res.json();
+    if (res.ok) {
+      setForm(prev => ({ ...prev, coverImage: data.url }));
+    } else {
+      setError(data.error || "Erreur lors de l'upload");
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -168,8 +188,22 @@ export default function BlogForm({ post }: { post?: BlogData }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Image de couverture (URL)</label>
-          <input name="coverImage" value={form.coverImage} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="block text-sm font-semibold text-navy mb-2">Image de couverture</label>
+          <div className="flex gap-2">
+            <input name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="https://... ou télécharger" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky min-w-0" />
+            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Télécharger une image" className="flex items-center gap-1.5 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-60 flex-shrink-0">
+              {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+            </button>
+            {form.coverImage && (
+              <button type="button" onClick={() => setForm(prev => ({ ...prev, coverImage: "" }))} title="Supprimer l'image" className="flex items-center px-2 py-2.5 border border-gray-200 rounded-xl text-sm text-red-400 hover:bg-red-50 flex-shrink-0">
+                <X size={14} />
+              </button>
+            )}
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+          {form.coverImage && (
+            <img src={form.coverImage} alt="Aperçu" className="mt-2 h-16 w-full object-cover rounded-lg border border-gray-100" />
+          )}
         </div>
         <div>
           <label className="block text-sm font-semibold text-navy mb-2">Auteur *</label>

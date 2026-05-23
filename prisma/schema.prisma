@@ -255,6 +255,52 @@ model MobileApp {
   @@map("mobile_apps")
 }
 
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  roleFr    String
+  roleEn    String
+  bioFr     String   @db.Text
+  bioEn     String   @db.Text
+  avatar    String?
+  linkedin  String?
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+model AboutTimeline {
+  id        String   @id @default(cuid())
+  year      String
+  titleFr   String
+  titleEn   String
+  descFr    String   @db.Text
+  descEn    String   @db.Text
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_timeline")
+}
+
+model WhyPoint {
+  id        String   @id @default(cuid())
+  icon      String
+  titleFr   String
+  titleEn   String
+  descFr    String   @db.Text
+  descEn    String   @db.Text
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("why_points")
+}
+
 model ActivityLog {
   id        String   @id @default(cuid())
   userId    String

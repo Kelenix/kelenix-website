@@ -1,4 +1,3 @@
-import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
 import AppsTicker from "@/components/home/AppsTicker";

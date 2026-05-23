@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import { MessageStatus } from "@prisma/client";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Mail, FileText, BookOpen, Users, MessageCircle, Star, TrendingUp, Briefcase } from "lucide-react";
+import { Mail, FileText, BookOpen, Users, Star, TrendingUp, Briefcase } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminDashboardPage() {

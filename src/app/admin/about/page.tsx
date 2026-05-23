@@ -6,9 +6,15 @@ import AboutClient from "./AboutClient";
 
 export default async function AdminAboutPage() {
   await requireAuth("MODERATOR");
-  const settings = await prisma.siteSettings.findMany({
-    where: { key: { in: ["about_mission_fr", "about_mission_en", "about_vision_fr", "about_vision_en", "about_values_fr", "about_values_en", "about_story_fr", "about_story_en"] } },
-  });
+
+  const [settings, teamMembers, timelineItems, whyPoints] = await Promise.all([
+    prisma.siteSettings.findMany({
+      where: { key: { in: ["about_mission_fr", "about_mission_en", "about_vision_fr", "about_vision_en", "about_values_fr", "about_values_en", "about_story_fr", "about_story_en"] } },
+    }),
+    prisma.teamMember.findMany({ orderBy: { order: "asc" } }),
+    prisma.aboutTimeline.findMany({ orderBy: { order: "asc" } }),
+    prisma.whyPoint.findMany({ orderBy: { order: "asc" } }),
+  ]);
 
   const data = Object.fromEntries(settings.map(s => [s.key, s.value]));
 
@@ -16,12 +22,17 @@ export default async function AdminAboutPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />
       <main className="flex-1 lg:ml-64 p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="mb-8">
             <h1 className="font-heading text-2xl font-bold text-navy">Page À propos</h1>
             <p className="text-gray-500 text-sm mt-1">Gérez le contenu de la page À propos</p>
           </div>
-          <AboutClient data={data} />
+          <AboutClient
+            data={data}
+            teamMembers={teamMembers}
+            timelineItems={timelineItems}
+            whyPoints={whyPoints}
+          />
         </div>
       </main>
     </div>

@@ -12,9 +12,11 @@ export default function AppsTickerClient({ apps }: { apps: App[] }) {
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
+    pos.current = -window.innerWidth; // items start off-screen to the right
     const step = () => {
       pos.current += 0.5;
-      if (pos.current >= track.scrollWidth / 2) pos.current = 0;
+      const half = track.scrollWidth / 2;
+      if (pos.current >= half) pos.current -= half;
       track.style.transform = `translateX(-${pos.current}px)`;
       raf.current = requestAnimationFrame(step);
     };
