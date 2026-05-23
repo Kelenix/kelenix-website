@@ -14,5 +14,8 @@ git push
 cd /var/www/kelenix-website
 git pull
 npm run build
+
+ssh root@69.62.116.243
+
 pm2 restart kelenix
 ```
