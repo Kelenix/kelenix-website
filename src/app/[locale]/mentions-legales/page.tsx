@@ -83,8 +83,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "3. Hosting" : "3. Hébergement"}</h2>
               <p>
                 {isEn
-                  ? "This website is hosted by Vercel Inc., 340 Pine Street, Suite 900, San Francisco, CA 94104, USA."
-                  : "Ce site est hébergé par Vercel Inc., 340 Pine Street, Suite 900, San Francisco, CA 94104, États-Unis."}
+                  ? "This website is hosted by Hostinger International Ltd, 61 Lordou Vironos Street, 6023 Larnaca, Cyprus (server located in Frankfurt, Germany)."
+                  : "Ce site est hébergé par Hostinger International Ltd, 61 Lordou Vironos Street, 6023 Larnaca, Chypre (serveur situé à Francfort, Allemagne)."}
               </p>
             </div>
 
@@ -92,8 +92,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "4. Intellectual Property" : "4. Propriété intellectuelle"}</h2>
               <p>
                 {isEn
-                  ? "All content on this site (texts, images, graphics, logos, icons, etc.) is the exclusive property of Kelenix Tech and is protected by French and international intellectual property laws. Any reproduction, distribution or modification without prior written consent from Kelenix Tech is strictly prohibited."
-                  : "Tous les contenus présents sur ce site (textes, images, graphiques, logos, icônes, etc.) sont la propriété exclusive de Kelenix Tech et sont protégés par les lois françaises et internationales sur la propriété intellectuelle. Toute reproduction, distribution ou modification sans accord écrit préalable de Kelenix Tech est strictement interdite."}
+                  ? "All content on this site (texts, images, graphics, logos, icons, etc.) is the exclusive property of Kelenix Tech and is protected by applicable and international intellectual property laws. Any reproduction, distribution or modification without prior written consent from Kelenix Tech is strictly prohibited."
+                  : "Tous les contenus présents sur ce site (textes, images, graphiques, logos, icônes, etc.) sont la propriété exclusive de Kelenix Tech et sont protégés par les lois applicables et internationales sur la propriété intellectuelle. Toute reproduction, distribution ou modification sans accord écrit préalable de Kelenix Tech est strictement interdite."}
               </p>
             </div>
 
@@ -110,8 +110,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "6. Personal Data" : "6. Données personnelles"}</h2>
               <p>
                 {isEn
-                  ? "The processing of personal data collected on this site is governed by our Privacy Policy, in accordance with the GDPR and French Data Protection Act."
-                  : "Le traitement des données personnelles collectées sur ce site est régi par notre Politique de Confidentialité, conformément au RGPD et à la loi Informatique et Libertés."}
+                  ? "The processing of personal data collected on this site is governed by our Privacy Policy, in accordance with the GDPR and applicable data protection laws."
+                  : "Le traitement des données personnelles collectées sur ce site est régi par notre Politique de Confidentialité, conformément au RGPD et aux lois applicables en matière de protection des données."}
               </p>
             </div>
 
@@ -119,8 +119,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "7. Applicable Law" : "7. Droit applicable"}</h2>
               <p>
                 {isEn
-                  ? "These legal notices are governed by French law. Any dispute relating to the use of this site shall be subject to the exclusive jurisdiction of French courts."
-                  : "Les présentes mentions légales sont régies par le droit français. Tout litige relatif à l'utilisation de ce site sera soumis à la compétence exclusive des tribunaux français."}
+                  ? "These legal notices are governed by Italian law. Any dispute relating to the use of this site shall be subject to the exclusive jurisdiction of the courts of Ancona, Italy."
+                  : "Les présentes mentions légales sont régies par le droit italien. Tout litige relatif à l'utilisation de ce site sera soumis à la compétence exclusive des tribunaux d'Ancône, Italie."}
               </p>
             </div>
           </div>

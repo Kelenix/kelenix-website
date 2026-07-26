@@ -123,8 +123,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "9. Applicable Law" : "9. Droit applicable"}</h2>
               <p>
                 {isEn
-                  ? "These ToU are governed by French law. Any dispute relating to their interpretation or execution shall be subject to the exclusive jurisdiction of Paris courts."
-                  : "Les présentes CGU sont soumises au droit français. Tout litige relatif à leur interprétation ou à leur exécution sera soumis à la compétence exclusive des tribunaux de Paris."}
+                  ? "These ToU are governed by Italian law. Any dispute relating to their interpretation or execution shall be subject to the exclusive jurisdiction of the courts of Ancona, Italy."
+                  : "Les présentes CGU sont soumises au droit italien. Tout litige relatif à leur interprétation ou à leur exécution sera soumis à la compétence exclusive des tribunaux d'Ancône, Italie."}
               </p>
             </div>
 
