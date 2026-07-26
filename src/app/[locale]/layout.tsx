@@ -22,15 +22,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const isEn = locale === "en";
   const title = isEn
-    ? "Kelenix - Intelligence in service of global innovation"
-    : "Kelenix - L'intelligence au service de l'innovation mondiale";
+    ? "Kelenix Tech - Intelligence in service of global innovation"
+    : "Kelenix Tech - L'intelligence au service de l'innovation mondiale";
   const description = isEn
-    ? "Kelenix supports businesses in their digital transformation through innovative technology solutions: software development, AI, web and mobile applications."
-    : "Kelenix accompagne les entreprises dans leur transformation numérique grâce à des solutions technologiques innovantes : développement logiciel, IA, applications web et mobile.";
+    ? "Kelenix Tech supports businesses in their digital transformation through innovative technology solutions: software development, AI, web and mobile applications."
+    : "Kelenix Tech accompagne les entreprises dans leur transformation numérique grâce à des solutions technologiques innovantes : développement logiciel, IA, applications web et mobile.";
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://kelenix.com"),
-    title: { default: title, template: `%s | Kelenix` },
+    title: { default: title, template: `%s | Kelenix Tech` },
     description,
     keywords: isEn
       ? ["software development", "AI", "web apps", "mobile apps", "digital transformation", "Kelenix"]
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: locale === "fr" ? "fr_FR" : "en_US",
-      siteName: "Kelenix",
+      siteName: "Kelenix Tech",
       title,
       description,
       images: [{ url: "/og-image.svg", width: 1200, height: 630 }],

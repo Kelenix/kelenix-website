@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const isEn = locale === "en";
   return {
-    title: isEn ? "Careers at Kelenix" : "Carrières chez Kelenix",
+    title: isEn ? "Careers at Kelenix Tech" : "Carrières chez Kelenix Tech",
     description: isEn
       ? "Join the Kelenix team and build the future of technology. Discover our open positions and submit your spontaneous application."
       : "Rejoignez l'équipe Kelenix et construisons ensemble l'avenir de la technologie. Découvrez nos postes ouverts et soumettez votre candidature spontanée.",

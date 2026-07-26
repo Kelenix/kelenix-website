@@ -7,7 +7,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === "fr" ? "Demande de Devis | Kelenix" : "Get a Quote | Kelenix",
+    title: locale === "fr" ? "Demande de Devis" : "Get a Quote",
     description: locale === "fr"
       ? "Demandez un devis personnalisé gratuit pour votre projet digital."
       : "Request a free personalized quote for your digital project.",

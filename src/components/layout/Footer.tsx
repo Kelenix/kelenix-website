@@ -268,7 +268,7 @@ export default function Footer({ settings }: { settings: FooterSettings }) {
       <div className="border-t border-white/5 py-4">
         <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
           <p className="text-xs text-gray-500">
-            &copy; {currentYear} Kelenix. {t("copyright")}
+            &copy; {currentYear} Kelenix Tech. {t("copyright")}
           </p>
         </div>
       </div>

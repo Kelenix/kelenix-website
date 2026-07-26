@@ -18,12 +18,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const isEn = locale === "en";
   return {
-    title: isEn
-      ? "Kelenix - Technology & Digital Transformation"
-      : "Kelenix - Technologie & Transformation Numérique",
+    title: {
+      absolute: isEn
+        ? "Kelenix Tech - Technology & Digital Transformation"
+        : "Kelenix Tech - Technologie & Transformation Numérique",
+    },
     description: isEn
-      ? "Custom software development, AI solutions, web & mobile applications. Kelenix - your digital transformation partner."
-      : "Développement logiciel sur mesure, solutions IA, applications web & mobile. Kelenix - votre partenaire en transformation numérique.",
+      ? "Custom software development, AI solutions, web & mobile applications. Kelenix Tech - your digital transformation partner."
+      : "Développement logiciel sur mesure, solutions IA, applications web & mobile. Kelenix Tech - votre partenaire en transformation numérique.",
   };
 }
 

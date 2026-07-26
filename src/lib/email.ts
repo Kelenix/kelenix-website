@@ -10,9 +10,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const FROM = process.env.SMTP_FROM ?? "Kelenix <noreply@kelenix.com>";
+const FROM = process.env.SMTP_FROM ?? "Kelenix Tech <noreply@kelenix.com>";
 const ADMIN = process.env.ADMIN_EMAIL ?? "admin@kelenix.com";
-const SITE = process.env.NEXT_PUBLIC_SITE_NAME ?? "Kelenix";
+const SITE = process.env.NEXT_PUBLIC_SITE_NAME ?? "Kelenix Tech";
 
 function wrap(title: string, body: string) {
   return `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">

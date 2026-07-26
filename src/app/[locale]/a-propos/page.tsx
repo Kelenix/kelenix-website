@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const isEn = locale === "en";
   return {
-    title: isEn ? "About Kelenix" : "À propos de Kelenix",
+    title: isEn ? "About Kelenix Tech" : "À propos de Kelenix Tech",
     description: isEn
       ? "Discover Kelenix's story, mission, vision, values and team. A technology company committed to your digital transformation."
       : "Découvrez l'histoire, la mission, la vision, les valeurs et l'équipe de Kelenix. Une entreprise technologique engagée dans votre transformation numérique.",
@@ -23,12 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const defaultTimeline = [
-  { year: "2019", titleFr: "Fondation", titleEn: "Foundation", descFr: "Kelenix est fondée à Paris par une équipe de développeurs passionnés avec la vision de démocratiser la technologie.", descEn: "Kelenix is founded in Paris by a team of passionate developers with the vision of democratizing technology." },
+  { year: "2019", titleFr: "Fondation", titleEn: "Foundation", descFr: "Kelenix Tech est fondée à Paris par une équipe de développeurs passionnés avec la vision de démocratiser la technologie.", descEn: "Kelenix Tech is founded in Paris by a team of passionate developers with the vision of democratizing technology." },
   { year: "2020", titleFr: "Premiers projets", titleEn: "First projects", descFr: "Livraison des 20 premiers projets clients incluant applications web et mobiles pour des PME françaises.", descEn: "Delivery of the first 20 client projects including web and mobile applications for French SMEs." },
   { year: "2021", titleFr: "Expansion", titleEn: "Expansion", descFr: "Croissance de l'équipe à 15 membres, ouverture de nouveaux marchés en Afrique francophone.", descEn: "Team growth to 15 members, opening of new markets in French-speaking Africa." },
   { year: "2022", titleFr: "Innovation IA", titleEn: "AI Innovation", descFr: "Lancement du département Intelligence Artificielle et livraison des premières solutions ML à grande échelle.", descEn: "Launch of the Artificial Intelligence department and delivery of the first large-scale ML solutions." },
   { year: "2023", titleFr: "International", titleEn: "International", descFr: "Expansion vers l'Europe et le Moyen-Orient, 80+ clients actifs, certifications AWS et Google Cloud.", descEn: "Expansion into Europe and the Middle East, 80+ active clients, AWS and Google Cloud certifications." },
-  { year: "2024", titleFr: "Leader régional", titleEn: "Regional leader", descFr: "Kelenix s'impose comme leader de la transformation numérique avec 150+ projets livrés et 98% de satisfaction.", descEn: "Kelenix establishes itself as a digital transformation leader with 150+ projects delivered and 98% satisfaction." },
+  { year: "2024", titleFr: "Leader régional", titleEn: "Regional leader", descFr: "Kelenix Tech s'impose comme leader de la transformation numérique avec 150+ projets livrés et 98% de satisfaction.", descEn: "Kelenix Tech establishes itself as a digital transformation leader with 150+ projects delivered and 98% satisfaction." },
 ];
 
 const defaultTeam = [

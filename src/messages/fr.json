@@ -18,7 +18,7 @@
     "badge": "Innovation & Excellence Technologique",
     "title": "L'intelligence au service de",
     "titleHighlight": "l'innovation mondiale",
-    "subtitle": "Kelenix accompagne les entreprises, PME et startups dans leur transformation numérique grâce à des solutions technologiques innovantes, fiables et accessibles.",
+    "subtitle": "Kelenix Tech accompagne les entreprises, PME et startups dans leur transformation numérique grâce à des solutions technologiques innovantes, fiables et accessibles.",
     "cta1": "Demander un devis",
     "cta2": "Découvrir nos services",
     "stat1Value": "150+",
@@ -136,7 +136,7 @@
     }
   },
   "whyUs": {
-    "badge": "Pourquoi Kelenix ?",
+    "badge": "Pourquoi Kelenix Tech ?",
     "title": "Ce qui nous",
     "titleHighlight": "distingue",
     "subtitle": "Nous combinons expertise technique et approche centrée client pour livrer des solutions d'excellence",
@@ -288,9 +288,9 @@
   "about": {
     "badge": "Notre Histoire",
     "title": "À propos de",
-    "titleHighlight": "Kelenix",
+    "titleHighlight": "Kelenix Tech",
     "subtitle": "Une entreprise technologique née d'une passion pour l'innovation et d'un engagement envers l'excellence",
-    "story": "Kelenix a été fondée avec une vision claire : rendre la technologie accessible à tous et accompagner les entreprises dans leur transformation numérique. Depuis nos débuts, nous avons construit une équipe d'experts passionnés, dédiés à créer des solutions innovantes qui génèrent un impact réel.",
+    "story": "Kelenix Tech a été fondée avec une vision claire : rendre la technologie accessible à tous et accompagner les entreprises dans leur transformation numérique. Depuis nos débuts, nous avons construit une équipe d'experts passionnés, dédiés à créer des solutions innovantes qui génèrent un impact réel.",
     "mission": {
       "title": "Notre Mission",
       "description": "Accompagner les particuliers, les PME, les startups et les établissements éducatifs dans leur transformation numérique grâce à des solutions technologiques innovantes, fiables et accessibles."
@@ -337,11 +337,11 @@
   "careers": {
     "badge": "Carrières",
     "title": "Rejoignez",
-    "titleHighlight": "l'aventure Kelenix",
+    "titleHighlight": "l'aventure Kelenix Tech",
     "subtitle": "Construisons ensemble l'avenir de la technologie",
     "culture": {
       "title": "Notre Culture",
-      "description": "Chez Kelenix, nous croyons en un environnement de travail stimulant où chaque talent peut s'épanouir et contribuer à des projets qui ont un impact réel."
+      "description": "Chez Kelenix Tech, nous croyons en un environnement de travail stimulant où chaque talent peut s'épanouir et contribuer à des projets qui ont un impact réel."
     },
     "openPositions": "Postes ouverts",
     "spontaneous": {
@@ -377,7 +377,7 @@
     }
   },
   "footer": {
-    "description": "Kelenix accompagne les entreprises dans leur transformation numérique grâce à des solutions technologiques innovantes et fiables.",
+    "description": "Kelenix Tech accompagne les entreprises dans leur transformation numérique grâce à des solutions technologiques innovantes et fiables.",
     "quickLinks": "Liens rapides",
     "ourServices": "Nos Services",
     "contactUs": "Contact",
