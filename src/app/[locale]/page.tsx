@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
 import ProcessSection from "@/components/home/ProcessSection";
-import ShopSection from "@/components/home/ShopSection";
 import PromoPopup from "@/components/home/PromoPopup";
 import ProofNotifications from "@/components/home/ProofNotifications";
 import ServicesSection from "@/components/home/ServicesSection";
@@ -72,7 +71,6 @@ export default async function HomePage({ params }: Props) {
       <HeroSection />
       <ServicesSection />
       <ProcessSection />
-      <ShopSection />
       <WhyUsSection />
       <StatsSection />
       <PortfolioSection projects={projects} locale={locale} />
