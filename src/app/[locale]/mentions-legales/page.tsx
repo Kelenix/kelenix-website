@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { ChevronRight } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -17,6 +19,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LegalNoticePage({ params }: Props) {
   const { locale } = await params;
   const isEn = locale === "en";
+
+  // Coordonnées : mêmes réglages que la page Contact (numéro identique)
+  let s: Record<string, string> = {};
+  try {
+    const rows = await prisma.siteSettings.findMany({
+      where: { key: { in: ["company_email", "company_phone"] } },
+    });
+    s = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  } catch {}
+  const tContact = await getTranslations({ locale, namespace: "contact" });
+  const email = s.company_email || tContact("info.email");
+  const phone = s.company_phone || tContact("info.phone");
 
   return (
     <main>
@@ -46,16 +60,13 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "1. Company Identification" : "1. Identification de l'entreprise"}</h2>
               <p>
                 {isEn
-                  ? "This website is published by Kelenix Tech SAS, a simplified joint-stock company with a capital of €10,000."
-                  : "Ce site web est édité par Kelenix Tech SAS, société par actions simplifiée au capital de 10 000 €."}
+                  ? "This website is published by Kelenix Tech."
+                  : "Ce site web est édité par Kelenix Tech."}
               </p>
               <ul>
-                <li><strong>{isEn ? "Registered office:" : "Siège social :"}</strong> Paris, France</li>
-                <li><strong>SIRET :</strong> 123 456 789 00010</li>
-                <li><strong>RCS :</strong> Paris B 123 456 789</li>
-                <li><strong>TVA Intracommunautaire :</strong> FR 12 123456789</li>
-                <li><strong>Email :</strong> contact@kelenix.com</li>
-                <li><strong>{isEn ? "Phone:" : "Téléphone :"}</strong> +33 1 23 45 67 89</li>
+                <li><strong>{isEn ? "Registered office:" : "Siège social :"}</strong> {isEn ? "Ancona, Italy" : "Ancône, Italie"}</li>
+                <li><strong>Email :</strong> {email}</li>
+                <li><strong>{isEn ? "Phone:" : "Téléphone :"}</strong> {phone}</li>
               </ul>
             </div>
 
@@ -63,8 +74,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "2. Publication Director" : "2. Directeur de la publication"}</h2>
               <p>
                 {isEn
-                  ? "The publication director is Kevin Assou, CEO of Kelenix Tech SAS."
-                  : "Le directeur de la publication est Kévin Assou, Président de Kelenix Tech SAS."}
+                  ? "The publication director is Lionel Djouaka."
+                  : "Le directeur de la publication est Lionel Djouaka."}
               </p>
             </div>
 
