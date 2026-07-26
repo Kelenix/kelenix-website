@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronRight, ChevronLeft, CheckCircle, Send } from "lucide-react";
+import { ChevronRight, ChevronLeft, CheckCircle, Send, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type FormData = {
@@ -25,6 +25,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
   const t = useTranslations("quote.form");
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
   const [data, setData] = useState<FormData>({
     serviceType: "", projectName: "", projectDesc: "", projectGoals: "",
     budget: "", deadline: "", firstName: "", lastName: "", email: "", phone: "", company: "",
@@ -58,15 +59,41 @@ export default function QuoteForm({ locale }: { locale: string }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
+    setErrorMsg("");
     try {
       const res = await fetch("/api/devis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (res.ok) setStatus("success");
-      else setStatus("error");
+      if (res.ok) {
+        setStatus("success");
+        return;
+      }
+      // Message d'erreur explicite selon le cas
+      let msg =
+        locale === "fr"
+          ? "Une erreur est survenue. Veuillez réessayer."
+          : "Something went wrong. Please try again.";
+      if (res.status === 429) {
+        msg =
+          locale === "fr"
+            ? "Trop de tentatives. Patientez une minute puis réessayez."
+            : "Too many attempts. Please wait a minute and try again.";
+      } else {
+        try {
+          const j = await res.json();
+          if (j?.error && typeof j.error === "string") msg = j.error;
+        } catch {}
+      }
+      setErrorMsg(msg);
+      setStatus("error");
     } catch {
+      setErrorMsg(
+        locale === "fr"
+          ? "Erreur réseau. Vérifiez votre connexion internet."
+          : "Network error. Please check your connection."
+      );
       setStatus("error");
     }
   };
@@ -218,6 +245,14 @@ export default function QuoteForm({ locale }: { locale: string }) {
               <input type="text" value={data.company} onChange={e => update("company", e.target.value)} className={inputClass} />
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Message d'erreur */}
+      {status === "error" && errorMsg && (
+        <div className="mt-6 flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+          <AlertCircle size={18} className="shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
         </div>
       )}
 

@@ -22,7 +22,7 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   const ip = (await headers()).get("x-forwarded-for") ?? "unknown";
-  if (!rateLimit(`devis:${ip}`, 3, 60_000)) {
+  if (!rateLimit(`devis:${ip}`, 5, 60_000)) {
     return NextResponse.json({ error: "Trop de requêtes, réessayez dans une minute." }, { status: 429 });
   }
 
