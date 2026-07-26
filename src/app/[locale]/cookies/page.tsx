@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = locale === "en";
   return {
     title: isEn ? "Cookie Policy" : "Politique Cookies",
-    description: isEn ? "Kelenix cookie policy" : "Politique de gestion des cookies de Kelenix",
+    description: isEn ? "Kelenix Tech cookie policy" : "Politique de gestion des cookies de Kelenix Tech",
     robots: { index: false, follow: false },
   };
 }
@@ -90,8 +90,8 @@ export default async function CookiesPage({ params }: Props) {
               <h2>{isEn ? "2. Cookies we use" : "2. Cookies que nous utilisons"}</h2>
               <p>
                 {isEn
-                  ? "The Kelenix site uses the following types of cookies:"
-                  : "Le site Kelenix utilise les types de cookies suivants :"}
+                  ? "The Kelenix Tech site uses the following types of cookies:"
+                  : "Le site Kelenix Tech utilise les types de cookies suivants :"}
               </p>
             </div>
           </div>

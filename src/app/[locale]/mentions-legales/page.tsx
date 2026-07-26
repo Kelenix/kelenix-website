@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = locale === "en";
   return {
     title: isEn ? "Legal Notice" : "Mentions Légales",
-    description: isEn ? "Kelenix legal notice" : "Mentions légales de Kelenix",
+    description: isEn ? "Kelenix Tech legal notice" : "Mentions légales de Kelenix Tech",
     robots: { index: false, follow: false },
   };
 }
@@ -46,8 +46,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "1. Company Identification" : "1. Identification de l'entreprise"}</h2>
               <p>
                 {isEn
-                  ? "This website is published by Kelenix SAS, a simplified joint-stock company with a capital of €10,000."
-                  : "Ce site web est édité par Kelenix SAS, société par actions simplifiée au capital de 10 000 €."}
+                  ? "This website is published by Kelenix Tech SAS, a simplified joint-stock company with a capital of €10,000."
+                  : "Ce site web est édité par Kelenix Tech SAS, société par actions simplifiée au capital de 10 000 €."}
               </p>
               <ul>
                 <li><strong>{isEn ? "Registered office:" : "Siège social :"}</strong> Paris, France</li>
@@ -63,8 +63,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "2. Publication Director" : "2. Directeur de la publication"}</h2>
               <p>
                 {isEn
-                  ? "The publication director is Kevin Assou, CEO of Kelenix SAS."
-                  : "Le directeur de la publication est Kévin Assou, Président de Kelenix SAS."}
+                  ? "The publication director is Kevin Assou, CEO of Kelenix Tech SAS."
+                  : "Le directeur de la publication est Kévin Assou, Président de Kelenix Tech SAS."}
               </p>
             </div>
 
@@ -81,8 +81,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "4. Intellectual Property" : "4. Propriété intellectuelle"}</h2>
               <p>
                 {isEn
-                  ? "All content on this site (texts, images, graphics, logos, icons, etc.) is the exclusive property of Kelenix and is protected by French and international intellectual property laws. Any reproduction, distribution or modification without prior written consent from Kelenix is strictly prohibited."
-                  : "Tous les contenus présents sur ce site (textes, images, graphiques, logos, icônes, etc.) sont la propriété exclusive de Kelenix et sont protégés par les lois françaises et internationales sur la propriété intellectuelle. Toute reproduction, distribution ou modification sans accord écrit préalable de Kelenix est strictement interdite."}
+                  ? "All content on this site (texts, images, graphics, logos, icons, etc.) is the exclusive property of Kelenix Tech and is protected by French and international intellectual property laws. Any reproduction, distribution or modification without prior written consent from Kelenix Tech is strictly prohibited."
+                  : "Tous les contenus présents sur ce site (textes, images, graphiques, logos, icônes, etc.) sont la propriété exclusive de Kelenix Tech et sont protégés par les lois françaises et internationales sur la propriété intellectuelle. Toute reproduction, distribution ou modification sans accord écrit préalable de Kelenix Tech est strictement interdite."}
               </p>
             </div>
 
@@ -90,8 +90,8 @@ export default async function LegalNoticePage({ params }: Props) {
               <h2>{isEn ? "5. Liability Limitation" : "5. Limitation de responsabilité"}</h2>
               <p>
                 {isEn
-                  ? "Kelenix strives to provide accurate and up-to-date information but cannot guarantee the completeness or accuracy of content. Kelenix cannot be held liable for any direct or indirect damages resulting from the use of this site."
-                  : "Kelenix s'efforce de fournir des informations exactes et à jour mais ne peut garantir l'exhaustivité ou l'exactitude des contenus. Kelenix ne pourra être tenue responsable de tout dommage direct ou indirect résultant de l'utilisation de ce site."}
+                  ? "Kelenix Tech strives to provide accurate and up-to-date information but cannot guarantee the completeness or accuracy of content. Kelenix Tech cannot be held liable for any direct or indirect damages resulting from the use of this site."
+                  : "Kelenix Tech s'efforce de fournir des informations exactes et à jour mais ne peut garantir l'exhaustivité ou l'exactitude des contenus. Kelenix Tech ne pourra être tenue responsable de tout dommage direct ou indirect résultant de l'utilisation de ce site."}
               </p>
             </div>
 

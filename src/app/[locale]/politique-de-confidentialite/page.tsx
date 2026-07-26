@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = locale === "en";
   return {
     title: isEn ? "Privacy Policy" : "Politique de Confidentialité",
-    description: isEn ? "Kelenix privacy policy and GDPR information" : "Politique de confidentialité et informations RGPD de Kelenix",
+    description: isEn ? "Kelenix Tech privacy policy and GDPR information" : "Politique de confidentialité et informations RGPD de Kelenix Tech",
     robots: { index: false, follow: false },
   };
 }
@@ -46,8 +46,8 @@ export default async function PrivacyPolicyPage({ params }: Props) {
               <h2>{isEn ? "1. Introduction" : "1. Introduction"}</h2>
               <p>
                 {isEn
-                  ? "Kelenix SAS, as data controller, attaches great importance to the protection of your personal data. This privacy policy describes how we collect, use and protect your personal information in accordance with the General Data Protection Regulation (GDPR) and the French Data Protection Act."
-                  : "Kelenix SAS, en tant que responsable du traitement, accorde une grande importance à la protection de vos données personnelles. La présente politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations personnelles conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés."}
+                  ? "Kelenix Tech SAS, as data controller, attaches great importance to the protection of your personal data. This privacy policy describes how we collect, use and protect your personal information in accordance with the General Data Protection Regulation (GDPR) and the French Data Protection Act."
+                  : "Kelenix Tech SAS, en tant que responsable du traitement, accorde une grande importance à la protection de vos données personnelles. La présente politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations personnelles conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés."}
               </p>
             </div>
 

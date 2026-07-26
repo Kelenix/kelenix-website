@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = locale === "en";
   return {
     title: isEn ? "Terms of Use" : "Conditions Générales d'Utilisation",
-    description: isEn ? "Kelenix terms of use" : "Conditions générales d'utilisation de Kelenix",
+    description: isEn ? "Kelenix Tech terms of use" : "Conditions générales d'utilisation de Kelenix Tech",
     robots: { index: false, follow: false },
   };
 }
@@ -46,8 +46,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "1. Purpose" : "1. Objet"}</h2>
               <p>
                 {isEn
-                  ? "These Terms of Use (hereinafter 'ToU') govern access to and use of the Kelenix website accessible at www.kelenix.com. By accessing this site, you agree to these ToU without reservation."
-                  : "Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation du site web Kelenix accessible à l'adresse www.kelenix.com. En accédant à ce site, vous acceptez sans réserve les présentes CGU."}
+                  ? "These Terms of Use (hereinafter 'ToU') govern access to and use of the Kelenix Tech website accessible at www.kelenix.com. By accessing this site, you agree to these ToU without reservation."
+                  : "Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation du site web Kelenix Tech accessible à l'adresse www.kelenix.com. En accédant à ce site, vous acceptez sans réserve les présentes CGU."}
               </p>
             </div>
 
@@ -55,8 +55,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "2. Access to the Site" : "2. Accès au site"}</h2>
               <p>
                 {isEn
-                  ? "Access to the site is free. Kelenix reserves the right to interrupt, suspend or modify access without notice for technical or legal reasons."
-                  : "L'accès au site est gratuit. Kelenix se réserve le droit d'interrompre, de suspendre ou de modifier l'accès sans préavis pour des raisons techniques ou légales."}
+                  ? "Access to the site is free. Kelenix Tech reserves the right to interrupt, suspend or modify access without notice for technical or legal reasons."
+                  : "L'accès au site est gratuit. Kelenix Tech se réserve le droit d'interrompre, de suspendre ou de modifier l'accès sans préavis pour des raisons techniques ou légales."}
               </p>
             </div>
 
@@ -67,7 +67,7 @@ export default async function CGUPage({ params }: Props) {
                 <li>{isEn ? "Use the site for lawful purposes only" : "Utiliser le site uniquement à des fins licites"}</li>
                 <li>{isEn ? "Not attempt to disrupt or compromise the site's security" : "Ne pas tenter de perturber ou de compromettre la sécurité du site"}</li>
                 <li>{isEn ? "Not spread false, misleading or harmful information" : "Ne pas diffuser d'informations fausses, trompeuses ou nuisibles"}</li>
-                <li>{isEn ? "Respect Kelenix's intellectual property rights" : "Respecter les droits de propriété intellectuelle de Kelenix"}</li>
+                <li>{isEn ? "Respect Kelenix Tech's intellectual property rights" : "Respecter les droits de propriété intellectuelle de Kelenix Tech"}</li>
               </ul>
             </div>
 
@@ -75,8 +75,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "4. Intellectual Property" : "4. Propriété intellectuelle"}</h2>
               <p>
                 {isEn
-                  ? "All elements of the site (texts, images, logos, icons, videos, databases) are protected by intellectual property law. Any reproduction or use without prior written authorization from Kelenix is prohibited."
-                  : "Tous les éléments du site (textes, images, logos, icônes, vidéos, bases de données) sont protégés par le droit de la propriété intellectuelle. Toute reproduction ou utilisation sans autorisation écrite préalable de Kelenix est interdite."}
+                  ? "All elements of the site (texts, images, logos, icons, videos, databases) are protected by intellectual property law. Any reproduction or use without prior written authorization from Kelenix Tech is prohibited."
+                  : "Tous les éléments du site (textes, images, logos, icônes, vidéos, bases de données) sont protégés par le droit de la propriété intellectuelle. Toute reproduction ou utilisation sans autorisation écrite préalable de Kelenix Tech est interdite."}
               </p>
             </div>
 
@@ -84,8 +84,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "5. External Links" : "5. Liens externes"}</h2>
               <p>
                 {isEn
-                  ? "The Kelenix website may contain links to third-party sites. Kelenix has no control over the content of these sites and declines all liability regarding the information published on them."
-                  : "Le site Kelenix peut contenir des liens vers des sites tiers. Kelenix n'a aucun contrôle sur le contenu de ces sites et décline toute responsabilité quant aux informations qui y sont publiées."}
+                  ? "The Kelenix Tech website may contain links to third-party sites. Kelenix Tech has no control over the content of these sites and declines all liability regarding the information published on them."
+                  : "Le site Kelenix Tech peut contenir des liens vers des sites tiers. Kelenix Tech n'a aucun contrôle sur le contenu de ces sites et décline toute responsabilité quant aux informations qui y sont publiées."}
               </p>
             </div>
 
@@ -93,8 +93,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "6. Limitation of Liability" : "6. Limitation de responsabilité"}</h2>
               <p>
                 {isEn
-                  ? "Kelenix cannot be held liable for any direct or indirect, material or immaterial damages resulting from the use of the site, including but not limited to: data loss, business interruption, loss of revenue."
-                  : "Kelenix ne peut être tenue responsable des dommages directs ou indirects, matériels ou immatériels résultant de l'utilisation du site, notamment : perte de données, interruption d'activité, manque à gagner."}
+                  ? "Kelenix Tech cannot be held liable for any direct or indirect, material or immaterial damages resulting from the use of the site, including but not limited to: data loss, business interruption, loss of revenue."
+                  : "Kelenix Tech ne peut être tenue responsable des dommages directs ou indirects, matériels ou immatériels résultant de l'utilisation du site, notamment : perte de données, interruption d'activité, manque à gagner."}
               </p>
             </div>
 
@@ -114,8 +114,8 @@ export default async function CGUPage({ params }: Props) {
               <h2>{isEn ? "8. Modification of ToU" : "8. Modification des CGU"}</h2>
               <p>
                 {isEn
-                  ? "Kelenix reserves the right to modify these ToU at any time. Users are advised to consult them regularly. Continued use of the site after modification constitutes acceptance of the new ToU."
-                  : "Kelenix se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs sont invités à les consulter régulièrement. La poursuite de l'utilisation du site après modification vaut acceptation des nouvelles CGU."}
+                  ? "Kelenix Tech reserves the right to modify these ToU at any time. Users are advised to consult them regularly. Continued use of the site after modification constitutes acceptance of the new ToU."
+                  : "Kelenix Tech se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs sont invités à les consulter régulièrement. La poursuite de l'utilisation du site après modification vaut acceptation des nouvelles CGU."}
               </p>
             </div>
 
