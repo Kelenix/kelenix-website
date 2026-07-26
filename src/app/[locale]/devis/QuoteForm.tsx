@@ -56,8 +56,42 @@ export default function QuoteForm({ locale }: { locale: string }) {
   const nextStep = () => setStep(s => Math.min(s + 1, TOTAL_STEPS));
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
+  // Validation par étape : empêche d'avancer/envoyer avec des données invalides
+  const canProceed = () => {
+    if (step === 1) return data.serviceType !== "";
+    if (step === 2) return data.projectName.trim() !== "" && data.projectDesc.trim().length >= 10;
+    if (step === 3) return data.budget !== "";
+    return true;
+  };
+
+  const fieldLabels: Record<string, string> =
+    locale === "fr"
+      ? {
+          serviceType: "type de service",
+          projectName: "nom du projet",
+          projectDesc: "description du projet (min. 10 caractères)",
+          budget: "budget",
+          firstName: "prénom",
+          lastName: "nom",
+          email: "email",
+        }
+      : {
+          serviceType: "service type",
+          projectName: "project name",
+          projectDesc: "project description (min. 10 characters)",
+          budget: "budget",
+          firstName: "first name",
+          lastName: "last name",
+          email: "email",
+        };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Sur les étapes intermédiaires, "Entrée" fait avancer plutôt qu'envoyer
+    if (step < TOTAL_STEPS) {
+      if (canProceed()) nextStep();
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
     try {
@@ -83,7 +117,28 @@ export default function QuoteForm({ locale }: { locale: string }) {
       } else {
         try {
           const j = await res.json();
-          if (j?.error && typeof j.error === "string") msg = j.error;
+          if (
+            res.status === 400 &&
+            Array.isArray(j?.details) &&
+            j.details.length > 0
+          ) {
+            const fields = [
+              ...new Set(
+                j.details
+                  .map((d: { path?: string[] }) => {
+                    const key = d?.path?.[0];
+                    return key ? fieldLabels[key] ?? key : null;
+                  })
+                  .filter(Boolean)
+              ),
+            ];
+            msg =
+              (locale === "fr"
+                ? "À corriger : "
+                : "Please fix: ") + fields.join(", ") + ".";
+          } else if (j?.error && typeof j.error === "string") {
+            msg = j.error;
+          }
         } catch {}
       }
       setErrorMsg(msg);
@@ -166,6 +221,14 @@ export default function QuoteForm({ locale }: { locale: string }) {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("projectDesc")} *</label>
             <textarea required rows={4} value={data.projectDesc} onChange={e => update("projectDesc", e.target.value)} className={cn(inputClass, "resize-none")} />
+            <p className={cn(
+              "text-xs mt-1.5",
+              data.projectDesc.trim().length > 0 && data.projectDesc.trim().length < 10 ? "text-red-500" : "text-gray-400"
+            )}>
+              {locale === "fr"
+                ? `${data.projectDesc.trim().length} / 10 caractères minimum`
+                : `${data.projectDesc.trim().length} / 10 characters minimum`}
+            </p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("projectGoals")}</label>
@@ -268,8 +331,8 @@ export default function QuoteForm({ locale }: { locale: string }) {
           <button
             type="button"
             onClick={nextStep}
-            disabled={step === 1 && !data.serviceType}
-            className="flex items-center gap-2 px-6 py-2.5 bg-sky text-white rounded-xl text-sm font-semibold hover:bg-sky-dark transition-colors disabled:opacity-40"
+            disabled={!canProceed()}
+            className="flex items-center gap-2 px-6 py-2.5 bg-sky text-white rounded-xl text-sm font-semibold hover:bg-sky-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {t("next")} <ChevronRight size={16} />
           </button>
