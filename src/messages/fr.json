@@ -4,6 +4,7 @@
     "about": "À propos",
     "services": "Services",
     "portfolio": "Portfolio",
+    "shop": "Boutique",
     "blog": "Blog",
     "testimonials": "Témoignages",
     "contact": "Contact",
@@ -39,6 +40,9 @@
     "titleHighlight": "votre logiciel livré",
     "subtitle": "Un parcours clair et maîtrisé : suivez votre projet à chaque étape, de la première demande jusqu'à la mise en production.",
     "cubeLabel": "Votre logiciel",
+    "appLabel": "Build Kelenix",
+    "building": "Construction en cours…",
+    "delivered": "Livré ✓",
     "cta": "Démarrer mon projet",
     "steps": {
       "order": {
@@ -63,42 +67,35 @@
       }
     }
   },
-  "chariow": {
-    "badge": "Outils de vente",
-    "title": "Tout pour",
-    "titleHighlight": "booster vos ventes",
-    "subtitle": "Une suite d'outils marketing intégrés pour convertir vos visiteurs et augmenter votre chiffre d'affaires.",
-    "new": "Nouveau",
-    "items": {
-      "reductions": {
-        "title": "Réductions",
-        "description": "Offrez des réductions et codes promo pour déclencher l'achat et stimuler vos ventes."
-      },
-      "popups": {
-        "title": "Popups",
-        "description": "Mettez en avant vos offres et promotions à un moment clé pour inciter à l'action."
-      },
-      "makeups": {
-        "title": "Makeups",
-        "description": "Créez des pages de vente qui convertissent vos visiteurs en clients."
-      },
-      "snap": {
-        "title": "Snap",
-        "description": "Snap permet d'intégrer le widget Chariow sur votre site web."
-      },
-      "proof": {
-        "title": "Proof",
-        "description": "Intégrez les avis clients sur votre site pour renforcer la confiance et augmenter les conversions."
-      },
-      "banners": {
-        "title": "Bannières",
-        "description": "Diffusez un message promotionnel en haut de votre boutique pour augmenter la conversion."
-      },
-      "campaigns": {
-        "title": "Campagnes",
-        "description": "Créez des liens de suivi pour savoir quelles publicités ou réseaux amènent des clients."
-      }
-    }
+  "shop": {
+    "badge": "Boutique — Snap",
+    "title": "Nos formations &",
+    "titleHighlight": "ebooks tech",
+    "subtitle": "Achetez directement nos formations et ebooks, paiement 100 % sécurisé via Chariow.",
+    "buy": "Acheter",
+    "popular": "Populaire",
+    "secure": "Paiement sécurisé & accès immédiat via Chariow",
+    "viewAll": "Voir toute la boutique",
+    "pageTitle": "Boutique",
+    "pageHighlight": "eBookDev",
+    "pageSubtitle": "Nos formations et ebooks tech pour passer de débutant à autonome. Téléchargement immédiat après paiement.",
+    "promoLine": "-{percent}% sur tout avec le code {code}",
+    "browseStore": "Ouvrir la boutique complète"
+  },
+  "promo": {
+    "badge": "Offre de bienvenue",
+    "title": "-{percent}% sur toute la boutique",
+    "subtitle": "Utilisez ce code au moment du paiement et profitez de nos formations à prix réduit.",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "cta": "J'en profite maintenant",
+    "dismiss": "Non merci, plus tard",
+    "close": "Fermer"
+  },
+  "proof": {
+    "bought": "vient d'acheter",
+    "verified": "Achat vérifié",
+    "close": "Fermer"
   },
   "services": {
     "badge": "Nos Services",

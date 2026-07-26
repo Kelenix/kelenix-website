@@ -101,8 +101,8 @@ export default function HeroSection() {
         </div>
 
         {/* Titre */}
-        <h1 className="font-heading text-4xl sm:text-5xl xl:text-7xl font-extrabold text-white leading-[1.05] mb-6 animate-slide-up tracking-tight">
-          {t("title")}
+        <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.08] mb-6 animate-slide-up tracking-tight text-balance">
+          <span className="lg:whitespace-nowrap">{t("title")}</span>
           <br />
           <span className="text-transparent bg-clip-text bg-linear-to-r from-sky via-sky-light to-gold">
             {t("titleHighlight")}

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
 import ProcessSection from "@/components/home/ProcessSection";
-import ChariowFeatures from "@/components/home/ChariowFeatures";
+import ShopSection from "@/components/home/ShopSection";
+import PromoPopup from "@/components/home/PromoPopup";
+import ProofNotifications from "@/components/home/ProofNotifications";
 import ServicesSection from "@/components/home/ServicesSection";
 import WhyUsSection from "@/components/home/WhyUsSection";
 import StatsSection from "@/components/home/StatsSection";
@@ -70,13 +72,17 @@ export default async function HomePage({ params }: Props) {
       <HeroSection />
       <ServicesSection />
       <ProcessSection />
-      <ChariowFeatures />
+      <ShopSection />
       <WhyUsSection />
       <StatsSection />
       <PortfolioSection projects={projects} locale={locale} />
       <TestimonialsSection testimonials={testimonials} locale={locale} />
       <BlogSection posts={blogPosts} locale={locale} />
       <CtaSection />
+
+      {/* Intégrations Chariow */}
+      <PromoPopup />
+      <ProofNotifications />
     </>
   );
 }

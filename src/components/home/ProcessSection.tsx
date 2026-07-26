@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
@@ -22,50 +22,129 @@ const steps = [
   { key: "deliver", icon: Rocket },
 ] as const;
 
-/* ---------- Cube 3D "logiciel livré" ---------- */
-function SoftwareCube() {
+const stepKeys = ["order", "design", "build", "test", "deliver"] as const;
+
+/* ---------- Scène 3D "build en direct" ---------- */
+function BuildScene() {
+  const t = useTranslations("process");
   const reduce = useReducedMotion();
-  const face =
-    "absolute inset-0 flex items-center justify-center rounded-2xl border border-sky/40 " +
-    "bg-[linear-gradient(135deg,rgba(47,168,255,0.28),rgba(11,31,58,0.35))] backdrop-blur-md";
-  const S = 132; // demi-arête
+  const [phase, setPhase] = useState(reduce ? 6 : 0);
+
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => {
+      setPhase((p) => (p >= 7 ? 0 : p + 1));
+    }, 780);
+    return () => clearInterval(id);
+  }, [reduce]);
+
+  const done = Math.min(phase, 5); // nb d'étapes cochées (0..5)
+  const progress = (done / 5) * 100;
+  const delivered = phase >= 5;
+
+  const chips = [
+    { icon: Code2, cls: "top-2 -right-3 text-sky", d: 0 },
+    { icon: ShieldCheck, cls: "top-1/2 -left-6 text-emerald-400", d: 1.2 },
+    { icon: Rocket, cls: "-bottom-2 right-6 text-gold", d: 2.1 },
+  ];
+
   return (
-    <div
-      className="relative"
-      style={{ width: S * 2, height: S * 2, perspective: 900 }}
-    >
+    <div className="relative w-full max-w-[380px] aspect-square mx-auto" style={{ perspective: 1100 }}>
       {/* Halo */}
       <div
-        className="absolute inset-0 rounded-full blur-3xl"
+        className="absolute inset-6 rounded-full blur-3xl"
         style={{
-          background:
-            "radial-gradient(circle, rgba(47,168,255,0.45), transparent 65%)",
-          animation: reduce ? "none" : "glowPulse 4s ease-in-out infinite",
+          background: "radial-gradient(circle, rgba(47,168,255,0.35), transparent 68%)",
+          animation: reduce ? "none" : "glowPulse 5s ease-in-out infinite",
         }}
       />
-      {/* Cube */}
+
+      {/* Anneaux orbitaux */}
       <div
-        className="absolute inset-0"
-        style={{
-          transformStyle: "preserve-3d",
-          animation: reduce ? "none" : "spin3d 14s linear infinite",
-        }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky/20 border-dashed"
+        style={{ width: "108%", height: "108%", transform: "translate(-50%,-50%) rotateX(66deg)", animation: reduce ? "none" : "spin 26s linear infinite" }}
+      />
+      <div
+        className="absolute left-1/2 top-1/2 rounded-full border border-gold/15"
+        style={{ width: "84%", height: "84%", transform: "translate(-50%,-50%) rotateX(70deg) rotateZ(30deg)", animation: reduce ? "none" : "spin 18s linear infinite reverse" }}
+      />
+
+      {/* Panneau applicatif flottant */}
+      <motion.div
+        animate={reduce ? undefined : { y: [0, -14, 0], rotateY: [-7, 7, -7], rotateX: [3, -3, 3] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        style={{ transformPerspective: 1000, transformStyle: "preserve-3d" }}
+        className="glass absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[74%] rounded-2xl p-4 shadow-2xl"
       >
-        <div className={face} style={{ transform: `rotateY(0deg) translateZ(${S}px)` }}>
-          <Check className="text-sky" size={54} strokeWidth={2.5} />
+        {/* Barre de fenêtre */}
+        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/10">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-gold/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+          <span className="ml-2 text-[11px] font-semibold text-gray-300 tracking-wide">
+            {t("appLabel")}
+          </span>
         </div>
-        <div className={face} style={{ transform: `rotateY(90deg) translateZ(${S}px)` }}>
-          <Code2 className="text-sky-light" size={48} />
+
+        {/* Checklist des étapes */}
+        <div className="flex flex-col gap-2 mb-3">
+          {stepKeys.map((k, i) => {
+            const isDone = i < done;
+            return (
+              <div key={k} className="flex items-center gap-2.5">
+                <span
+                  className={`flex items-center justify-center w-4 h-4 rounded-full border transition-all duration-300 ${
+                    isDone
+                      ? "bg-sky border-sky scale-100"
+                      : "border-white/25 scale-90"
+                  }`}
+                >
+                  {isDone && <Check size={11} className="text-navy" strokeWidth={3.5} />}
+                </span>
+                <span
+                  className={`text-[12px] transition-colors duration-300 ${
+                    isDone ? "text-white" : "text-gray-500"
+                  }`}
+                >
+                  {t(`steps.${k}.title`)}
+                </span>
+              </div>
+            );
+          })}
         </div>
-        <div className={face} style={{ transform: `rotateY(180deg) translateZ(${S}px)` }}>
-          <Rocket className="text-gold" size={48} />
+
+        {/* Barre de progression */}
+        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden mb-2">
+          <motion.div
+            className="h-full rounded-full bg-linear-to-r from-sky to-gold"
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
         </div>
-        <div className={face} style={{ transform: `rotateY(-90deg) translateZ(${S}px)` }}>
-          <span className="font-heading font-black text-2xl text-white/90">K</span>
+
+        {/* État */}
+        <div className="flex items-center justify-between">
+          <span className={`text-[11px] font-semibold ${delivered ? "text-emerald-400" : "text-sky"}`}>
+            {delivered ? t("delivered") : t("building")}
+          </span>
+          <span className="text-[11px] font-bold text-gray-300">{Math.round(progress)}%</span>
         </div>
-        <div className={face} style={{ transform: `rotateX(90deg) translateZ(${S}px)` }} />
-        <div className={face} style={{ transform: `rotateX(-90deg) translateZ(${S}px)` }} />
-      </div>
+      </motion.div>
+
+      {/* Puces techno flottantes */}
+      {chips.map((c, i) => {
+        const Icon = c.icon;
+        return (
+          <motion.div
+            key={i}
+            animate={reduce ? undefined : { y: [0, -12, 0] }}
+            transition={{ duration: 4 + c.d, repeat: Infinity, ease: "easeInOut", delay: c.d }}
+            className={`glass-pill absolute ${c.cls} w-11 h-11 rounded-xl flex items-center justify-center z-10`}
+          >
+            <Icon size={20} className={c.cls.split(" ").pop()} />
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
@@ -104,24 +183,8 @@ export default function ProcessSection() {
 
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           {/* Scène 3D */}
-          <div
-            className="relative flex items-center justify-center order-1 lg:order-none"
-            style={{ perspective: 1000 }}
-          >
-            <div className="float-slow">
-              <SoftwareCube />
-            </div>
-            {/* Socle réfléchissant */}
-            <div
-              className="absolute bottom-4 w-64 h-8 rounded-[100%] blur-md"
-              style={{
-                background:
-                  "radial-gradient(ellipse, rgba(47,168,255,0.35), transparent 70%)",
-              }}
-            />
-            <span className="absolute -bottom-2 text-xs uppercase tracking-[0.25em] text-sky/70 font-semibold">
-              {t("cubeLabel")}
-            </span>
+          <div className="relative order-1 lg:order-none">
+            <BuildScene />
           </div>
 
           {/* Timeline des étapes */}
