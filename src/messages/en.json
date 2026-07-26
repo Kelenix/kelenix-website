@@ -33,6 +33,73 @@
     "title": "They trust us",
     "subtitle": "Companies of all sizes trust us for their technology projects"
   },
+  "process": {
+    "badge": "Our Process",
+    "title": "From order to",
+    "titleHighlight": "your delivered software",
+    "subtitle": "A clear, controlled journey: follow your project at every stage, from the first request all the way to production.",
+    "cubeLabel": "Your software",
+    "cta": "Start my project",
+    "steps": {
+      "order": {
+        "title": "Order & Quote",
+        "description": "You describe your needs, we deliver a clear quote and specifications within 48 hours."
+      },
+      "design": {
+        "title": "Design & UX",
+        "description": "Technical architecture, UI/UX mockups and experience validation before a single line of code."
+      },
+      "build": {
+        "title": "Development",
+        "description": "Our teams build your solution in agile cycles, with regular demos to stay aligned."
+      },
+      "test": {
+        "title": "Testing & Quality",
+        "description": "Automated tests, QA and fixes for a reliable, secure and high-performing solution."
+      },
+      "deliver": {
+        "title": "Delivery & Support",
+        "description": "Production launch, training and ongoing support: your software is in your hands."
+      }
+    }
+  },
+  "chariow": {
+    "badge": "Sales tools",
+    "title": "Everything to",
+    "titleHighlight": "boost your sales",
+    "subtitle": "A suite of integrated marketing tools to convert your visitors and grow your revenue.",
+    "new": "New",
+    "items": {
+      "reductions": {
+        "title": "Discounts",
+        "description": "Offer discounts and promo codes to trigger purchases and boost your sales."
+      },
+      "popups": {
+        "title": "Popups",
+        "description": "Highlight your offers and promotions at the right moment to drive action."
+      },
+      "makeups": {
+        "title": "Makeups",
+        "description": "Build sales pages that turn your visitors into customers."
+      },
+      "snap": {
+        "title": "Snap",
+        "description": "Snap lets you embed the Chariow widget on your website."
+      },
+      "proof": {
+        "title": "Proof",
+        "description": "Add customer reviews to your site to build trust and increase conversions."
+      },
+      "banners": {
+        "title": "Banners",
+        "description": "Display a promotional message at the top of your store to boost conversion."
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "description": "Create tracking links to know which ads or channels bring in customers."
+      }
+    }
+  },
   "services": {
     "badge": "Our Services",
     "title": "Custom technology",

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function HeroSection() {
   const t = useTranslations("hero");
@@ -15,8 +15,12 @@ export default function HeroSection() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
     const nodes: { x: number; y: number; vx: number; vy: number }[] = [];
     const nodeCount = 60;
@@ -62,7 +66,10 @@ export default function HeroSection() {
     };
 
     draw();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   const stats = [
@@ -74,66 +81,72 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen bg-gradient-hero flex items-center overflow-hidden">
-      {/* Animated background */}
+      {/* Aurora / mesh gradient */}
+      <div className="aurora-bg" />
+
+      {/* Grille en perspective */}
+      <div className="grid-floor opacity-60" />
+
+      {/* Réseau de particules animé */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-40" />
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-navy/60" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(47,168,255,0.08)_0%,transparent_70%)]" />
+      {/* Superpositions de dégradé */}
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-navy/70" />
 
-      <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-5xl py-24 text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-8 animate-fade-in">
-          <span className="w-2 h-2 rounded-full bg-sky animate-pulse" />
+      <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-5xl py-28 text-center">
+        {/* Badge de verre */}
+        <div className="inline-flex items-center gap-2 glass-pill rounded-full px-5 py-2 mb-8 animate-fade-in">
+          <Sparkles size={15} className="text-sky" />
           <span className="text-sky text-sm font-medium">{t("badge")}</span>
         </div>
 
-        {/* Heading */}
-        <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white leading-tight mb-6 animate-slide-up">
+        {/* Titre */}
+        <h1 className="font-heading text-4xl sm:text-5xl xl:text-7xl font-extrabold text-white leading-[1.05] mb-6 animate-slide-up tracking-tight">
           {t("title")}
           <br />
-          <span className="text-transparent bg-clip-text bg-linear-to-r from-sky to-gold">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-sky via-sky-light to-gold">
             {t("titleHighlight")}
           </span>
         </h1>
 
-        {/* Subtitle */}
+        {/* Sous-titre */}
         <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed mb-10 animate-slide-up" style={{ animationDelay: "0.1s" }}>
           {t("subtitle")}
         </p>
 
-        {/* CTA Buttons */}
+        {/* Boutons CTA */}
         <div className="flex flex-wrap justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: "0.2s" }}>
           <Link
             href="/devis"
-            className="group flex items-center gap-2.5 px-7 py-4 bg-gold text-navy font-bold text-base rounded-xl hover:bg-gold-dark transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+            className="group flex items-center gap-2.5 px-7 py-4 bg-gold text-navy font-bold text-base rounded-2xl hover:bg-gold-dark transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
           >
             {t("cta1")}
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
             href="/services"
-            className="flex items-center gap-2.5 px-7 py-4 bg-white/10 border border-white/20 text-white font-semibold text-base rounded-xl hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
+            className="glass glass-hover flex items-center gap-2.5 px-7 py-4 text-white font-semibold text-base rounded-2xl"
           >
             {t("cta2")}
           </Link>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+        {/* Stats — cartes de verre */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 animate-slide-up" style={{ animationDelay: "0.3s" }}>
           {stats.map((stat, i) => (
-            <div key={i} className="text-center">
+            <div
+              key={i}
+              className="glass glass-shine rounded-2xl px-4 py-5 text-center float-slow"
+              style={{ animationDelay: `${i * 0.6}s` }}
+            >
               <div className="text-3xl sm:text-4xl font-extrabold text-white mb-1">
                 {stat.value}
               </div>
-              <div className="text-sm text-gray-400">{stat.label}</div>
+              <div className="text-sm text-gray-300">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Decorative elements */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-2/3 bg-linear-to-l from-sky/5 to-transparent pointer-events-none" />
     </section>
   );
 }

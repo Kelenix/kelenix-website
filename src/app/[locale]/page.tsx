@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
-import AppsTicker from "@/components/home/AppsTicker";
+import ProcessSection from "@/components/home/ProcessSection";
+import ChariowFeatures from "@/components/home/ChariowFeatures";
 import ServicesSection from "@/components/home/ServicesSection";
 import WhyUsSection from "@/components/home/WhyUsSection";
 import StatsSection from "@/components/home/StatsSection";
@@ -41,11 +42,11 @@ export default async function HomePage({ params }: Props) {
         coverImage: true,
         client: true,
       },
-    }),
+    }).catch(() => []),
     prisma.testimonial.findMany({
       where: { published: true, showOnHome: true },
       orderBy: { createdAt: "desc" },
-    }),
+    }).catch(() => []),
     prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { publishedAt: "desc" },
@@ -61,18 +62,15 @@ export default async function HomePage({ params }: Props) {
         category: true,
         publishedAt: true,
       },
-    }),
+    }).catch(() => []),
   ]);
 
   return (
     <>
-      <div className="relative">
-        <HeroSection />
-        <div className="absolute top-0 left-0 right-0 z-20">
-          <AppsTicker />
-        </div>
-      </div>
+      <HeroSection />
       <ServicesSection />
+      <ProcessSection />
+      <ChariowFeatures />
       <WhyUsSection />
       <StatsSection />
       <PortfolioSection projects={projects} locale={locale} />

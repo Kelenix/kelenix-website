@@ -43,8 +43,10 @@ export default function ServicesSection() {
   const serviceKeys: ServiceKey[] = ["software", "web", "webapp", "mobile", "ai", "consulting", "training"];
 
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
+    <section className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
+      <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-sky/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
+      <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-16">
           <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
@@ -68,7 +70,7 @@ export default function ServicesSection() {
               <Link
                 key={key}
                 href={{ pathname: "/services/[slug]", params: { slug } }}
-                className="group bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 hover:border-sky/20"
+                className="group glass-light glass-hover rounded-2xl p-6"
               >
                 <div className={cn(
                   "w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br",

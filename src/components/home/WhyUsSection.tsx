@@ -19,8 +19,9 @@ export default function WhyUsSection() {
   const items: ItemKey[] = ["expertise", "agile", "support", "quality", "international", "accessible"];
 
   return (
-    <section className="py-24 bg-neutral-light">
-      <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
+    <section className="relative py-24 bg-neutral-light overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42rem] h-[42rem] rounded-full bg-sky/5 blur-3xl pointer-events-none" />
+      <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
         <div className="text-center mb-16">
           <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
             {t("badge")}
@@ -38,7 +39,7 @@ export default function WhyUsSection() {
             return (
               <div
                 key={key}
-                className="group bg-white rounded-2xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-sky/10"
+                className="group glass-light glass-hover rounded-2xl p-8"
               >
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky/10 to-navy/5 flex items-center justify-center mb-5 group-hover:bg-sky group-hover:scale-110 transition-all duration-300">
                   <Icon size={22} className="text-sky group-hover:text-white transition-colors" />

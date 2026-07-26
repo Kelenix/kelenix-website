@@ -71,10 +71,17 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   const messages = await getMessages();
 
-  const settingsRows = await prisma.siteSettings.findMany({
-    where: { key: { in: ["company_email","company_phone","company_whatsapp","company_address","company_linkedin","company_facebook","company_instagram","company_youtube","company_twitter"] } },
-  });
-  const s = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
+  let s: Record<string, string> = {};
+  try {
+    const settingsRows = await prisma.siteSettings.findMany({
+      where: { key: { in: ["company_email","company_phone","company_whatsapp","company_address","company_linkedin","company_facebook","company_instagram","company_youtube","company_twitter"] } },
+    });
+    s = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
+  } catch (e) {
+    // Base de données indisponible : on retombe sur les valeurs par défaut
+    // pour que la navbar et le footer s'affichent malgré tout.
+    console.error("[layout] Impossible de charger les réglages du site:", e);
+  }
   const footerSettings = {
     email:     s.company_email     || "contact@kelenix.com",
     phone:     s.company_phone     || "+33 1 23 45 67 89",

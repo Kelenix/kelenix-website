@@ -33,6 +33,73 @@
     "title": "Ils nous font confiance",
     "subtitle": "Des entreprises de toutes tailles nous font confiance pour leurs projets technologiques"
   },
+  "process": {
+    "badge": "Notre Processus",
+    "title": "De la commande à",
+    "titleHighlight": "votre logiciel livré",
+    "subtitle": "Un parcours clair et maîtrisé : suivez votre projet à chaque étape, de la première demande jusqu'à la mise en production.",
+    "cubeLabel": "Votre logiciel",
+    "cta": "Démarrer mon projet",
+    "steps": {
+      "order": {
+        "title": "Commande & Devis",
+        "description": "Vous décrivez votre besoin, nous établissons un devis clair et un cahier des charges sous 48h."
+      },
+      "design": {
+        "title": "Conception & Design",
+        "description": "Architecture technique, maquettes UI/UX et validation de l'expérience avant la moindre ligne de code."
+      },
+      "build": {
+        "title": "Développement",
+        "description": "Nos équipes développent votre solution en cycles agiles, avec des démos régulières pour rester alignés."
+      },
+      "test": {
+        "title": "Tests & Qualité",
+        "description": "Tests automatisés, contrôle qualité et corrections pour une solution fiable, sécurisée et performante."
+      },
+      "deliver": {
+        "title": "Livraison & Support",
+        "description": "Mise en production, formation et accompagnement continu : votre logiciel est entre vos mains."
+      }
+    }
+  },
+  "chariow": {
+    "badge": "Outils de vente",
+    "title": "Tout pour",
+    "titleHighlight": "booster vos ventes",
+    "subtitle": "Une suite d'outils marketing intégrés pour convertir vos visiteurs et augmenter votre chiffre d'affaires.",
+    "new": "Nouveau",
+    "items": {
+      "reductions": {
+        "title": "Réductions",
+        "description": "Offrez des réductions et codes promo pour déclencher l'achat et stimuler vos ventes."
+      },
+      "popups": {
+        "title": "Popups",
+        "description": "Mettez en avant vos offres et promotions à un moment clé pour inciter à l'action."
+      },
+      "makeups": {
+        "title": "Makeups",
+        "description": "Créez des pages de vente qui convertissent vos visiteurs en clients."
+      },
+      "snap": {
+        "title": "Snap",
+        "description": "Snap permet d'intégrer le widget Chariow sur votre site web."
+      },
+      "proof": {
+        "title": "Proof",
+        "description": "Intégrez les avis clients sur votre site pour renforcer la confiance et augmenter les conversions."
+      },
+      "banners": {
+        "title": "Bannières",
+        "description": "Diffusez un message promotionnel en haut de votre boutique pour augmenter la conversion."
+      },
+      "campaigns": {
+        "title": "Campagnes",
+        "description": "Créez des liens de suivi pour savoir quelles publicités ou réseaux amènent des clients."
+      }
+    }
+  },
   "services": {
     "badge": "Nos Services",
     "title": "Solutions technologiques",
