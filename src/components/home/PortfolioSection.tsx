@@ -41,7 +41,7 @@ export default function PortfolioSection({ projects, locale }: { projects: Proje
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
         </div>
 
-        <div className="flex flex-col gap-4 mb-12 max-w-4xl mx-auto">
+        <div className="flex flex-col gap-4 mb-12 max-w-6xl mx-auto">
           {projects.slice(0, 6).map((p) => {
             const badge = categoryColors[p.category] ?? "bg-sky";
             return (
