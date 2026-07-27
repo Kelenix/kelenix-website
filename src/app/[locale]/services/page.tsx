@@ -50,9 +50,9 @@ const iconMap: Record<string, React.ElementType> = {
   ShieldCheck,
 };
 
-function ServiceIcon({ name }: { name: string }) {
+function ServiceIcon({ name, className = "text-sky" }: { name: string; className?: string }) {
   const Icon = iconMap[name] ?? Code;
-  return <Icon size={28} className="text-sky" />;
+  return <Icon size={26} className={className} strokeWidth={2.2} />;
 }
 
 const processSteps = [
@@ -119,7 +119,7 @@ export default async function ServicesPage({ params }: Props) {
                 <Link
                   key={service.slug}
                   href={{ pathname: "/services/[slug]", params: { slug: service.slug } }}
-                  className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100 hover:border-sky/20 overflow-hidden"
+                  className="group relative bg-white rounded-3xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-sky/30 overflow-hidden"
                 >
                   {service.image && (
                     <div className="relative h-44 overflow-hidden">
@@ -128,12 +128,12 @@ export default async function ServicesPage({ params }: Props) {
                         alt={isEn ? service.titleEn : service.titleFr}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-navy/50 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-navy/10 to-transparent" />
                     </div>
                   )}
-                  <div className="p-7">
-                    <div className="w-14 h-14 bg-sky/10 rounded-2xl flex items-center justify-center mb-5">
-                      <ServiceIcon name={service.icon} />
+                  <div className="relative p-7">
+                    <div className={`w-14 h-14 bg-gradient-to-br from-sky to-sky-dark rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-sky/25 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 ${service.image ? "-mt-14 border-4 border-white" : ""}`}>
+                      <ServiceIcon name={service.icon} className="text-white" />
                     </div>
                     <h2 className="font-heading font-bold text-navy text-xl mb-3 group-hover:text-sky transition-colors">
                       {isEn ? service.titleEn : service.titleFr}
@@ -164,19 +164,20 @@ export default async function ServicesPage({ params }: Props) {
                 <Link
                   key={svc.key}
                   href={{ pathname: "/services/[slug]", params: { slug: svc.slug } }}
-                  className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100 hover:border-sky/20 p-7"
+                  className="group relative bg-white rounded-3xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-sky/30 p-7 overflow-hidden flex flex-col"
                 >
-                  <div className="w-14 h-14 bg-sky/10 rounded-2xl flex items-center justify-center mb-5">
-                    <ServiceIcon name={svc.icon} />
+                  <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-sky/15 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="relative w-14 h-14 bg-gradient-to-br from-sky to-sky-dark rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-sky/25 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
+                    <ServiceIcon name={svc.icon} className="text-white" />
                   </div>
-                  <h2 className="font-heading font-bold text-navy text-lg mb-3 group-hover:text-sky transition-colors">
+                  <h2 className="relative font-heading font-bold text-navy text-lg mb-3 group-hover:text-sky transition-colors">
                     {t(`items.${svc.key}.title`)}
                   </h2>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-5">
+                  <p className="relative text-gray-500 text-sm leading-relaxed mb-5">
                     {t(`items.${svc.key}.description`)}
                   </p>
-                  <div className="flex items-center gap-2 text-sky text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                    {t("learnMore")} <ArrowRight size={14} />
+                  <div className="relative mt-auto flex items-center gap-2 text-sky text-sm font-semibold">
+                    {t("learnMore")} <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
                   </div>
                 </Link>
               ))}

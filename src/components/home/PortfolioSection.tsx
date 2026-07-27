@@ -30,19 +30,19 @@ export default function PortfolioSection({ projects, locale }: { projects: Proje
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
           {projects.slice(0, 6).map((p) => (
             <Link
               key={p.slug}
               href={{ pathname: "/portfolio/[slug]", params: { slug: p.slug } }}
               className="group bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100"
             >
-              <div className="relative h-52 overflow-hidden">
+              <div className="relative h-40 overflow-hidden">
                 <Image
                   src={p.coverImage}
                   alt={locale === "fr" ? p.titleFr : p.titleEn}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -52,12 +52,12 @@ export default function PortfolioSection({ projects, locale }: { projects: Proje
                   </span>
                 </div>
               </div>
-              <div className="p-5">
+              <div className="p-4">
                 <p className="text-xs text-gray-400 mb-1">{p.client}</p>
-                <h3 className="font-heading font-bold text-navy text-base group-hover:text-sky transition-colors">
+                <h3 className="font-heading font-bold text-navy text-sm group-hover:text-sky transition-colors line-clamp-2">
                   {locale === "fr" ? p.titleFr : p.titleEn}
                 </h3>
-                <div className="mt-3 flex items-center gap-1 text-sky text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="mt-3 flex items-center gap-1 text-sky text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   {t("viewProject")} <ExternalLink size={13} />
                 </div>
               </div>

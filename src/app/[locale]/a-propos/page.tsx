@@ -200,16 +200,17 @@ export default async function AboutPage({ params }: Props) {
             </h2>
           </div>
           <div className="relative">
-            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-linear-to-b from-sky via-sky/50 to-transparent hidden md:block" />
-            <div className="space-y-12">
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 rounded-full bg-linear-to-b from-sky via-sky/40 to-transparent hidden md:block" />
+            <div className="space-y-10 md:space-y-4">
               {timeline.map((item, i) => (
                 <div
                   key={item.year}
                   className={`flex flex-col md:flex-row items-center gap-6 md:gap-12 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
                 >
                   <div className={`flex-1 ${i % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
-                    <div className={`bg-white rounded-2xl p-6 shadow-card border border-gray-100 inline-block max-w-sm ${i % 2 === 0 ? "md:ml-auto" : ""}`}>
-                      <h3 className="font-heading text-lg font-bold text-navy mb-2">
+                    <div className={`group relative bg-white rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border border-gray-100 hover:border-sky/30 inline-block max-w-sm text-left ${i % 2 === 0 ? "md:ml-auto" : ""}`}>
+                      <span className="font-heading text-sm font-extrabold text-sky">{item.year}</span>
+                      <h3 className="font-heading text-lg font-bold text-navy mt-1 mb-2">
                         {isEn ? item.titleEn : item.titleFr}
                       </h3>
                       <p className="text-gray-500 text-sm leading-relaxed">
@@ -218,10 +219,10 @@ export default async function AboutPage({ params }: Props) {
                     </div>
                   </div>
                   <div className="relative z-10 flex flex-col items-center shrink-0">
-                    <div className="w-14 h-14 bg-linear-to-br from-sky to-navy rounded-full flex items-center justify-center text-white font-extrabold text-sm shadow-lg border-4 border-white">
+                    <span className="absolute w-14 h-14 rounded-full bg-sky/25 animate-ping opacity-40 hidden md:block" />
+                    <div className="relative w-14 h-14 bg-linear-to-br from-sky to-navy rounded-full flex items-center justify-center text-white font-extrabold text-base shadow-lg shadow-sky/30 border-4 border-white">
                       {item.year.slice(-2)}
                     </div>
-                    <span className="mt-1 text-xs font-bold text-sky">{item.year}</span>
                   </div>
                   <div className="flex-1 hidden md:block" />
                 </div>
@@ -244,12 +245,14 @@ export default async function AboutPage({ params }: Props) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member) => (
-              <div key={member.name} className="bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
-                <div className="relative h-48 bg-linear-to-br from-navy to-sky/30 flex items-center justify-center">
+              <div key={member.name} className="bg-white rounded-3xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 overflow-hidden group border border-gray-100 hover:border-sky/30">
+                <div className="relative h-44 bg-linear-to-br from-navy via-navy-light to-sky/40 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_30%_20%,rgba(47,168,255,0.5),transparent_55%)]" />
+                  <div className="absolute -bottom-10 -right-8 w-32 h-32 rounded-full bg-sky/20 blur-2xl" />
                   <img
                     src={member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0B1F3A&color=2FA8FF&size=200&bold=true`}
                     alt={member.name}
-                    className="w-28 h-28 rounded-full border-4 border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300"
+                    className="relative w-28 h-28 rounded-full object-cover border-4 border-white/25 ring-4 ring-sky/20 shadow-xl group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="p-6">
@@ -257,7 +260,7 @@ export default async function AboutPage({ params }: Props) {
                   <p className="text-sky text-sm font-semibold mb-3">{isEn ? member.roleEn : member.roleFr}</p>
                   <p className="text-gray-500 text-sm leading-relaxed">{isEn ? member.bioEn : member.bioFr}</p>
                   {"linkedin" in member && member.linkedin && (
-                    <a href={member.linkedin as string} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sky text-xs hover:underline">LinkedIn →</a>
+                    <a href={member.linkedin as string} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sky text-xs font-semibold hover:underline">LinkedIn →</a>
                   )}
                 </div>
               </div>
@@ -280,9 +283,9 @@ export default async function AboutPage({ params }: Props) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {whyPoints.map((point) => (
-              <div key={point.titleFr} className="flex gap-4 p-6 bg-neutral-light rounded-2xl border border-gray-100 hover:border-sky/30 transition-colors">
-                <div className="w-12 h-12 bg-sky/10 rounded-xl flex items-center justify-center shrink-0">
-                  <DynIcon name={point.icon} size={22} className="text-sky" />
+              <div key={point.titleFr} className="group flex gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:border-sky/30 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-br from-sky to-sky-dark rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-sky/25 group-hover:scale-110 transition-transform duration-300">
+                  <DynIcon name={point.icon} size={22} className="text-white" />
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-navy mb-2">{isEn ? point.titleEn : point.titleFr}</h3>
