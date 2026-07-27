@@ -118,9 +118,9 @@ export default function BlogGrid({
             <Link
               key={post.slug}
               href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}
-              className="group flex flex-col sm:flex-row gap-5 bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-sky/30 p-4 sm:p-5"
+              className="group flex flex-col sm:flex-row gap-4 sm:gap-5 bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-sky/30 p-3 sm:p-4"
             >
-              <div className="relative w-full sm:w-64 h-48 sm:h-40 shrink-0 overflow-hidden rounded-xl">
+              <div className="relative w-full sm:w-52 h-44 sm:h-28 shrink-0 overflow-hidden rounded-xl">
                 {post.coverImage ? (
                   <Image
                     src={post.coverImage}
@@ -138,8 +138,8 @@ export default function BlogGrid({
                   </span>
                 </div>
               </div>
-              <div className="flex flex-col flex-1 min-w-0 sm:py-1">
-                <div className="flex items-center gap-4 text-xs text-gray-400 mb-2 flex-wrap">
+              <div className="flex flex-col flex-1 min-w-0 justify-center">
+                <div className="flex items-center gap-4 text-xs text-gray-400 mb-1.5 flex-wrap">
                   <span className="flex items-center gap-1.5">
                     {post.authorImage ? (
                       <img
@@ -159,13 +159,13 @@ export default function BlogGrid({
                     </span>
                   )}
                 </div>
-                <h3 className="font-heading font-bold text-navy text-lg sm:text-xl mb-2 line-clamp-2 group-hover:text-sky transition-colors">
+                <h3 className="font-heading font-bold text-navy text-base sm:text-lg mb-1.5 line-clamp-2 group-hover:text-sky transition-colors">
                   {isEn ? post.titleEn : post.titleFr}
                 </h3>
-                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-4">
+                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">
                   {isEn ? post.excerptEn : post.excerptFr}
                 </p>
-                <div className="mt-auto flex items-center gap-1 text-sky text-sm font-semibold">
+                <div className="flex items-center gap-1 text-sky text-sm font-semibold">
                   {t("readMore")} <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
                 </div>
               </div>
