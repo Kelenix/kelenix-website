@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 type Project = {
   slug: string;
@@ -14,12 +14,23 @@ type Project = {
   client: string;
 };
 
+// Couleur de badge par catégorie
+const categoryColors: Record<string, string> = {
+  WEB: "bg-sky",
+  MOBILE: "bg-purple-500",
+  AI: "bg-gold text-navy",
+  SOFTWARE: "bg-emerald-500",
+  CONSULTING: "bg-indigo-500",
+  TRAINING: "bg-orange-500",
+};
+
 export default function PortfolioSection({ projects, locale }: { projects: Project[]; locale: string }) {
   const t = useTranslations("portfolio");
 
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
+    <section className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
+      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[42rem] h-[42rem] rounded-full bg-sky/5 blur-3xl pointer-events-none" />
+      <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
         <div className="text-center mb-16">
           <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
             {t("badge")}
@@ -31,44 +42,56 @@ export default function PortfolioSection({ projects, locale }: { projects: Proje
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
-          {projects.slice(0, 6).map((p) => (
-            <Link
-              key={p.slug}
-              href={{ pathname: "/portfolio/[slug]", params: { slug: p.slug } }}
-              className="group bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100"
-            >
-              <div className="relative h-40 overflow-hidden">
-                <Image
-                  src={p.coverImage}
-                  alt={locale === "fr" ? p.titleFr : p.titleEn}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-sky/90 text-white text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide">
+          {projects.slice(0, 6).map((p) => {
+            const badge = categoryColors[p.category] ?? "bg-sky";
+            return (
+              <Link
+                key={p.slug}
+                href={{ pathname: "/portfolio/[slug]", params: { slug: p.slug } }}
+                className="group relative flex flex-col rounded-3xl overflow-hidden bg-white shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-sky/30"
+              >
+                <div className="relative h-44 overflow-hidden">
+                  <Image
+                    src={p.coverImage}
+                    alt={locale === "fr" ? p.titleFr : p.titleEn}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  {/* Voile dégradé permanent pour la profondeur */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
+                  {/* Badge catégorie */}
+                  <span className={`absolute top-3 left-3 ${badge} text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg`}>
                     {p.category}
                   </span>
+                  {/* Pastille flèche au survol */}
+                  <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <ArrowUpRight size={18} className="text-navy" />
+                  </div>
+                  {/* Client sur l'image */}
+                  <p className="absolute bottom-3 left-4 text-white/80 text-xs font-medium">{p.client}</p>
                 </div>
-              </div>
-              <div className="p-4">
-                <p className="text-xs text-gray-400 mb-1">{p.client}</p>
-                <h3 className="font-heading font-bold text-navy text-sm group-hover:text-sky transition-colors line-clamp-2">
-                  {locale === "fr" ? p.titleFr : p.titleEn}
-                </h3>
-                <div className="mt-3 flex items-center gap-1 text-sky text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  {t("viewProject")} <ExternalLink size={13} />
+
+                <div className="flex flex-col flex-1 p-5">
+                  <h3 className="font-heading font-bold text-navy text-base leading-snug group-hover:text-sky transition-colors line-clamp-2">
+                    {locale === "fr" ? p.titleFr : p.titleEn}
+                  </h3>
+                  <div className="mt-4 flex items-center gap-1.5 text-sky text-sm font-semibold">
+                    {t("viewProject")}
+                    <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform" />
+                  </div>
+                  {/* Trait dégradé animé */}
+                  <div className="mt-4 h-1 w-10 rounded-full bg-gradient-to-r from-sky to-navy group-hover:w-full transition-all duration-500" />
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="text-center">
           <Link
             href="/portfolio"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200 shadow-lg shadow-navy/20"
           >
             {t("viewAll")} <ArrowRight size={16} />
           </Link>
