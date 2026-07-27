@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 type Project = {
   slug: string;
@@ -41,47 +41,38 @@ export default function PortfolioSection({ projects, locale }: { projects: Proje
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+        <div className="flex flex-col gap-4 mb-12 max-w-4xl mx-auto">
           {projects.slice(0, 6).map((p) => {
             const badge = categoryColors[p.category] ?? "bg-sky";
             return (
               <Link
                 key={p.slug}
                 href={{ pathname: "/portfolio/[slug]", params: { slug: p.slug } }}
-                className="group relative flex flex-col rounded-3xl overflow-hidden bg-white shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-sky/30"
+                className="group flex flex-col sm:flex-row gap-4 sm:gap-5 bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-sky/30 p-3 sm:p-4"
               >
-                <div className="relative h-44 overflow-hidden">
+                <div className="relative w-full sm:w-52 h-44 sm:h-28 shrink-0 overflow-hidden rounded-xl">
                   <Image
                     src={p.coverImage}
                     alt={locale === "fr" ? p.titleFr : p.titleEn}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    sizes="(max-width: 640px) 100vw, 208px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  {/* Voile dégradé permanent pour la profondeur */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
-                  {/* Badge catégorie */}
-                  <span className={`absolute top-3 left-3 ${badge} text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg`}>
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/50 to-transparent" />
+                  <span className={`absolute top-3 left-3 ${badge} text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md`}>
                     {p.category}
                   </span>
-                  {/* Pastille flèche au survol */}
-                  <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                    <ArrowUpRight size={18} className="text-navy" />
-                  </div>
-                  {/* Client sur l'image */}
-                  <p className="absolute bottom-3 left-4 text-white/80 text-xs font-medium">{p.client}</p>
                 </div>
 
-                <div className="flex flex-col flex-1 p-5">
-                  <h3 className="font-heading font-bold text-navy text-base leading-snug group-hover:text-sky transition-colors line-clamp-2">
+                <div className="flex flex-col flex-1 min-w-0 justify-center">
+                  <p className="text-xs text-gray-400 mb-1.5">{p.client}</p>
+                  <h3 className="font-heading font-bold text-navy text-base sm:text-lg mb-3 leading-snug group-hover:text-sky transition-colors line-clamp-2">
                     {locale === "fr" ? p.titleFr : p.titleEn}
                   </h3>
-                  <div className="mt-4 flex items-center gap-1.5 text-sky text-sm font-semibold">
+                  <div className="flex items-center gap-1.5 text-sky text-sm font-semibold">
                     {t("viewProject")}
                     <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform" />
                   </div>
-                  {/* Trait dégradé animé */}
-                  <div className="mt-4 h-1 w-10 rounded-full bg-gradient-to-r from-sky to-navy group-hover:w-full transition-all duration-500" />
                 </div>
               </Link>
             );
