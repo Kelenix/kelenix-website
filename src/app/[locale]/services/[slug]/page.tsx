@@ -159,44 +159,38 @@ export default async function ServiceDetailPage({ params }: Props) {
         </div>
       </nav>
 
-      <section className="bg-gradient-to-br from-navy via-navy to-sky/20 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(47,168,255,0.1)_0%,transparent_60%)]" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="w-16 h-16 bg-sky/20 rounded-2xl flex items-center justify-center mb-6">
-                <ServiceIcon name={service.icon} />
-              </div>
-              <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-6 leading-tight">
-                {title}
-              </h1>
-              <p className="text-lg text-gray-300 leading-relaxed mb-8">{shortDesc}</p>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/devis"
-                  className="inline-flex items-center gap-2 px-7 py-4 bg-gold text-navy font-bold rounded-xl hover:bg-yellow-400 transition-colors"
-                >
-                  {isEn ? "Request a quote" : "Demander un devis"} <ArrowRight size={16} />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 px-7 py-4 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors"
-                >
-                  {isEn ? "Contact us" : "Nous contacter"}
-                </Link>
-              </div>
-            </div>
-            {service.image && (
-              <div className="relative">
-                <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-                  <img
-                    src={service.image}
-                    alt={title}
-                    className="w-full h-72 object-cover"
-                  />
-                </div>
-              </div>
-            )}
+      <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
+        {service.image ? (
+          <img
+            src={service.image}
+            alt={title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-navy to-sky/30" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 container mx-auto px-4 xl:px-8 max-w-7xl">
+          <div className="w-14 h-14 bg-sky/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-5">
+            <ServiceIcon name={service.icon} />
+          </div>
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-3 leading-tight">
+            {title}
+          </h1>
+          <p className="text-gray-300 text-lg mb-6 max-w-2xl">{shortDesc}</p>
+          <div className="flex flex-wrap gap-4">
+            <Link
+              href="/devis"
+              className="inline-flex items-center gap-2 px-7 py-4 bg-gold text-navy font-bold rounded-xl hover:bg-yellow-400 transition-colors"
+            >
+              {isEn ? "Request a quote" : "Demander un devis"} <ArrowRight size={16} />
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-7 py-4 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors"
+            >
+              {isEn ? "Contact us" : "Nous contacter"}
+            </Link>
           </div>
         </div>
       </section>
