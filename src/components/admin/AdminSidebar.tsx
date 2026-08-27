@@ -9,7 +9,7 @@ import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Code, Briefcase, BookOpen, Star, Mail,
   Newspaper, Settings, LogOut, Menu, X, Search,
-  Users, Handshake, Info, Smartphone
+  Users, Handshake, Info, Smartphone, HelpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/admin/services", label: "Services", icon: Code },
   { href: "/admin/portfolio", label: "Portfolio", icon: Briefcase },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
+  { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
   { href: "/admin/testimonials", label: "Témoignages", icon: Star },
   { href: "/admin/apps", label: "Apps mobiles", icon: Smartphone },
   { href: "/admin/careers", label: "Carrières", icon: Users },

@@ -1,0 +1,39 @@
+"use client";
+
+import { useState } from "react";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+
+export default function FaqDeleteButton({ id, title }: { id: string; title: string }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    await fetch(`/api/admin/faq/${id}`, { method: "DELETE" });
+    setOpen(false);
+    router.refresh();
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        disabled={loading}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-500 bg-red-50 rounded-lg hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
+      >
+        <Trash2 size={13} /> Supprimer
+      </button>
+      <ConfirmDialog
+        open={open}
+        title="Supprimer cette question"
+        message={`Voulez-vous vraiment supprimer "${title}" ? Cette action est irréversible.`}
+        onConfirm={handleConfirm}
+        onCancel={() => setOpen(false)}
+      />
+    </>
+  );
+}
