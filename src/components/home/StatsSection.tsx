@@ -56,16 +56,29 @@ function StatCard({ icon: Icon, value, suffix, label, delay }: {
   );
 }
 
-export default function StatsSection() {
+// Découpe une valeur "150+" ou "97%" en nombre (pour l'animation) + suffixe.
+function parseStat(raw: string | undefined, fallbackValue: number, fallbackSuffix: string) {
+  if (!raw) return { value: fallbackValue, suffix: fallbackSuffix };
+  const m = raw.trim().match(/^(\d+)(.*)$/);
+  if (!m) return { value: fallbackValue, suffix: raw.trim() };
+  return { value: parseInt(m[1], 10), suffix: m[2] };
+}
+
+export default function StatsSection({ statValues }: { statValues?: string[] }) {
   const t = useTranslations("stats");
 
-  const stats = [
+  const defaults = [
     { icon: Briefcase, value: 150, suffix: "+", label: t("projects") },
     { icon: Users, value: 80, suffix: "+", label: t("clients") },
     { icon: Calendar, value: 5, suffix: "+", label: t("years") },
     { icon: Cpu, value: 15, suffix: "+", label: t("technologies") },
     { icon: Star, value: 97, suffix: "%", label: t("satisfaction") },
   ];
+
+  const stats = defaults.map((d, i) => {
+    const parsed = parseStat(statValues?.[i], d.value, d.suffix);
+    return { ...d, value: parsed.value, suffix: parsed.suffix };
+  });
 
   return (
     <section className="py-24 bg-navy relative overflow-hidden">

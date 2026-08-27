@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Save, CheckCircle, AlertCircle } from "lucide-react";
 
 type Settings = Record<string, string>;
-type Field = { key: string; label: string; inputType?: string; textarea?: boolean };
+type Field = { key: string; label: string; inputType?: string; textarea?: boolean; defaultValue?: string };
 type Section = { title: string; fields: Field[] };
 
 const sections: Section[] = [
@@ -40,10 +40,34 @@ const sections: Section[] = [
       { key: "google_analytics_id", label: "Google Analytics ID (G-XXXXXXXX)" },
     ],
   },
+  {
+    title: "Statistiques — bandeau d'accueil (haut de page)",
+    fields: [
+      { key: "hero_stat1_value", label: "Projets livrés (ex: 150+)", defaultValue: "150+" },
+      { key: "hero_stat2_value", label: "Clients satisfaits (ex: 80+)", defaultValue: "80+" },
+      { key: "hero_stat3_value", label: "Années d'expérience (ex: 5+)", defaultValue: "5+" },
+      { key: "hero_stat4_value", label: "Technologies maîtrisées (ex: 15+)", defaultValue: "15+" },
+    ],
+  },
+  {
+    title: "Statistiques — section « Nos Chiffres »",
+    fields: [
+      { key: "home_stat1_value", label: "Projets livrés (ex: 150+)", defaultValue: "150+" },
+      { key: "home_stat2_value", label: "Clients satisfaits (ex: 80+)", defaultValue: "80+" },
+      { key: "home_stat3_value", label: "Années d'expérience (ex: 5+)", defaultValue: "5+" },
+      { key: "home_stat4_value", label: "Technologies maîtrisées (ex: 15+)", defaultValue: "15+" },
+      { key: "home_stat5_value", label: "Taux de satisfaction (ex: 97%)", defaultValue: "97%" },
+    ],
+  },
 ];
 
+// Valeurs par défaut pré-remplies quand la clé n'existe pas encore en base.
+const fieldDefaults: Settings = Object.fromEntries(
+  sections.flatMap(s => s.fields).filter(f => f.defaultValue !== undefined).map(f => [f.key, f.defaultValue as string])
+);
+
 export default function SettingsClient({ settings }: { settings: Settings }) {
-  const [form, setForm] = useState<Settings>(settings);
+  const [form, setForm] = useState<Settings>({ ...fieldDefaults, ...settings });
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
 
   const update = (key: string, value: string) => setForm(f => ({ ...f, [key]: value }));

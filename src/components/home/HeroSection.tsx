@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
 
-export default function HeroSection() {
+export default function HeroSection({ statValues }: { statValues?: string[] }) {
   const t = useTranslations("hero");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -73,10 +73,10 @@ export default function HeroSection() {
   }, []);
 
   const stats = [
-    { value: t("stat1Value"), label: t("stat1Label") },
-    { value: t("stat2Value"), label: t("stat2Label") },
-    { value: t("stat3Value"), label: t("stat3Label") },
-    { value: t("stat4Value"), label: t("stat4Label") },
+    { value: statValues?.[0] ?? t("stat1Value"), label: t("stat1Label") },
+    { value: statValues?.[1] ?? t("stat2Value"), label: t("stat2Label") },
+    { value: statValues?.[2] ?? t("stat3Value"), label: t("stat3Label") },
+    { value: statValues?.[3] ?? t("stat4Value"), label: t("stat4Label") },
   ];
 
   return (
