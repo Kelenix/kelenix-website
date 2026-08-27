@@ -6,6 +6,11 @@ import { auth } from "@/lib/auth";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
+// Dossier de stockage persistant, hors de `public` (servi via /api/media/[filename]).
+// Écrire dans `public` n'est pas fiable : Turbopack (dev) et certains déploiements
+// ne servent pas les fichiers ajoutés après le démarrage du serveur.
+const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
@@ -27,12 +32,11 @@ export async function POST(request: Request) {
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
 
-  await mkdir(uploadDir, { recursive: true });
-  await writeFile(path.join(uploadDir, filename), buffer);
+  await mkdir(UPLOAD_DIR, { recursive: true });
+  await writeFile(path.join(UPLOAD_DIR, filename), buffer);
 
-  return NextResponse.json({ url: `/uploads/${filename}` });
+  return NextResponse.json({ url: `/api/media/${filename}` });
 }
