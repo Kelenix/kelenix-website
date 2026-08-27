@@ -94,6 +94,19 @@ export default async function LocaleLayout({ children, params }: Props) {
     twitter:   s.company_twitter   || "https://x.com/kelenix",
   };
 
+  // Services affichés dans le footer — issus de la base, pour refléter
+  // les ajouts/suppressions faits en admin (plus de liens morts).
+  let footerServices: { slug: string; titleFr: string; titleEn: string }[] = [];
+  try {
+    footerServices = await prisma.service.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      select: { slug: true, titleFr: true, titleEn: true },
+    });
+  } catch {
+    footerServices = [];
+  }
+
   return (
     <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
@@ -107,7 +120,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <main className="min-h-screen pt-16">
             {children}
           </main>
-          <Footer settings={footerSettings} />
+          <Footer settings={footerSettings} services={footerServices} />
           <WhatsAppButton />
           <ScrollToTop />
           <CookieBanner />

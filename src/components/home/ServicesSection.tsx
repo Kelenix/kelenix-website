@@ -2,46 +2,42 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap, ArrowRight } from "lucide-react";
+import {
+  Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap,
+  Layers, Cpu, Wrench, Database, Cloud, ShieldCheck, ArrowRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const serviceIcons = {
-  software: Code,
-  web: Globe,
-  webapp: Monitor,
-  mobile: Smartphone,
-  ai: Brain,
-  consulting: TrendingUp,
-  training: GraduationCap,
+const iconMap: Record<string, React.ElementType> = {
+  Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap,
+  Layers, Cpu, Wrench, Database, Cloud, ShieldCheck,
 };
 
-const serviceSlugs = {
-  software: "developpement-logiciel",
-  web: "creation-sites-web",
-  webapp: "applications-web",
-  mobile: "applications-mobiles",
-  ai: "intelligence-artificielle",
-  consulting: "consulting-informatique",
-  training: "formation-programmation",
+// Palette cyclique : chaque carte reçoit une couleur selon son ordre d'affichage.
+const colorPalette: { grad: string; glow: string }[] = [
+  { grad: "from-blue-500 to-sky-dark",     glow: "bg-blue-500/20" },
+  { grad: "from-sky to-blue-400",          glow: "bg-sky/20" },
+  { grad: "from-indigo-500 to-sky",        glow: "bg-indigo-500/20" },
+  { grad: "from-purple-500 to-indigo-500", glow: "bg-purple-500/20" },
+  { grad: "from-gold to-gold-dark",        glow: "bg-gold/25" },
+  { grad: "from-emerald-500 to-teal-500",  glow: "bg-emerald-500/20" },
+  { grad: "from-orange-500 to-amber-500",  glow: "bg-orange-500/20" },
+];
+
+type HomeService = {
+  slug: string;
+  titleFr: string;
+  titleEn: string;
+  shortDescFr: string;
+  shortDescEn: string;
+  icon: string;
 };
 
-// Dégradé plein de l'icône + halo assorti
-const serviceColors: Record<ServiceKey, { grad: string; glow: string }> = {
-  software:   { grad: "from-blue-500 to-sky-dark",     glow: "bg-blue-500/20" },
-  web:        { grad: "from-sky to-blue-400",          glow: "bg-sky/20" },
-  webapp:     { grad: "from-indigo-500 to-sky",        glow: "bg-indigo-500/20" },
-  mobile:     { grad: "from-purple-500 to-indigo-500", glow: "bg-purple-500/20" },
-  ai:         { grad: "from-gold to-gold-dark",        glow: "bg-gold/25" },
-  consulting: { grad: "from-emerald-500 to-teal-500",  glow: "bg-emerald-500/20" },
-  training:   { grad: "from-orange-500 to-amber-500",  glow: "bg-orange-500/20" },
-};
-
-type ServiceKey = keyof typeof serviceIcons;
-
-export default function ServicesSection() {
+export default function ServicesSection({ services, locale }: { services: HomeService[]; locale: string }) {
   const t = useTranslations("services");
+  const isEn = locale === "en";
 
-  const serviceKeys: ServiceKey[] = ["software", "web", "webapp", "mobile", "ai", "consulting", "training"];
+  if (services.length === 0) return null;
 
   return (
     <section className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
@@ -62,15 +58,14 @@ export default function ServicesSection() {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-          {serviceKeys.map((key) => {
-            const Icon = serviceIcons[key];
-            const slug = serviceSlugs[key];
-            const c = serviceColors[key];
+          {services.map((service, i) => {
+            const Icon = iconMap[service.icon] ?? Code;
+            const c = colorPalette[i % colorPalette.length];
 
             return (
               <Link
-                key={key}
-                href={{ pathname: "/services/[slug]", params: { slug } }}
+                key={service.slug}
+                href={{ pathname: "/services/[slug]", params: { slug: service.slug } }}
                 className="group relative glass-light glass-hover rounded-3xl p-6 overflow-hidden flex flex-col"
               >
                 {/* Halo au survol */}
@@ -83,10 +78,10 @@ export default function ServicesSection() {
                   <Icon size={22} className="text-white" strokeWidth={2.2} />
                 </div>
                 <h3 className="relative font-heading font-bold text-navy text-base mb-2 group-hover:text-sky transition-colors">
-                  {t(`items.${key}.title`)}
+                  {isEn ? service.titleEn : service.titleFr}
                 </h3>
-                <p className="relative text-gray-500 text-sm leading-relaxed mb-4">
-                  {t(`items.${key}.description`)}
+                <p className="relative text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
+                  {isEn ? service.shortDescEn : service.shortDescFr}
                 </p>
                 <div className="relative mt-auto flex items-center gap-1 text-sky text-sm font-semibold">
                   {t("learnMore")}

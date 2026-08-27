@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Logo from "@/components/ui/Logo";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 const SocialIcons = {
@@ -35,11 +35,12 @@ const SocialIcons = {
 };
 
 type FooterSettings = { email: string; phone: string; whatsapp: string; address: string; linkedin: string; facebook: string; instagram: string; youtube: string; twitter: string };
+type FooterService = { slug: string; titleFr: string; titleEn: string };
 
-export default function Footer({ settings }: { settings: FooterSettings }) {
+export default function Footer({ settings, services = [] }: { settings: FooterSettings; services?: FooterService[] }) {
   const t = useTranslations("footer");
   const tNav = useTranslations("nav");
-  const tServices = useTranslations("services");
+  const locale = useLocale();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "exists">("idle");
 
@@ -64,15 +65,10 @@ export default function Footer({ settings }: { settings: FooterSettings }) {
 
   const currentYear = new Date().getFullYear();
 
-  const serviceLinks = [
-    { slug: "developpement-logiciel", label: tServices("items.software.title") },
-    { slug: "creation-sites-web", label: tServices("items.web.title") },
-    { slug: "applications-web", label: tServices("items.webapp.title") },
-    { slug: "applications-mobiles", label: tServices("items.mobile.title") },
-    { slug: "intelligence-artificielle", label: tServices("items.ai.title") },
-    { slug: "consulting-informatique", label: tServices("items.consulting.title") },
-    { slug: "formation-programmation", label: tServices("items.training.title") },
-  ];
+  const serviceLinks = services.map((s) => ({
+    slug: s.slug,
+    label: locale === "en" ? s.titleEn : s.titleFr,
+  }));
 
   const quickLinks = [
     { href: "/", label: tNav("home") },

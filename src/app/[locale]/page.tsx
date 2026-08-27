@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
 
-  const [projects, testimonials, blogPosts, settingsRows] = await Promise.all([
+  const [projects, testimonials, blogPosts, settingsRows, homeServices] = await Promise.all([
     prisma.project.findMany({
       where: { published: true, featured: true },
       orderBy: { createdAt: "desc" },
@@ -77,6 +77,11 @@ export default async function HomePage({ params }: Props) {
       },
       select: { key: true, value: true },
     }).catch(() => [] as { key: string; value: string }[]),
+    prisma.service.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      select: { slug: true, titleFr: true, titleEn: true, shortDescFr: true, shortDescEn: true, icon: true },
+    }).catch(() => []),
   ]);
 
   const smap = Object.fromEntries(settingsRows.map((s) => [s.key, s.value]));
@@ -97,7 +102,7 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <HeroSection statValues={heroStatValues} />
-      <ServicesSection />
+      <ServicesSection services={homeServices} locale={locale} />
       <ProcessSection />
       <WhyUsSection />
       <StatsSection statValues={homeStatValues} />
