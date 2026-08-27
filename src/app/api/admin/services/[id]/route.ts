@@ -14,6 +14,8 @@ const schema = z.object({
   icon: z.string().min(1).max(50),
   image: z.string().max(500).optional(),
   technologies: z.string().max(500).optional(),
+  faqFr: z.string().optional(),
+  faqEn: z.string().optional(),
   order: z.number().int().min(0),
   published: z.boolean(),
 });

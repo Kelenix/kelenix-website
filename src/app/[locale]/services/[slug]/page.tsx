@@ -78,9 +78,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 type FaqItem = { question: string; answer: string };
 
+// Tolère les deux formats stockés : { question, answer } et l'ancien { q, a }.
 function parseFaq(raw: string): FaqItem[] {
   try {
-    return JSON.parse(raw) as FaqItem[];
+    const parsed = JSON.parse(raw) as Array<Record<string, unknown>>;
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((item) => ({
+        question: String(item.question ?? item.q ?? ""),
+        answer: String(item.answer ?? item.a ?? ""),
+      }))
+      .filter((item) => item.question.trim() !== "" || item.answer.trim() !== "");
   } catch {
     return [];
   }
