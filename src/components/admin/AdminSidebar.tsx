@@ -9,7 +9,7 @@ import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Code, Briefcase, BookOpen, Star, Mail,
   Newspaper, Settings, LogOut, Menu, X, Search,
-  Users, Handshake, Info, Smartphone, HelpCircle
+  Users, Handshake, Info, Smartphone, HelpCircle, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,7 @@ const navItems = [
   { href: "/admin/partners", label: "Partenaires", icon: Handshake },
   { href: "/admin/messages", label: "Messages", icon: Mail },
   { href: "/admin/newsletter", label: "Newsletter", icon: Newspaper },
+  { href: "/admin/status", label: "État du système", icon: Activity },
   { href: "/admin/settings", label: "Paramètres", icon: Settings },
 ];
 
