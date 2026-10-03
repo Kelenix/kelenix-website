@@ -1,0 +1,53 @@
+name: Deploy
+
+# Déploiement automatique : à chaque push sur master, GitHub se connecte
+# en SSH au VPS et met le site à jour. Déclenchable aussi à la main.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Un seul déploiement à la fois (les suivants attendent au lieu de se chevaucher).
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          command_timeout: 20m
+          script: |
+            set -e
+            cd /var/www/kelenix-website
+
+            echo "==> Récupération du code"
+            git fetch --all
+            git reset --hard origin/master
+
+            echo "==> Installation des dépendances"
+            npm ci
+
+            echo "==> Synchronisation du schéma Prisma"
+            npx prisma generate
+            # Changements additifs appliqués automatiquement. Un changement
+            # destructeur fait ÉCHOUER le déploiement volontairement (pas de
+            # perte de données silencieuse) : à gérer manuellement le cas échéant.
+            npx prisma db push --skip-generate
+
+            echo "==> Build de production"
+            npm run build
+
+            echo "==> Redémarrage de l'application (pm2)"
+            pm2 reload kelenix --update-env || pm2 start npm --name kelenix -- start
+            pm2 save
+
+            echo "==> Déploiement terminé ✅"

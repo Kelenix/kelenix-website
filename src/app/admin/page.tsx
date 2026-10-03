@@ -5,9 +5,29 @@ import { MessageStatus } from "@prisma/client";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Mail, FileText, BookOpen, Users, Star, TrendingUp, Briefcase } from "lucide-react";
 import Link from "next/link";
+import TrendAreaChart from "@/components/admin/charts/TrendAreaChart";
+import CategoryBarChart from "@/components/admin/charts/CategoryBarChart";
+import DonutChart from "@/components/admin/charts/DonutChart";
+
+const SERVICE_LABELS: Record<string, string> = {
+  software: "Logiciel sur mesure",
+  web: "Sites web",
+  webapp: "Applications web",
+  mobile: "Applications mobiles",
+  ai: "Intelligence artificielle",
+  consulting: "Consulting IT",
+  training: "Formation",
+};
+
+const DONUT_COLORS = ["#2FA8FF", "#FFC107", "#8B5CF6", "#10B981", "#F97316", "#EF4444", "#0A8FE8"];
 
 export default async function AdminDashboardPage() {
   await requireAuth("MODERATOR");
+
+  // Fenêtre des 6 derniers mois (début du mois).
+  const now = new Date();
+  const MONTHS_BACK = 6;
+  const trendStart = new Date(now.getFullYear(), now.getMonth() - (MONTHS_BACK - 1), 1);
 
   const [
     newMessages,
@@ -18,6 +38,10 @@ export default async function AdminDashboardPage() {
     totalSubscribers,
     recentMessages,
     recentQuotes,
+    msgDates,
+    quoteDates,
+    quotesByService,
+    quotesByBudget,
   ] = await Promise.all([
     prisma.contactMessage.count({ where: { status: MessageStatus.NEW } }),
     prisma.quoteRequest.count({ where: { status: MessageStatus.NEW } }),
@@ -27,7 +51,40 @@ export default async function AdminDashboardPage() {
     prisma.newsletter.count({ where: { active: true } }),
     prisma.contactMessage.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, firstName: true, lastName: true, email: true, service: true, createdAt: true, status: true } }),
     prisma.quoteRequest.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, firstName: true, lastName: true, email: true, serviceType: true, budget: true, createdAt: true, status: true } }),
+    prisma.contactMessage.findMany({ where: { createdAt: { gte: trendStart } }, select: { createdAt: true } }),
+    prisma.quoteRequest.findMany({ where: { createdAt: { gte: trendStart } }, select: { createdAt: true } }),
+    prisma.quoteRequest.groupBy({ by: ["serviceType"], _count: { _all: true } }),
+    prisma.quoteRequest.groupBy({ by: ["budget"], _count: { _all: true } }),
   ]);
+
+  // Buckets mensuels pour le graphique de tendance.
+  const months = Array.from({ length: MONTHS_BACK }, (_, i) => {
+    const d = new Date(trendStart.getFullYear(), trendStart.getMonth() + i, 1);
+    return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString("fr-FR", { month: "short" }) };
+  });
+  const bucketize = (rows: { createdAt: Date }[]) => {
+    const map = Object.fromEntries(months.map((m) => [m.key, 0]));
+    for (const { createdAt } of rows) {
+      const d = new Date(createdAt);
+      const k = `${d.getFullYear()}-${d.getMonth()}`;
+      if (k in map) map[k]++;
+    }
+    return months.map((m) => map[m.key]);
+  };
+
+  const trendLabels = months.map((m) => m.label);
+  const trendSeries = [
+    { name: "Messages", color: "#2FA8FF", data: bucketize(msgDates) },
+    { name: "Devis", color: "#FFC107", data: bucketize(quoteDates) },
+  ];
+
+  const serviceData = quotesByService
+    .map((g) => ({ label: SERVICE_LABELS[g.serviceType] ?? g.serviceType, value: g._count._all }))
+    .sort((a, b) => b.value - a.value);
+
+  const budgetData = quotesByBudget
+    .map((g, i) => ({ label: g.budget, value: g._count._all, color: DONUT_COLORS[i % DONUT_COLORS.length] }))
+    .sort((a, b) => b.value - a.value);
 
   const stats = [
     { icon: Mail, label: "Nouveaux messages", value: newMessages, href: "/admin/messages", color: "bg-blue-500" },
@@ -63,6 +120,35 @@ export default async function AdminDashboardPage() {
                 <div className="text-xs text-gray-500 mt-1 leading-tight">{label}</div>
               </Link>
             ))}
+          </div>
+
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            {/* Trend (span 2) */}
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="font-heading font-bold text-navy text-base">Activité des 6 derniers mois</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Messages et demandes de devis reçus par mois</p>
+                </div>
+                <TrendingUp size={18} className="text-sky" />
+              </div>
+              <TrendAreaChart labels={trendLabels} series={trendSeries} />
+            </div>
+
+            {/* Donut: budget */}
+            <div className="bg-white rounded-2xl shadow-card p-6">
+              <h2 className="font-heading font-bold text-navy text-base mb-1">Devis par budget</h2>
+              <p className="text-xs text-gray-400 mb-4">Répartition des demandes de devis</p>
+              <DonutChart data={budgetData} emptyLabel="Aucune demande de devis" />
+            </div>
+          </div>
+
+          {/* Bar: services */}
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-6">
+            <h2 className="font-heading font-bold text-navy text-base mb-1">Demandes de devis par service</h2>
+            <p className="text-xs text-gray-400 mb-4">Services les plus demandés</p>
+            <CategoryBarChart data={serviceData} emptyLabel="Aucune demande de devis" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
