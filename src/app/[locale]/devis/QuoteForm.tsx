@@ -283,13 +283,15 @@ export default function QuoteForm({ locale }: { locale: string }) {
                     type="button"
                     onClick={() => update("budget", b.value)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium text-left transition-all hover:-translate-y-0.5",
+                      "flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 text-sm font-semibold text-left transition-all hover:-translate-y-0.5",
                       selected ? "border-sky bg-sky/5 text-sky shadow-sm" : "border-gray-100 hover:border-sky/40 text-gray-700"
                     )}
                   >
-                    <b.Icon size={18} className={cn("shrink-0", selected ? "text-sky" : "text-gray-400")} />
+                    <span className={cn("flex-none w-10 h-10 rounded-lg flex items-center justify-center transition-colors", selected ? "bg-sky text-white" : "bg-gray-100 text-gray-500")}>
+                      <b.Icon size={18} />
+                    </span>
                     <span className="flex-1">{b.value}</span>
-                    {selected && <CheckCircle2 size={16} className="text-sky shrink-0" />}
+                    {selected && <CheckCircle2 size={18} className="text-sky shrink-0" />}
                   </button>
                 );
               })}
@@ -306,13 +308,15 @@ export default function QuoteForm({ locale }: { locale: string }) {
                     type="button"
                     onClick={() => update("deadline", d.value)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium text-left transition-all hover:-translate-y-0.5",
+                      "flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 text-sm font-semibold text-left transition-all hover:-translate-y-0.5",
                       selected ? "border-sky bg-sky/5 text-sky shadow-sm" : "border-gray-100 hover:border-sky/40 text-gray-700"
                     )}
                   >
-                    <d.Icon size={18} className={cn("shrink-0", selected ? "text-sky" : "text-gray-400")} />
+                    <span className={cn("flex-none w-10 h-10 rounded-lg flex items-center justify-center transition-colors", selected ? "bg-sky text-white" : "bg-gray-100 text-gray-500")}>
+                      <d.Icon size={18} />
+                    </span>
                     <span className="flex-1">{d.value}</span>
-                    {selected && <CheckCircle2 size={16} className="text-sky shrink-0" />}
+                    {selected && <CheckCircle2 size={18} className="text-sky shrink-0" />}
                   </button>
                 );
               })}
