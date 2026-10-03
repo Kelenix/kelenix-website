@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronRight, ChevronLeft, CheckCircle, CheckCircle2, Send, AlertCircle, Rocket, ShieldCheck, Clock3 } from "lucide-react";
+import {
+  ChevronRight, ChevronLeft, CheckCircle, CheckCircle2, Send, AlertCircle,
+  Rocket, ShieldCheck, Clock3, FileText, Mail,
+  Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap, Sparkles,
+  Sprout, Banknote, Wallet, Gem, Zap, Calendar, CalendarDays, CalendarRange, Infinity as InfinityIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type FormData = {
@@ -36,29 +41,29 @@ export default function QuoteForm({ locale }: { locale: string }) {
 
   const fr = locale === "fr";
   const services = [
-    { value: "software", label: fr ? "Développement Logiciel" : "Software Development", desc: fr ? "Applications sur mesure" : "Custom applications", icon: "💻", grad: "from-blue-500 to-sky-dark" },
-    { value: "web", label: fr ? "Site Web" : "Website", desc: fr ? "Vitrine, e-commerce" : "Showcase, e-commerce", icon: "🌐", grad: "from-sky to-blue-400" },
-    { value: "webapp", label: fr ? "Application Web" : "Web App", desc: fr ? "Plateformes SaaS" : "SaaS platforms", icon: "🖥️", grad: "from-indigo-500 to-sky" },
-    { value: "mobile", label: fr ? "App Mobile" : "Mobile App", desc: fr ? "iOS & Android" : "iOS & Android", icon: "📱", grad: "from-purple-500 to-indigo-500" },
-    { value: "ai", label: fr ? "Intelligence Artificielle" : "AI Solution", desc: fr ? "IA & automatisation" : "AI & automation", icon: "🤖", grad: "from-gold to-gold-dark" },
-    { value: "consulting", label: fr ? "Consulting IT" : "IT Consulting", desc: fr ? "Stratégie & audit" : "Strategy & audit", icon: "📊", grad: "from-emerald-500 to-teal-500" },
-    { value: "training", label: fr ? "Formation" : "Training", desc: fr ? "Montée en compétences" : "Upskilling", icon: "🎓", grad: "from-orange-500 to-amber-500" },
-    { value: "other", label: fr ? "Autre" : "Other", desc: fr ? "Parlons-en" : "Let's talk", icon: "✨", grad: "from-slate-500 to-slate-700" },
+    { value: "software", label: fr ? "Développement Logiciel" : "Software Development", desc: fr ? "Applications sur mesure" : "Custom applications", Icon: Code, grad: "from-blue-500 to-sky-dark" },
+    { value: "web", label: fr ? "Site Web" : "Website", desc: fr ? "Vitrine, e-commerce" : "Showcase, e-commerce", Icon: Globe, grad: "from-sky to-blue-400" },
+    { value: "webapp", label: fr ? "Application Web" : "Web App", desc: fr ? "Plateformes SaaS" : "SaaS platforms", Icon: Monitor, grad: "from-indigo-500 to-sky" },
+    { value: "mobile", label: fr ? "App Mobile" : "Mobile App", desc: fr ? "iOS & Android" : "iOS & Android", Icon: Smartphone, grad: "from-purple-500 to-indigo-500" },
+    { value: "ai", label: fr ? "Intelligence Artificielle" : "AI Solution", desc: fr ? "IA & automatisation" : "AI & automation", Icon: Brain, grad: "from-gold to-gold-dark" },
+    { value: "consulting", label: fr ? "Consulting IT" : "IT Consulting", desc: fr ? "Stratégie & audit" : "Strategy & audit", Icon: TrendingUp, grad: "from-emerald-500 to-teal-500" },
+    { value: "training", label: fr ? "Formation" : "Training", desc: fr ? "Montée en compétences" : "Upskilling", Icon: GraduationCap, grad: "from-orange-500 to-amber-500" },
+    { value: "other", label: fr ? "Autre" : "Other", desc: fr ? "Parlons-en" : "Let's talk", Icon: Sparkles, grad: "from-slate-500 to-slate-700" },
   ];
 
   const budgets = [
-    { value: "< 1 000€", icon: "🌱" },
-    { value: "1 000€ – 5 000€", icon: "💶" },
-    { value: "5 000€ – 10 000€", icon: "💰" },
-    { value: "10 000€ – 50 000€", icon: "💎" },
-    { value: "> 50 000€", icon: "🚀" },
+    { value: "< 1 000€", Icon: Sprout },
+    { value: "1 000€ – 5 000€", Icon: Banknote },
+    { value: "5 000€ – 10 000€", Icon: Wallet },
+    { value: "10 000€ – 50 000€", Icon: Gem },
+    { value: "> 50 000€", Icon: Rocket },
   ];
   const deadlines = [
-    { value: fr ? "Urgent (< 1 mois)" : "Urgent (< 1 month)", icon: "⚡" },
-    { value: fr ? "1 – 3 mois" : "1 – 3 months", icon: "📅" },
-    { value: fr ? "3 – 6 mois" : "3 – 6 months", icon: "🗓️" },
-    { value: fr ? "6 – 12 mois" : "6 – 12 months", icon: "📆" },
-    { value: fr ? "Pas de contrainte" : "No constraint", icon: "🧘" },
+    { value: fr ? "Urgent (< 1 mois)" : "Urgent (< 1 month)", Icon: Zap },
+    { value: fr ? "1 – 3 mois" : "1 – 3 months", Icon: Calendar },
+    { value: fr ? "3 – 6 mois" : "3 – 6 months", Icon: CalendarDays },
+    { value: fr ? "6 – 12 mois" : "6 – 12 months", Icon: CalendarRange },
+    { value: fr ? "Pas de contrainte" : "No constraint", Icon: InfinityIcon },
   ];
 
   const nextStep = () => setStep(s => Math.min(s + 1, TOTAL_STEPS));
@@ -216,8 +221,8 @@ export default function QuoteForm({ locale }: { locale: string }) {
                   )}
                 >
                   {selected && <CheckCircle2 size={18} className="absolute top-2 right-2 text-sky" />}
-                  <span className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gradient-to-br shadow-sm transition-transform group-hover:scale-110", s.grad)}>
-                    {s.icon}
+                  <span className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br shadow-sm transition-transform group-hover:scale-110", s.grad)}>
+                    <s.Icon size={22} className="text-white" strokeWidth={2.2} />
                   </span>
                   <span className={cn("font-semibold text-sm leading-tight", selected ? "text-sky" : "text-navy")}>{s.label}</span>
                   <span className="text-xs text-gray-400 leading-tight">{s.desc}</span>
@@ -232,7 +237,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
       {step === 2 && (
         <div className="space-y-5">
           <div className="mb-2">
-            <h2 className="font-heading font-bold text-navy text-xl">📝 {fr ? "Décrivez votre projet" : "Describe your project"}</h2>
+            <h2 className="font-heading font-bold text-navy text-xl flex items-center gap-2"><FileText size={20} className="text-sky" /> {fr ? "Décrivez votre projet" : "Describe your project"}</h2>
             <p className="text-sm text-gray-400 mt-1">{fr ? "Plus c'est précis, plus le devis sera juste." : "The more detail you give, the more accurate the quote."}</p>
           </div>
           <div>
@@ -268,7 +273,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
             <p className="text-sm text-gray-400 mt-1">{fr ? "Une estimation suffit — tout reste négociable." : "An estimate is enough — everything is negotiable."}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">💶 {t("budget")} *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3"><Wallet size={14} className="inline -mt-0.5 mr-1 text-sky" />{t("budget")} *</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {budgets.map(b => {
                 const selected = data.budget === b.value;
@@ -282,7 +287,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
                       selected ? "border-sky bg-sky/5 text-sky shadow-sm" : "border-gray-100 hover:border-sky/40 text-gray-700"
                     )}
                   >
-                    <span className="text-xl">{b.icon}</span>
+                    <b.Icon size={18} className={cn("shrink-0", selected ? "text-sky" : "text-gray-400")} />
                     <span className="flex-1">{b.value}</span>
                     {selected && <CheckCircle2 size={16} className="text-sky shrink-0" />}
                   </button>
@@ -305,7 +310,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
                       selected ? "border-sky bg-sky/5 text-sky shadow-sm" : "border-gray-100 hover:border-sky/40 text-gray-700"
                     )}
                   >
-                    <span className="text-xl">{d.icon}</span>
+                    <d.Icon size={18} className={cn("shrink-0", selected ? "text-sky" : "text-gray-400")} />
                     <span className="flex-1">{d.value}</span>
                     {selected && <CheckCircle2 size={16} className="text-sky shrink-0" />}
                   </button>
@@ -320,7 +325,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
       {step === 4 && (
         <div className="space-y-5">
           <div className="mb-2">
-            <h2 className="font-heading font-bold text-navy text-xl">📬 {fr ? "Vos coordonnées" : "Your contact details"}</h2>
+            <h2 className="font-heading font-bold text-navy text-xl flex items-center gap-2"><Mail size={20} className="text-sky" /> {fr ? "Vos coordonnées" : "Your contact details"}</h2>
             <p className="text-sm text-gray-400 mt-1">{fr ? "On vous répond sous 24h — vos données restent confidentielles." : "We reply within 24h — your data stays private."}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
