@@ -1,16 +1,16 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// Instanciation paresseuse : ne pas créer le client au build (clé absente → erreur).
+let resendClient: Resend | null = null;
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null;
+  if (!resendClient) resendClient = new Resend(process.env.RESEND_API_KEY);
+  return resendClient;
+}
 
-const FROM = process.env.SMTP_FROM ?? "Kelenix Tech <noreply@kelenix.com>";
+// Expéditeur : doit être sur un domaine vérifié dans Resend.
+// EMAIL_FROM en priorité, sinon SMTP_FROM (compat), sinon domaine de test Resend.
+const FROM = process.env.EMAIL_FROM ?? process.env.SMTP_FROM ?? "Kelenix Tech <onboarding@resend.dev>";
 const ADMIN = process.env.ADMIN_EMAIL ?? "admin@kelenix.com";
 const SITE = process.env.NEXT_PUBLIC_SITE_NAME ?? "Kelenix Tech";
 
@@ -41,13 +41,20 @@ function field(label: string, value: string | null | undefined) {
   return `<div class="field"><div class="label">${label}</div><div class="value">${value}</div></div>`;
 }
 
-async function send(options: nodemailer.SendMailOptions) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn("[email] SMTP_USER / SMTP_PASS not set — email skipped");
+async function send(options: { to: string; subject: string; html: string }) {
+  const client = getResend();
+  if (!client) {
+    console.warn("[email] RESEND_API_KEY not set — email skipped");
     return;
   }
   try {
-    await transporter.sendMail({ from: FROM, ...options });
+    const { error } = await client.emails.send({
+      from: FROM,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+    if (error) console.error("[email] Resend error:", error);
   } catch (err) {
     console.error("[email] Send failed:", err);
   }
