@@ -330,13 +330,38 @@ h1, h2, h3, h4, h5, h6 {
   50%      { opacity: 0.9; transform: scale(1.08); }
 }
 
+/* CTA principal : halo pulsé pour attirer l'œil */
+@keyframes ctaGlow {
+  0%, 100% { box-shadow: 0 10px 25px -5px rgba(255,193,7,0.35), 0 0 0 0 rgba(255,193,7,0.45); }
+  50%      { box-shadow: 0 14px 32px -5px rgba(255,193,7,0.55), 0 0 0 12px rgba(255,193,7,0); }
+}
+.cta-pulse { animation: ctaGlow 2.6s ease-in-out infinite; }
+
+/* CTA principal : brillance qui balaie le bouton */
+.cta-shine { position: relative; overflow: hidden; }
+.cta-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+  transform: translateX(-130%);
+  animation: ctaSweep 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ctaSweep {
+  0%, 55%   { transform: translateX(-130%); }
+  80%, 100% { transform: translateX(130%); }
+}
+
 /* Accessibilité : réduction des animations */
 @media (prefers-reduced-motion: reduce) {
   .glass-shine::before,
   .aurora-bg::before,
   .aurora-bg::after,
   .float-slow,
-  .float-slow2 {
+  .float-slow2,
+  .cta-pulse,
+  .cta-shine::after {
     animation: none !important;
   }
 }

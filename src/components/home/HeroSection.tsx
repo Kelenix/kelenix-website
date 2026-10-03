@@ -1,13 +1,94 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, ChevronDown } from "lucide-react";
+
+// Découpe "30+" / "97%" / "4.9/5" en nombre + suffixe pour l'animation de comptage.
+function parseStat(raw: string): { num: number | null; suffix: string; decimals: number } {
+  const m = raw.trim().match(/^(\d+(?:[.,]\d+)?)(.*)$/);
+  if (!m) return { num: null, suffix: raw, decimals: 0 };
+  const hasDecimals = m[1].includes(".") || m[1].includes(",");
+  return { num: parseFloat(m[1].replace(",", ".")), suffix: m[2], decimals: hasDecimals ? 1 : 0 };
+}
+
+function CountUpStat({ value, reduced }: { value: string; reduced: boolean }) {
+  const { num, suffix, decimals } = parseStat(value);
+  const [disp, setDisp] = useState(0);
+
+  useEffect(() => {
+    if (num === null) return;
+    if (reduced) {
+      const id = requestAnimationFrame(() => setDisp(num));
+      return () => cancelAnimationFrame(id);
+    }
+    let raf = 0;
+    let start: number | null = null;
+    const duration = 1600;
+    const step = (ts: number) => {
+      if (start === null) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisp(eased * num);
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [num, reduced]);
+
+  if (num === null) return <>{value}</>;
+  return <>{disp.toFixed(decimals)}{suffix}</>;
+}
+
+function RotatingHighlight({ phrases, reduced }: { phrases: string[]; reduced: boolean }) {
+  const [i, setI] = useState(0);
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    if (reduced || phrases.length <= 1) return;
+    let to: ReturnType<typeof setTimeout>;
+    const id = setInterval(() => {
+      setShow(false);
+      to = setTimeout(() => {
+        setI((p) => (p + 1) % phrases.length);
+        setShow(true);
+      }, 300);
+    }, 3000);
+    return () => {
+      clearInterval(id);
+      clearTimeout(to);
+    };
+  }, [phrases.length, reduced]);
+
+  return (
+    <span
+      className={`inline-block text-transparent bg-clip-text bg-linear-to-r from-sky via-sky-light to-gold transition-all duration-300 ${
+        show ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
+      }`}
+    >
+      {phrases[i]}
+    </span>
+  );
+}
 
 export default function HeroSection({ statValues }: { statValues?: string[] }) {
   const t = useTranslations("hero");
+  const locale = useLocale();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [reduced, setReduced] = useState(false);
+
+  // Détection prefers-reduced-motion (différée pour éviter un setState synchrone).
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(mq.matches);
+    const id = requestAnimationFrame(update);
+    mq.addEventListener("change", update);
+    return () => {
+      cancelAnimationFrame(id);
+      mq.removeEventListener("change", update);
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -79,6 +160,15 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
     { value: statValues?.[3] ?? t("stat4Value"), label: t("stat4Label") },
   ];
 
+  const phrases =
+    locale === "en"
+      ? [t("titleHighlight"), "your growth", "your digital projects", "your transformation"]
+      : [t("titleHighlight"), "votre croissance", "vos projets digitaux", "votre transformation"];
+
+  const scrollDown = () => {
+    window.scrollBy({ top: Math.round(window.innerHeight * 0.9), behavior: "smooth" });
+  };
+
   return (
     <section className="relative min-h-screen bg-gradient-hero flex items-center overflow-hidden">
       {/* Aurora / mesh gradient */}
@@ -104,9 +194,7 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
         <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.08] mb-6 animate-slide-up tracking-tight text-balance">
           <span className="lg:whitespace-nowrap">{t("title")}</span>
           <br />
-          <span className="text-transparent bg-clip-text bg-linear-to-r from-sky via-sky-light to-gold">
-            {t("titleHighlight")}
-          </span>
+          <RotatingHighlight phrases={phrases} reduced={reduced} />
         </h1>
 
         {/* Sous-titre */}
@@ -118,10 +206,12 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
         <div className="flex flex-wrap justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: "0.2s" }}>
           <Link
             href="/devis"
-            className="group flex items-center gap-2.5 px-7 py-4 bg-gold text-navy font-bold text-base rounded-2xl hover:bg-gold-dark transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+            className="group cta-pulse cta-shine flex items-center gap-2.5 px-8 py-4 bg-gold text-navy font-bold text-base rounded-2xl hover:bg-gold-dark transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
           >
-            {t("cta1")}
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <span className="relative z-10 flex items-center gap-2.5">
+              {t("cta1")}
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </span>
           </Link>
           <Link
             href="/services"
@@ -131,7 +221,7 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
           </Link>
         </div>
 
-        {/* Stats — cartes de verre */}
+        {/* Stats — cartes de verre (chiffres animés) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 animate-slide-up" style={{ animationDelay: "0.3s" }}>
           {stats.map((stat, i) => (
             <div
@@ -139,14 +229,24 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
               className="glass glass-shine rounded-2xl px-4 py-5 text-center float-slow"
               style={{ animationDelay: `${i * 0.6}s` }}
             >
-              <div className="text-3xl sm:text-4xl font-extrabold text-white mb-1">
-                {stat.value}
+              <div className="text-3xl sm:text-4xl font-extrabold text-white mb-1 tabular-nums">
+                <CountUpStat value={stat.value} reduced={reduced} />
               </div>
               <div className="text-sm text-gray-300">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Indicateur de défilement */}
+      <button
+        type="button"
+        onClick={scrollDown}
+        aria-label={locale === "en" ? "Scroll down" : "Défiler vers le bas"}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white/50 hover:text-white transition-colors motion-safe:animate-bounce"
+      >
+        <ChevronDown size={30} />
+      </button>
     </section>
   );
 }
