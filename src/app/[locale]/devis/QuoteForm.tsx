@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronRight, ChevronLeft, CheckCircle, Send, AlertCircle } from "lucide-react";
+import { ChevronRight, ChevronLeft, CheckCircle, CheckCircle2, Send, AlertCircle, Rocket, ShieldCheck, Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type FormData = {
@@ -34,23 +34,31 @@ export default function QuoteForm({ locale }: { locale: string }) {
   const update = (field: keyof FormData, value: string) =>
     setData(d => ({ ...d, [field]: value }));
 
+  const fr = locale === "fr";
   const services = [
-    { value: "software", label: locale === "fr" ? "Développement Logiciel" : "Software Development", icon: "💻" },
-    { value: "web", label: locale === "fr" ? "Site Web" : "Website", icon: "🌐" },
-    { value: "webapp", label: locale === "fr" ? "Application Web" : "Web App", icon: "📱" },
-    { value: "mobile", label: locale === "fr" ? "App Mobile" : "Mobile App", icon: "📲" },
-    { value: "ai", label: locale === "fr" ? "Intelligence Artificielle" : "AI Solution", icon: "🤖" },
-    { value: "consulting", label: locale === "fr" ? "Consulting IT" : "IT Consulting", icon: "📊" },
-    { value: "training", label: locale === "fr" ? "Formation" : "Training", icon: "🎓" },
+    { value: "software", label: fr ? "Développement Logiciel" : "Software Development", desc: fr ? "Applications sur mesure" : "Custom applications", icon: "💻", grad: "from-blue-500 to-sky-dark" },
+    { value: "web", label: fr ? "Site Web" : "Website", desc: fr ? "Vitrine, e-commerce" : "Showcase, e-commerce", icon: "🌐", grad: "from-sky to-blue-400" },
+    { value: "webapp", label: fr ? "Application Web" : "Web App", desc: fr ? "Plateformes SaaS" : "SaaS platforms", icon: "🖥️", grad: "from-indigo-500 to-sky" },
+    { value: "mobile", label: fr ? "App Mobile" : "Mobile App", desc: fr ? "iOS & Android" : "iOS & Android", icon: "📱", grad: "from-purple-500 to-indigo-500" },
+    { value: "ai", label: fr ? "Intelligence Artificielle" : "AI Solution", desc: fr ? "IA & automatisation" : "AI & automation", icon: "🤖", grad: "from-gold to-gold-dark" },
+    { value: "consulting", label: fr ? "Consulting IT" : "IT Consulting", desc: fr ? "Stratégie & audit" : "Strategy & audit", icon: "📊", grad: "from-emerald-500 to-teal-500" },
+    { value: "training", label: fr ? "Formation" : "Training", desc: fr ? "Montée en compétences" : "Upskilling", icon: "🎓", grad: "from-orange-500 to-amber-500" },
+    { value: "other", label: fr ? "Autre" : "Other", desc: fr ? "Parlons-en" : "Let's talk", icon: "✨", grad: "from-slate-500 to-slate-700" },
   ];
 
-  const budgets = ["< 1 000€", "1 000€ – 5 000€", "5 000€ – 10 000€", "10 000€ – 50 000€", "> 50 000€"];
+  const budgets = [
+    { value: "< 1 000€", icon: "🌱" },
+    { value: "1 000€ – 5 000€", icon: "💶" },
+    { value: "5 000€ – 10 000€", icon: "💰" },
+    { value: "10 000€ – 50 000€", icon: "💎" },
+    { value: "> 50 000€", icon: "🚀" },
+  ];
   const deadlines = [
-    locale === "fr" ? "Urgent (< 1 mois)" : "Urgent (< 1 month)",
-    locale === "fr" ? "1 – 3 mois" : "1 – 3 months",
-    locale === "fr" ? "3 – 6 mois" : "3 – 6 months",
-    locale === "fr" ? "6 – 12 mois" : "6 – 12 months",
-    locale === "fr" ? "Pas de contrainte" : "No constraint",
+    { value: fr ? "Urgent (< 1 mois)" : "Urgent (< 1 month)", icon: "⚡" },
+    { value: fr ? "1 – 3 mois" : "1 – 3 months", icon: "📅" },
+    { value: fr ? "3 – 6 mois" : "3 – 6 months", icon: "🗓️" },
+    { value: fr ? "6 – 12 mois" : "6 – 12 months", icon: "📆" },
+    { value: fr ? "Pas de contrainte" : "No constraint", icon: "🧘" },
   ];
 
   const nextStep = () => setStep(s => Math.min(s + 1, TOTAL_STEPS));
@@ -188,24 +196,34 @@ export default function QuoteForm({ locale }: { locale: string }) {
       {/* Step 1: Service Type */}
       {step === 1 && (
         <div className="space-y-4">
-          <h2 className="font-heading font-bold text-navy text-xl mb-6">{t("serviceType")}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {services.map(s => (
-              <button
-                key={s.value}
-                type="button"
-                onClick={() => update("serviceType", s.value)}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all text-sm font-medium",
-                  data.serviceType === s.value
-                    ? "border-sky bg-sky/5 text-sky"
-                    : "border-gray-100 hover:border-sky/30 text-gray-700"
-                )}
-              >
-                <span className="text-2xl">{s.icon}</span>
-                {s.label}
-              </button>
-            ))}
+          <div className="mb-6">
+            <h2 className="font-heading font-bold text-navy text-xl flex items-center gap-2">
+              <Rocket size={20} className="text-sky" /> {t("serviceType")}
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">{fr ? "Choisissez ce qui correspond le mieux à votre besoin." : "Pick what best matches your need."}</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {services.map(s => {
+              const selected = data.serviceType === s.value;
+              return (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => update("serviceType", s.value)}
+                  className={cn(
+                    "group relative flex flex-col items-center text-center gap-2 p-4 rounded-2xl border-2 transition-all duration-200 hover:-translate-y-0.5",
+                    selected ? "border-sky bg-sky/5 shadow-md" : "border-gray-100 hover:border-sky/40 hover:shadow-sm"
+                  )}
+                >
+                  {selected && <CheckCircle2 size={18} className="absolute top-2 right-2 text-sky" />}
+                  <span className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gradient-to-br shadow-sm transition-transform group-hover:scale-110", s.grad)}>
+                    {s.icon}
+                  </span>
+                  <span className={cn("font-semibold text-sm leading-tight", selected ? "text-sky" : "text-navy")}>{s.label}</span>
+                  <span className="text-xs text-gray-400 leading-tight">{s.desc}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -213,7 +231,10 @@ export default function QuoteForm({ locale }: { locale: string }) {
       {/* Step 2: Project */}
       {step === 2 && (
         <div className="space-y-5">
-          <h2 className="font-heading font-bold text-navy text-xl mb-6">{locale === "fr" ? "Décrivez votre projet" : "Describe your project"}</h2>
+          <div className="mb-2">
+            <h2 className="font-heading font-bold text-navy text-xl">📝 {fr ? "Décrivez votre projet" : "Describe your project"}</h2>
+            <p className="text-sm text-gray-400 mt-1">{fr ? "Plus c'est précis, plus le devis sera juste." : "The more detail you give, the more accurate the quote."}</p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("projectName")} *</label>
             <input type="text" required value={data.projectName} onChange={e => update("projectName", e.target.value)} className={inputClass} />
@@ -240,41 +261,56 @@ export default function QuoteForm({ locale }: { locale: string }) {
       {/* Step 3: Budget & Deadline */}
       {step === 3 && (
         <div className="space-y-6">
-          <h2 className="font-heading font-bold text-navy text-xl mb-6">{locale === "fr" ? "Budget & délais" : "Budget & timeline"}</h2>
+          <div className="mb-2">
+            <h2 className="font-heading font-bold text-navy text-xl flex items-center gap-2">
+              <ShieldCheck size={20} className="text-sky" /> {fr ? "Budget & délais" : "Budget & timeline"}
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">{fr ? "Une estimation suffit — tout reste négociable." : "An estimate is enough — everything is negotiable."}</p>
+          </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">{t("budget")} *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">💶 {t("budget")} *</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {budgets.map(b => (
-                <button
-                  key={b}
-                  type="button"
-                  onClick={() => update("budget", b)}
-                  className={cn(
-                    "px-4 py-3 rounded-xl border-2 text-sm font-medium text-left transition-all",
-                    data.budget === b ? "border-sky bg-sky/5 text-sky" : "border-gray-100 hover:border-sky/30 text-gray-700"
-                  )}
-                >
-                  {b}
-                </button>
-              ))}
+              {budgets.map(b => {
+                const selected = data.budget === b.value;
+                return (
+                  <button
+                    key={b.value}
+                    type="button"
+                    onClick={() => update("budget", b.value)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium text-left transition-all hover:-translate-y-0.5",
+                      selected ? "border-sky bg-sky/5 text-sky shadow-sm" : "border-gray-100 hover:border-sky/40 text-gray-700"
+                    )}
+                  >
+                    <span className="text-xl">{b.icon}</span>
+                    <span className="flex-1">{b.value}</span>
+                    {selected && <CheckCircle2 size={16} className="text-sky shrink-0" />}
+                  </button>
+                );
+              })}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">{t("deadline")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3"><Clock3 size={14} className="inline -mt-0.5 mr-1 text-sky" />{t("deadline")}</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {deadlines.map(d => (
-                <button
-                  key={d}
-                  type="button"
-                  onClick={() => update("deadline", d)}
-                  className={cn(
-                    "px-4 py-3 rounded-xl border-2 text-sm font-medium text-left transition-all",
-                    data.deadline === d ? "border-sky bg-sky/5 text-sky" : "border-gray-100 hover:border-sky/30 text-gray-700"
-                  )}
-                >
-                  {d}
-                </button>
-              ))}
+              {deadlines.map(d => {
+                const selected = data.deadline === d.value;
+                return (
+                  <button
+                    key={d.value}
+                    type="button"
+                    onClick={() => update("deadline", d.value)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium text-left transition-all hover:-translate-y-0.5",
+                      selected ? "border-sky bg-sky/5 text-sky shadow-sm" : "border-gray-100 hover:border-sky/40 text-gray-700"
+                    )}
+                  >
+                    <span className="text-xl">{d.icon}</span>
+                    <span className="flex-1">{d.value}</span>
+                    {selected && <CheckCircle2 size={16} className="text-sky shrink-0" />}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -283,7 +319,10 @@ export default function QuoteForm({ locale }: { locale: string }) {
       {/* Step 4: Contact */}
       {step === 4 && (
         <div className="space-y-5">
-          <h2 className="font-heading font-bold text-navy text-xl mb-6">{locale === "fr" ? "Vos coordonnées" : "Your contact details"}</h2>
+          <div className="mb-2">
+            <h2 className="font-heading font-bold text-navy text-xl">📬 {fr ? "Vos coordonnées" : "Your contact details"}</h2>
+            <p className="text-sm text-gray-400 mt-1">{fr ? "On vous répond sous 24h — vos données restent confidentielles." : "We reply within 24h — your data stays private."}</p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("firstName")} *</label>

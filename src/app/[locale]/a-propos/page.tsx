@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { getSiteStats } from "@/lib/site-stats";
 import {
   Target, Eye, CheckCircle, Users, Award, Globe, Zap, Shield, TrendingUp,
   ArrowRight, Lightbulb, Clock, Star, Heart,
@@ -58,11 +59,12 @@ export default async function AboutPage({ params }: Props) {
   const t = await getTranslations("about");
   const isEn = locale === "en";
 
-  const [dbTeam, dbTimeline, dbWhyPoints, settings] = await Promise.all([
+  const [dbTeam, dbTimeline, dbWhyPoints, settings, stats] = await Promise.all([
     prisma.teamMember.findMany({ where: { published: true }, orderBy: { order: "asc" } }),
     prisma.aboutTimeline.findMany({ orderBy: { order: "asc" } }),
     prisma.whyPoint.findMany({ where: { published: true }, orderBy: { order: "asc" } }),
     prisma.siteSettings.findMany({ where: { key: { in: ["about_story_fr", "about_story_en"] } } }),
+    getSiteStats(),
   ]);
 
   const settingsMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
@@ -113,9 +115,9 @@ export default async function AboutPage({ params }: Props) {
               </div>
               <div className="mt-8 grid grid-cols-3 gap-6">
                 {[
-                  { value: "150+", label: isEn ? "Projects" : "Projets" },
-                  { value: "80+", label: isEn ? "Clients" : "Clients" },
-                  { value: "98%", label: isEn ? "Satisfaction" : "Satisfaction" },
+                  { value: stats.projects, label: isEn ? "Projects" : "Projets" },
+                  { value: stats.clients, label: isEn ? "Clients" : "Clients" },
+                  { value: stats.satisfaction, label: isEn ? "Satisfaction" : "Satisfaction" },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center p-4 bg-neutral-light rounded-2xl">
                     <div className="text-3xl font-extrabold text-sky mb-1">{stat.value}</div>
@@ -129,10 +131,10 @@ export default async function AboutPage({ params }: Props) {
                 <div className="bg-navy rounded-3xl p-8">
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { icon: Users, label: isEn ? "Expert team" : "Équipe d'experts", value: "20+" },
-                      { icon: Globe, label: isEn ? "Countries" : "Pays", value: "3" },
-                      { icon: Star, label: isEn ? "Client rating" : "Note clients", value: "4.9/5" },
-                      { icon: Clock, label: isEn ? "Response time" : "Délai réponse", value: "< 24h" },
+                      { icon: Users, label: isEn ? "Expert team" : "Équipe d'experts", value: stats.team },
+                      { icon: Globe, label: isEn ? "Countries" : "Pays", value: stats.countries },
+                      { icon: Star, label: isEn ? "Client rating" : "Note clients", value: stats.rating },
+                      { icon: Clock, label: isEn ? "Response time" : "Délai réponse", value: stats.response },
                     ].map((item) => (
                       <div key={item.label} className="bg-white/5 rounded-2xl p-5 text-center border border-white/10">
                         <item.icon size={28} className="text-sky mx-auto mb-2" />

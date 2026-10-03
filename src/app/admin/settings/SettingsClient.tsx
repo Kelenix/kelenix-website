@@ -41,22 +41,17 @@ const sections: Section[] = [
     ],
   },
   {
-    title: "Statistiques — bandeau d'accueil (haut de page)",
+    title: "Statistiques du site (source unique — hero, à propos, témoignages, portfolio)",
     fields: [
-      { key: "hero_stat1_value", label: "Projets livrés (ex: 150+)", defaultValue: "150+" },
-      { key: "hero_stat2_value", label: "Clients satisfaits (ex: 80+)", defaultValue: "80+" },
-      { key: "hero_stat3_value", label: "Années d'expérience (ex: 5+)", defaultValue: "5+" },
-      { key: "hero_stat4_value", label: "Technologies maîtrisées (ex: 15+)", defaultValue: "15+" },
-    ],
-  },
-  {
-    title: "Statistiques — section « Nos Chiffres »",
-    fields: [
-      { key: "home_stat1_value", label: "Projets livrés (ex: 150+)", defaultValue: "150+" },
-      { key: "home_stat2_value", label: "Clients satisfaits (ex: 80+)", defaultValue: "80+" },
-      { key: "home_stat3_value", label: "Années d'expérience (ex: 5+)", defaultValue: "5+" },
-      { key: "home_stat4_value", label: "Technologies maîtrisées (ex: 15+)", defaultValue: "15+" },
-      { key: "home_stat5_value", label: "Taux de satisfaction (ex: 97%)", defaultValue: "97%" },
+      { key: "stat_projects", label: "Projets livrés (ex: 150+)", defaultValue: "150+" },
+      { key: "stat_clients", label: "Clients satisfaits (ex: 80+)", defaultValue: "80+" },
+      { key: "stat_years", label: "Années d'expérience (ex: 7+)", defaultValue: "7+" },
+      { key: "stat_technologies", label: "Technologies maîtrisées (ex: 15+)", defaultValue: "15+" },
+      { key: "stat_satisfaction", label: "Taux de satisfaction (ex: 98%)", defaultValue: "98%" },
+      { key: "stat_team", label: "Équipe d'experts (ex: 20+)", defaultValue: "20+" },
+      { key: "stat_countries", label: "Pays couverts (ex: 3)", defaultValue: "3" },
+      { key: "stat_rating", label: "Note clients (ex: 4.9/5)", defaultValue: "4.9/5" },
+      { key: "stat_response", label: "Délai de réponse (ex: < 24h)", defaultValue: "< 24h" },
     ],
   },
 ];

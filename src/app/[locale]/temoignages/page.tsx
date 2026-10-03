@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { getSiteStats } from "@/lib/site-stats";
 import type { Metadata } from "next";
 import { Star, Quote, Users, ThumbsUp, Award, TrendingUp } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -38,10 +39,13 @@ export default async function TestimonialsPage({ params }: Props) {
   const t = await getTranslations("testimonials");
   const isEn = locale === "en";
 
-  const testimonials = await prisma.testimonial.findMany({
-    where: { published: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [testimonials, siteStats] = await Promise.all([
+    prisma.testimonial.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    getSiteStats(),
+  ]);
 
   const avgRating =
     testimonials.length > 0
@@ -51,8 +55,8 @@ export default async function TestimonialsPage({ params }: Props) {
   const stats = [
     { icon: Users, value: `${testimonials.length}+`, label: isEn ? "Client testimonials" : "Témoignages clients" },
     { icon: Star, value: `${avgRating}/5`, label: isEn ? "Average rating" : "Note moyenne" },
-    { icon: ThumbsUp, value: "98%", label: isEn ? "Satisfaction rate" : "Taux de satisfaction" },
-    { icon: Award, value: "150+", label: isEn ? "Projects completed" : "Projets réalisés" },
+    { icon: ThumbsUp, value: siteStats.satisfaction, label: isEn ? "Satisfaction rate" : "Taux de satisfaction" },
+    { icon: Award, value: siteStats.projects, label: isEn ? "Projects completed" : "Projets réalisés" },
   ];
 
   return (

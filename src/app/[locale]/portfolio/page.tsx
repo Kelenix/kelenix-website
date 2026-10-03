@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { getSiteStats } from "@/lib/site-stats";
 import type { Metadata } from "next";
 import PortfolioGrid from "./PortfolioGrid";
 
@@ -22,18 +23,21 @@ export default async function PortfolioPage({ params }: Props) {
   const t = await getTranslations("portfolio");
   const isEn = locale === "en";
 
-  const projects = await prisma.project.findMany({
-    where: { published: true },
-    orderBy: { createdAt: "desc" },
-    select: {
-      slug: true,
-      titleFr: true,
-      titleEn: true,
-      category: true,
-      coverImage: true,
-      client: true,
-    },
-  });
+  const [projects, stats] = await Promise.all([
+    prisma.project.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      select: {
+        slug: true,
+        titleFr: true,
+        titleEn: true,
+        category: true,
+        coverImage: true,
+        client: true,
+      },
+    }),
+    getSiteStats(),
+  ]);
 
   return (
     <main>
@@ -61,7 +65,7 @@ export default async function PortfolioPage({ params }: Props) {
               <div className="text-sm text-gray-400">{isEn ? "Categories" : "Catégories"}</div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-gold">98%</div>
+              <div className="text-3xl font-extrabold text-gold">{stats.satisfaction}</div>
               <div className="text-sm text-gray-400">{isEn ? "Satisfaction" : "Satisfaction"}</div>
             </div>
           </div>
