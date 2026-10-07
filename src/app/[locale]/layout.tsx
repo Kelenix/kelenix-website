@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import CookieBanner from "@/components/layout/CookieBanner";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import MotionRoot from "@/components/motion/MotionRoot";
 import "@/app/globals.css";
 
 type Props = {
@@ -108,14 +109,24 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   return (
-    <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
+        {/* Avant le premier affichage : masque les éléments à révéler (classe `anim`), sauf si
+            « réduire les animations » est activé. Filet de sécurité : si le JS d'animation
+            n'a pas démarré après 4 s, tout redevient visible. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var r=document.documentElement;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;r.classList.add('anim');setTimeout(function(){if(!r.dataset.motion)r.classList.remove('anim')},4000)})()",
+          }}
+        />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-body antialiased bg-white text-gray-900">
         <NextIntlClientProvider messages={messages} locale={locale}>
+          <MotionRoot />
           <Header />
           <main className="min-h-screen pt-16">
             {children}

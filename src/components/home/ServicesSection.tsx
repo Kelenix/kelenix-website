@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -7,6 +8,7 @@ import {
   Layers, Cpu, Wrench, Database, Cloud, ShieldCheck, ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useReveal } from "@/lib/gsap";
 
 const iconMap: Record<string, React.ElementType> = {
   Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap,
@@ -36,24 +38,26 @@ type HomeService = {
 export default function ServicesSection({ services, locale }: { services: HomeService[]; locale: string }) {
   const t = useTranslations("services");
   const isEn = locale === "en";
+  const root = useRef<HTMLElement>(null);
+  useReveal(root);
 
   if (services.length === 0) return null;
 
   return (
-    <section className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
+    <section ref={root} className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
       <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-sky/10 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
       <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
             {t("badge")}
           </span>
-          <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
+          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
             {t("title")}{" "}
             <span className="text-sky">{t("titleHighlight")}</span>
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
+          <p data-reveal className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
         </div>
 
         {/* Services Grid */}
@@ -63,10 +67,10 @@ export default function ServicesSection({ services, locale }: { services: HomeSe
             const c = colorPalette[i % colorPalette.length];
 
             return (
+              <div key={service.slug} data-reveal="scale" className="flex">
               <Link
-                key={service.slug}
                 href={{ pathname: "/services/[slug]", params: { slug: service.slug } }}
-                className="group relative glass-light glass-hover rounded-3xl p-6 overflow-hidden flex flex-col"
+                className="group relative glass-light glass-hover rounded-3xl p-6 overflow-hidden flex flex-col w-full"
               >
                 {/* Halo au survol */}
                 <div className={cn("absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500", c.glow)} />
@@ -88,12 +92,13 @@ export default function ServicesSection({ services, locale }: { services: HomeSe
                   <ArrowRight size={14} className="ml-1 group-hover:translate-x-1.5 transition-transform" />
                 </div>
               </Link>
+              </div>
             );
           })}
         </div>
 
         {/* View All */}
-        <div className="text-center">
+        <div data-reveal className="text-center">
           <Link
             href="/services"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200 shadow-lg shadow-navy/20"

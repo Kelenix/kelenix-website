@@ -1,10 +1,12 @@
 "use client";
 
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { useReveal } from "@/lib/gsap";
 
 type Post = {
   slug: string;
@@ -20,28 +22,30 @@ type Post = {
 
 export default function BlogSection({ posts, locale }: { posts: Post[]; locale: string }) {
   const t = useTranslations("blog");
+  const root = useRef<HTMLElement>(null);
+  useReveal(root);
 
   if (!posts.length) return null;
 
   return (
-    <section className="py-24 bg-neutral-light">
+    <section ref={root} className="py-24 bg-neutral-light">
       <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
         <div className="text-center mb-16">
-          <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
             {t("badge")}
           </span>
-          <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
+          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
             {t("title")} <span className="text-sky">{t("titleHighlight")}</span>
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
+          <p data-reveal className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {posts.slice(0, 3).map((post) => (
+            <div key={post.slug} data-reveal className="flex">
             <Link
-              key={post.slug}
               href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}
-              className="group bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+              className="group w-full bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100"
             >
               {/* Cover Image */}
               <div className="relative h-48 overflow-hidden">
@@ -88,10 +92,11 @@ export default function BlogSection({ posts, locale }: { posts: Post[]; locale: 
                 </div>
               </div>
             </Link>
+            </div>
           ))}
         </div>
 
-        <div className="text-center">
+        <div data-reveal className="text-center">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200"

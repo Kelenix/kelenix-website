@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, motion } from "framer-motion";
 import { X, Copy, Check, Sparkles, ArrowRight } from "lucide-react";
 import { promo, STORE_URL } from "@/data/chariow";
+import { gsap, useGSAP, MOTION } from "@/lib/gsap";
 
 const STORAGE_KEY = "kelenix_promo_dismissed";
 
@@ -12,6 +12,21 @@ export default function PromoPopup() {
   const t = useTranslations("promo");
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const card = useRef<HTMLDivElement>(null);
+
+  // Ouverture : le fond apparaît en fondu, la carte arrive avec un léger rebond.
+  useGSAP(
+    () => {
+      if (!open) return;
+      const mm = gsap.matchMedia();
+      mm.add(MOTION, () => {
+        gsap.from(root.current, { opacity: 0, duration: 0.3, ease: "power2.out" });
+        gsap.from(card.current, { opacity: 0, scale: 0.9, y: 20, duration: 0.5, ease: "back.out(1.6)" });
+      });
+    },
+    { dependencies: [open] }
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -20,11 +35,14 @@ export default function PromoPopup() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Fermeture : on joue la sortie, puis on démonte.
   const close = () => {
-    setOpen(false);
     try {
       localStorage.setItem(STORAGE_KEY, "1");
     } catch {}
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setOpen(false);
+    gsap.to(card.current, { scale: 0.92, y: 16, duration: 0.25, ease: "power2.in" });
+    gsap.to(root.current, { opacity: 0, duration: 0.25, ease: "power2.in", onComplete: () => setOpen(false) });
   };
 
   const copyCode = async () => {
@@ -35,15 +53,10 @@ export default function PromoPopup() {
     } catch {}
   };
 
+  if (!open) return null;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+        <div ref={root} className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           {/* Fond */}
           <div
             className="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm"
@@ -51,13 +64,7 @@ export default function PromoPopup() {
           />
 
           {/* Carte */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="glass glass-shine relative z-10 w-full max-w-md rounded-3xl p-8 text-center overflow-hidden"
-          >
+          <div ref={card} className="glass relative z-10 w-full max-w-md rounded-3xl p-8 text-center overflow-hidden">
             {/* Halo */}
             <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-sky/30 blur-3xl pointer-events-none" />
 
@@ -119,9 +126,7 @@ export default function PromoPopup() {
                 {t("dismiss")}
               </button>
             </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </div>
+        </div>
   );
 }

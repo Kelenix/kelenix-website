@@ -83,6 +83,11 @@
 html {
   scroll-behavior: smooth;
 }
+/* Quand Lenis gère le défilement fluide, celui du navigateur doit rester instantané,
+   sinon les deux se superposent et ScrollTrigger calcule de mauvaises positions. */
+html.lenis {
+  scroll-behavior: auto !important;
+}
 
 body {
   font-family: var(--font-body);
@@ -146,6 +151,14 @@ h1, h2, h3, h4, h5, h6 {
 .animate-slide-up { animation: slideUp 0.6s ease-out both; }
 .animate-slide-down { animation: slideDown 0.3s ease-out both; }
 .animate-float    { animation: float   3s ease-in-out infinite; }
+
+/* Éléments animés par GSAP : masqués avant le premier affichage tant que la classe `anim`
+   est sur <html> (posée par le script du layout, retirée si « réduire les animations »). */
+.anim [data-reveal],
+.anim [data-split],
+.anim [data-hero] {
+  opacity: 0;
+}
 
 .reveal {
   opacity: 0;

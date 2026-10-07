@@ -1,29 +1,28 @@
 "use client";
 
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
 import { ArrowUpRight, Star } from "lucide-react";
 import { productUrl, type Product } from "@/data/chariow";
+import { useReveal } from "@/lib/gsap";
 
 export default function ProductGrid({ products }: { products: Product[] }) {
   const t = useTranslations("shop");
+  const root = useRef<HTMLDivElement>(null);
+  useReveal(root);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((p, i) => {
+    <div ref={root} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {products.map((p) => {
         const hasSale = p.sale < p.price;
         const off = Math.round(((p.price - p.sale) / p.price) * 100);
         return (
-          <motion.a
-            key={p.slug}
+          <div key={p.slug} data-reveal className="flex">
+          <a
             href={productUrl(p.slug)}
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5, delay: (i % 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
-            className="group glass-light glass-hover rounded-2xl overflow-hidden flex flex-col"
+            className="group glass-light glass-hover rounded-2xl overflow-hidden flex flex-col w-full"
           >
             {/* Visuel */}
             <div className="relative h-44 overflow-hidden bg-navy/5">
@@ -68,7 +67,8 @@ export default function ProductGrid({ products }: { products: Product[] }) {
                 </span>
               </div>
             </div>
-          </motion.a>
+          </a>
+          </div>
         );
       })}
     </div>

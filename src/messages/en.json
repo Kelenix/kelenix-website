@@ -28,7 +28,55 @@
     "stat3Value": "5+",
     "stat3Label": "Years of experience",
     "stat4Value": "15+",
-    "stat4Label": "Technologies mastered"
+    "stat4Label": "Technologies mastered",
+    "lab": {
+      "aria": "Animated demo: a client project goes through the five Kelenix steps, from quote to launch.",
+      "url": "your-project.com",
+      "draft": "In progress",
+      "live": "Live",
+      "toast": "Launch successful",
+      "steps": [
+        "Quote",
+        "Design",
+        "Code",
+        "Tests",
+        "Delivery"
+      ],
+      "cmds": [
+        "kelenix new your-project",
+        "kelenix design",
+        "kelenix build",
+        "kelenix test",
+        "kelenix deploy"
+      ],
+      "outs": [
+        "Needs scoped, quote approved",
+        "Mockups approved",
+        "Features developed",
+        "All tests passing",
+        "Your project is live"
+      ]
+    }
+  },
+  "pain": {
+    "badge": "Sound familiar?",
+    "title": "Three situations holding",
+    "titleHighlight": "your business back",
+    "items": [
+      {
+        "title": "A website that brings in nothing",
+        "text": "It has been online for months, yet no customer ever contacts you through it."
+      },
+      {
+        "title": "A contractor who stops answering",
+        "text": "Missed deadlines, unanswered messages, and a project delivered half-finished."
+      },
+      {
+        "title": "Tools that don't talk to each other",
+        "text": "Excel on one side, WhatsApp on the other: hours lost every day re-entering everything."
+      }
+    ],
+    "outro": "A digital project should not be a source of stress. With a clear process and a single point of contact, it becomes a growth engine."
   },
   "trust": {
     "title": "They trust us",
@@ -332,7 +380,8 @@
       "process": "Process",
       "delays": "Timelines",
       "support": "Support"
-    }
+    },
+    "viewAll": "See all questions"
   },
   "careers": {
     "badge": "Careers",

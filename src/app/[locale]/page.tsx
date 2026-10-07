@@ -10,6 +10,8 @@ import PortfolioSection from "@/components/home/PortfolioSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import BlogSection from "@/components/home/BlogSection";
 import CtaSection from "@/components/home/CtaSection";
+import PainSection from "@/components/home/PainSection";
+import FaqSection from "@/components/home/FaqSection";
 import { prisma } from "@/lib/prisma";
 import { getSiteStats } from "@/lib/site-stats";
 
@@ -33,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
 
-  const [projects, testimonials, blogPosts, stats, homeServices] = await Promise.all([
+  const [projects, testimonials, blogPosts, stats, homeServices, faqs] = await Promise.all([
     prisma.project.findMany({
       where: { published: true, featured: true },
       orderBy: { createdAt: "desc" },
@@ -73,7 +75,14 @@ export default async function HomePage({ params }: Props) {
       orderBy: { order: "asc" },
       select: { slug: true, titleFr: true, titleEn: true, shortDescFr: true, shortDescEn: true, icon: true },
     }).catch(() => []),
+    prisma.faq.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      take: 5,
+      select: { questionFr: true, questionEn: true, answerFr: true, answerEn: true },
+    }).catch(() => []),
   ]);
+  const faqItems = faqs.map((f) => (locale === "en" ? { q: f.questionEn, a: f.answerEn } : { q: f.questionFr, a: f.answerFr }));
 
   const heroStatValues = [stats.projects, stats.clients, stats.years, stats.technologies];
   const homeStatValues = [stats.projects, stats.clients, stats.years, stats.technologies, stats.satisfaction];
@@ -81,6 +90,7 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <HeroSection statValues={heroStatValues} />
+      <PainSection />
       <ServicesSection services={homeServices} locale={locale} />
       <ProcessSection />
       <WhyUsSection />
@@ -88,6 +98,7 @@ export default async function HomePage({ params }: Props) {
       <PortfolioSection projects={projects} locale={locale} />
       <TestimonialsSection testimonials={testimonials} locale={locale} />
       <BlogSection posts={blogPosts} locale={locale} />
+      <FaqSection items={faqItems} />
       <CtaSection />
 
       {/* Intégrations Chariow */}

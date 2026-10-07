@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import Logo from "@/components/ui/Logo";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { gsap, ScrollTrigger, useMotion } from "@/lib/gsap";
 
 export default function Header() {
   const t = useTranslations("nav");
@@ -17,6 +18,31 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const menuOpen = useRef(false);
+
+  useEffect(() => {
+    menuOpen.current = mobileOpen || langOpen;
+  }, [mobileOpen, langOpen]);
+
+  // L'en-tête se range quand on descend et revient dès qu'on remonte
+  // (jamais quand un menu est ouvert ou qu'un de ses liens a le focus clavier).
+  useMotion(headerRef, () => {
+    const el = headerRef.current;
+    if (!el) return;
+    let hidden = false;
+    const toggle = (hide: boolean) => {
+      if (hide === hidden) return;
+      hidden = hide;
+      gsap.to(el, { yPercent: hide ? -100 : 0, duration: 0.45, ease: "power3.out", overwrite: true });
+    };
+    ScrollTrigger.create({
+      start: 140,
+      end: "max",
+      onUpdate: (self) => toggle(self.direction === 1 && !menuOpen.current && !el.contains(document.activeElement)),
+      onLeaveBack: () => toggle(false),
+    });
+  });
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);
@@ -48,8 +74,9 @@ export default function Header() {
 
   return (
     <header
+      ref={headerRef}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow,padding] duration-300",
         isScrolled
           ? "bg-navy shadow-lg py-3"
           : "bg-navy/95 backdrop-blur-sm py-4"

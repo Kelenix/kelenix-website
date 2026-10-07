@@ -28,7 +28,55 @@
     "stat3Value": "5+",
     "stat3Label": "Années d'expérience",
     "stat4Value": "15+",
-    "stat4Label": "Technologies maîtrisées"
+    "stat4Label": "Technologies maîtrisées",
+    "lab": {
+      "aria": "Démonstration animée : un projet client passe par les cinq étapes Kelenix, du devis à la mise en ligne.",
+      "url": "votre-projet.com",
+      "draft": "En chantier",
+      "live": "En ligne",
+      "toast": "Mise en ligne réussie",
+      "steps": [
+        "Devis",
+        "Design",
+        "Code",
+        "Tests",
+        "Livraison"
+      ],
+      "cmds": [
+        "kelenix new votre-projet",
+        "kelenix design",
+        "kelenix build",
+        "kelenix test",
+        "kelenix deploy"
+      ],
+      "outs": [
+        "Besoin cadré, devis validé",
+        "Maquettes approuvées",
+        "Fonctionnalités développées",
+        "Tous les tests passent",
+        "Votre projet est en ligne"
+      ]
+    }
+  },
+  "pain": {
+    "badge": "Vous connaissez ça ?",
+    "title": "Trois situations qui freinent",
+    "titleHighlight": "votre entreprise",
+    "items": [
+      {
+        "title": "Un site qui ne rapporte rien",
+        "text": "Il est en ligne depuis des mois, mais aucun client ne vous contacte grâce à lui."
+      },
+      {
+        "title": "Un prestataire qui ne répond plus",
+        "text": "Délais dépassés, messages sans réponse, et un projet livré à moitié."
+      },
+      {
+        "title": "Des outils qui ne se parlent pas",
+        "text": "Excel d'un côté, WhatsApp de l'autre : chaque jour, des heures perdues à tout ressaisir."
+      }
+    ],
+    "outro": "Un projet numérique ne devrait pas être une source de stress. Avec un processus clair et un seul interlocuteur, il devient un moteur de croissance."
   },
   "trust": {
     "title": "Ils nous font confiance",
@@ -332,7 +380,8 @@
       "process": "Process",
       "delays": "Délais",
       "support": "Support"
-    }
+    },
+    "viewAll": "Voir toutes les questions"
   },
   "careers": {
     "badge": "Carrières",

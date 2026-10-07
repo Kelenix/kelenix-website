@@ -1,54 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingBag, ThumbsUp, X, BadgeCheck } from "lucide-react";
 import { proofItems } from "@/data/chariow";
+import { gsap, useGSAP, EASE } from "@/lib/gsap";
 
 export default function ProofNotifications() {
   const t = useTranslations("proof");
   const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(false);
   const [closed, setClosed] = useState(false);
+  const card = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (closed || proofItems.length === 0) return;
-    // Première apparition
-    const first = setTimeout(() => setVisible(true), 4000);
-    return () => clearTimeout(first);
-  }, [closed]);
+  // Cycle : première apparition après 4 s, affiché ~5 s, caché ~1 s, puis notification suivante.
+  useGSAP(
+    () => {
+      if (closed || proofItems.length === 0) return;
+      const slide = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : -30;
+      gsap
+        .timeline({ repeat: -1, delay: 4 })
+        .fromTo(card.current, { autoAlpha: 0, x: slide, y: slide ? 10 : 0 }, { autoAlpha: 1, x: 0, y: 0, duration: 0.45, ease: EASE })
+        .to(card.current, { autoAlpha: 0, x: slide, duration: 0.4, ease: "power3.in" }, "+=4.8")
+        .call(() => setIndex((i) => (i + 1) % proofItems.length))
+        .to({}, { duration: 0.8 });
+    },
+    { dependencies: [closed] }
+  );
 
-  useEffect(() => {
-    if (closed || !visible) return;
-    // Cycle : affiché ~5s, caché ~1.2s, puis suivant
-    const hide = setTimeout(() => setVisible(false), 5200);
-    const next = setTimeout(() => {
-      setIndex((i) => (i + 1) % proofItems.length);
-      setVisible(true);
-    }, 6400);
-    return () => {
-      clearTimeout(hide);
-      clearTimeout(next);
-    };
-  }, [visible, index, closed]);
-
-  if (closed) return null;
+  if (closed || proofItems.length === 0) return null;
 
   const item = proofItems[index];
 
   return (
     <div className="fixed bottom-4 left-4 z-[90] max-w-[330px] pointer-events-none">
-      <AnimatePresence mode="wait">
-        {visible && (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, x: -30, y: 10 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="glass-light rounded-2xl p-3.5 pr-9 shadow-xl relative pointer-events-auto"
-          >
+          <div ref={card} className="glass-light rounded-2xl p-3.5 pr-9 shadow-xl relative pointer-events-auto" style={{ visibility: "hidden" }}>
             <button
               onClick={() => setClosed(true)}
               className="absolute top-2 right-2 text-gray-400 hover:text-navy transition-colors"
@@ -95,9 +80,7 @@ export default function ProofNotifications() {
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
     </div>
   );
 }

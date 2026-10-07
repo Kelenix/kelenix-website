@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { scrollToY } from "@/lib/smooth-scroll";
 
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
@@ -13,7 +14,7 @@ export default function ScrollToTop() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollTop = () => scrollToY(0);
 
   return (
     <button
