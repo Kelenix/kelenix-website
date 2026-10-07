@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Sparkles, ChevronDown, Lock, Check, FileText, PenTool, Code2, ShieldCheck, Rocket } from "lucide-react";
 import Magnetic from "@/components/motion/Magnetic";
+import Aurora from "@/components/motion/Aurora";
 import { gsap, SplitText, useMotion, playInView, countUp, EASE, POINTER } from "@/lib/gsap";
 import { scrollToY } from "@/lib/smooth-scroll";
 
@@ -207,13 +208,6 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
     const section = root.current;
     const one = (selector: string) => q(selector)[0];
 
-    /* ---- Fond : deux halos qui dérivent lentement ---- */
-    const aurora = gsap
-      .timeline({ repeat: -1, yoyo: true, defaults: { ease: "sine.inOut" } })
-      .to(one("[data-aurora='a']"), { xPercent: 30, yPercent: 22, scale: 1.25, duration: 18 }, 0)
-      .to(one("[data-aurora='b']"), { xPercent: -28, yPercent: -18, scale: 0.9, duration: 18 }, 0);
-    playInView(aurora, section);
-
     /* ---- Entrée : étiquette, titre lettre par lettre, texte, boutons, chiffres, démo ---- */
     const title = one("[data-hero-title]");
     const split = SplitText.create(title, { type: "words,chars" });
@@ -390,19 +384,7 @@ export default function HeroSection({ statValues }: { statValues?: string[] }) {
 
   return (
     <section ref={root} className="relative min-h-[calc(100svh-4rem)] bg-gradient-hero flex items-center overflow-hidden">
-      {/* Halos de fond */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          data-aurora="a"
-          className="absolute -top-[12%] -left-[8%] w-[46vw] h-[46vw] rounded-full blur-[70px] opacity-55"
-          style={{ background: "radial-gradient(circle at center, rgba(47,168,255,0.55), transparent 70%)" }}
-        />
-        <div
-          data-aurora="b"
-          className="absolute -bottom-[14%] -right-[6%] w-[40vw] h-[40vw] rounded-full blur-[70px] opacity-55"
-          style={{ background: "radial-gradient(circle at center, rgba(255,193,7,0.30), transparent 70%)" }}
-        />
-      </div>
+      <Aurora />
       <div className="grid-floor opacity-60" />
       <div
         data-hero-glow

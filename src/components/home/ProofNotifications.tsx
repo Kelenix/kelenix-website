@@ -32,7 +32,7 @@ export default function ProofNotifications() {
   const item = proofItems[index];
 
   return (
-    <div className="fixed bottom-4 left-4 z-[90] max-w-[330px] pointer-events-none">
+    <div className="fixed bottom-[calc(1rem+var(--quote-bar,0px))] left-4 z-[90] max-w-[330px] pointer-events-none">
           <div ref={card} className="glass-light rounded-2xl p-3.5 pr-9 shadow-xl relative pointer-events-auto" style={{ visibility: "hidden" }}>
             <button
               onClick={() => setClosed(true)}

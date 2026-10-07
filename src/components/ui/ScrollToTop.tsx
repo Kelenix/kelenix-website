@@ -21,7 +21,7 @@ export default function ScrollToTop() {
       onClick={scrollTop}
       aria-label="Retour en haut"
       className={cn(
-        "fixed bottom-24 right-6 z-40 w-10 h-10 rounded-full",
+        "fixed bottom-[calc(6rem+var(--quote-bar,0px))] right-6 z-40 w-10 h-10 rounded-full",
         "bg-navy/80 backdrop-blur border border-white/20 text-white",
         "flex items-center justify-center shadow-lg",
         "hover:bg-sky hover:border-sky transition-all duration-300",

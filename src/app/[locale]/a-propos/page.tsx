@@ -80,7 +80,7 @@ export default async function AboutPage({ params }: Props) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.12)_0%,transparent_60%)]" />
         <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl text-center">
           <span className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 rounded-full bg-sky animate-pulse" />
+            <span data-loop="pulse" className="w-2 h-2 rounded-full bg-sky" />
             <span className="text-sky text-sm font-medium">{t("badge")}</span>
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6">
@@ -221,7 +221,7 @@ export default async function AboutPage({ params }: Props) {
                     </div>
                   </div>
                   <div className="relative z-10 flex flex-col items-center shrink-0">
-                    <span className="absolute w-14 h-14 rounded-full bg-sky/25 animate-ping opacity-40 hidden md:block" />
+                    <span data-loop="ping" className="absolute w-14 h-14 rounded-full bg-sky/25 opacity-40 hidden md:block" />
                     <div className="relative w-14 h-14 bg-linear-to-br from-sky to-navy rounded-full flex items-center justify-center text-white font-extrabold text-base shadow-lg shadow-sky/30 border-4 border-white">
                       {item.year.slice(-2)}
                     </div>

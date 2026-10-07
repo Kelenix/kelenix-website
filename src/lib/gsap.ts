@@ -67,38 +67,36 @@ const REVEAL_FROM: Record<string, gsap.TweenVars> = {
 // Apparitions au défilement, pilotées par des attributs dans le JSX :
 //   data-reveal ("up" par défaut, "left", "right", "scale") : l'élément arrive en fondu ;
 //   data-split : le titre arrive mot par mot (data-nosplit garde un groupe de mots entier).
-// À poser sur un wrapper, jamais sur un élément qui a une transition CSS sur transform/opacity.
-export function useReveal(scope: Scope, dependencies: unknown[] = []) {
-  useMotion(
-    scope,
-    (q) => {
-      const items = q("[data-reveal]");
-      items.forEach((el) => gsap.set(el, { opacity: 0, ...(REVEAL_FROM[el.dataset.reveal || "up"] ?? REVEAL_FROM.up) }));
-      ScrollTrigger.batch(items, {
-        start: "top 88%",
-        once: true,
-        onEnter: (els) =>
-          gsap.to(els, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.8, ease: EASE, stagger: 0.09, overwrite: true, clearProps: "transform" }),
-      });
+// Les transitions CSS de l'élément sont coupées le temps de l'apparition pour ne pas la ralentir.
+export function setupReveals(q: Query) {
+  const items = q("[data-reveal]");
+  items.forEach((el) => gsap.set(el, { opacity: 0, transition: "none", ...(REVEAL_FROM[el.dataset.reveal || "up"] ?? REVEAL_FROM.up) }));
+  ScrollTrigger.batch(items, {
+    start: "top 88%",
+    once: true,
+    onEnter: (els) =>
+      gsap.to(els, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.8, ease: EASE, stagger: 0.09, overwrite: true, clearProps: "transform,transition" }),
+  });
 
-      q("[data-split]").forEach((el) => {
-        const split = SplitText.create(el, { type: "words", ignore: "[data-nosplit]" });
-        const parts = [...(split.words as HTMLElement[]), ...Array.from(el.querySelectorAll<HTMLElement>("[data-nosplit]"))];
-        gsap.set(parts, { display: "inline-block" });
-        gsap.set(el, { opacity: 1 });
-        gsap.from(parts, {
-          yPercent: 70,
-          opacity: 0,
-          rotation: 4,
-          duration: 0.7,
-          ease: "back.out(1.6)",
-          stagger: 0.05,
-          scrollTrigger: { trigger: el, start: "top 88%", once: true },
-        });
-      });
-    },
-    dependencies
-  );
+  q("[data-split]").forEach((el) => {
+    const split = SplitText.create(el, { type: "words", ignore: "[data-nosplit]" });
+    const parts = [...(split.words as HTMLElement[]), ...Array.from(el.querySelectorAll<HTMLElement>("[data-nosplit]"))];
+    gsap.set(parts, { display: "inline-block" });
+    gsap.set(el, { opacity: 1 });
+    gsap.from(parts, {
+      yPercent: 70,
+      opacity: 0,
+      rotation: 4,
+      duration: 0.7,
+      ease: "back.out(1.6)",
+      stagger: 0.05,
+      scrollTrigger: { trigger: el, start: "top 88%", once: true },
+    });
+  });
+}
+
+export function useReveal(scope: Scope, dependencies: unknown[] = []) {
+  useMotion(scope, setupReveals, dependencies);
 }
 
 export { gsap, ScrollTrigger, SplitText, useGSAP };

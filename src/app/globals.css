@@ -152,12 +152,25 @@ h1, h2, h3, h4, h5, h6 {
 .animate-slide-down { animation: slideDown 0.3s ease-out both; }
 .animate-float    { animation: float   3s ease-in-out infinite; }
 
-/* Éléments animés par GSAP : masqués avant le premier affichage tant que la classe `anim`
-   est sur <html> (posée par le script du layout, retirée si « réduire les animations »). */
-.anim [data-reveal],
-.anim [data-split],
-.anim [data-hero] {
-  opacity: 0;
+/* Éléments animés par GSAP : masqués dès le premier affichage, sauf avec « réduire les animations »
+   (même media query que MOTION dans src/lib/gsap.ts). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal],
+  [data-split],
+  [data-hero],
+  /* Pages sans attributs explicites : mêmes sélecteurs que dans AutoReveal.tsx. */
+  [data-auto-reveal]:not([data-ready]) :is(h1, h2, h1 + p, h2 + p, .grid > *, form) {
+    opacity: 0;
+  }
+  /* Filet de sécurité : tant que MotionRoot n'a pas posé data-motion sur <html> (JS bloqué
+     ou très lent), tout redevient visible après 4 s. */
+  html:not([data-motion]) :is([data-reveal], [data-split], [data-hero]),
+  html:not([data-motion]) [data-auto-reveal] :is(h1, h2, h1 + p, h2 + p, .grid > *, form) {
+    animation: motion-failsafe 0s linear 4s forwards;
+  }
+}
+@keyframes motion-failsafe {
+  to { opacity: 1; }
 }
 
 .reveal {

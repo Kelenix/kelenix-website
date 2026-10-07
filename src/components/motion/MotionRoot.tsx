@@ -8,7 +8,7 @@ import { gsap, ScrollTrigger, useGSAP, MOTION } from "@/lib/gsap";
 import { setLenis } from "@/lib/smooth-scroll";
 
 // Socle d'animation du site public : défilement fluide (Lenis) synchronisé avec ScrollTrigger,
-// barre de progression de lecture, et classe `anim` sur <html> qui masque les éléments à révéler.
+// barre de progression de lecture, et attribut data-motion sur <html> (voir globals.css).
 export default function MotionRoot() {
   const bar = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -17,7 +17,6 @@ export default function MotionRoot() {
     const mm = gsap.matchMedia();
     mm.add(MOTION, () => {
       const root = document.documentElement;
-      root.classList.add("anim");
       root.dataset.motion = "on";
 
       const lenis = new Lenis({ anchors: true, stopInertiaOnNavigate: true });
@@ -33,20 +32,41 @@ export default function MotionRoot() {
         gsap.ticker.remove(raf);
         lenis.destroy();
         setLenis(null);
-        root.classList.remove("anim");
         delete root.dataset.motion;
       };
     });
   });
 
-  // Nouvelle page ou polices chargées : les hauteurs ont changé, on recalcule les déclencheurs.
-  useEffect(() => {
-    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
-    return () => cancelAnimationFrame(id);
-  }, [pathname]);
+  // Petites boucles d'attention posées dans le JSX : data-loop="pulse" (point qui respire)
+  // et data-loop="ping" (onde qui s'étend). Rescannées à chaque changement de page.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(MOTION, () => {
+        gsap.utils.toArray<HTMLElement>("[data-loop='pulse']").forEach((el) => {
+          gsap.to(el, { opacity: 0.35, duration: 0.9, ease: "sine.inOut", repeat: -1, yoyo: true });
+        });
+        gsap.utils.toArray<HTMLElement>("[data-loop='ping']").forEach((el) => {
+          gsap.fromTo(el, { scale: 1, opacity: 0.35 }, { scale: 1.9, opacity: 0, duration: 1.4, ease: "power2.out", repeat: -1 });
+        });
+      });
+    },
+    { dependencies: [pathname], revertOnUpdate: true }
+  );
 
+  // Nouvelle page, polices ou images chargées, liste filtrée, accordéon ouvert : dès que la hauteur
+  // de la page change, on recalcule les positions des déclencheurs.
   useEffect(() => {
-    document.fonts?.ready.then(() => ScrollTrigger.refresh());
+    let timer: ReturnType<typeof setTimeout>;
+    const observer = new ResizeObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+    observer.observe(document.body);
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   return (

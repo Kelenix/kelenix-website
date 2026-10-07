@@ -65,7 +65,7 @@ export default async function TestimonialsPage({ params }: Props) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.12)_0%,transparent_60%)]" />
         <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl text-center">
           <span className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 rounded-full bg-sky animate-pulse" />
+            <span data-loop="pulse" className="w-2 h-2 rounded-full bg-sky" />
             <span className="text-sky text-sm font-medium">{t("badge")}</span>
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6">

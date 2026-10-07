@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Cookie, X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { gsap, useGSAP, MOTION, EASE } from "@/lib/gsap";
 
 type ConsentState = {
   essential: boolean;
@@ -16,6 +17,18 @@ export default function CookieBanner() {
   const t = useTranslations("cookies");
   const [visible, setVisible] = useState(false);
   const [customizing, setCustomizing] = useState(false);
+  const banner = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (!visible) return;
+      const mm = gsap.matchMedia();
+      mm.add(MOTION, () => {
+        gsap.from(banner.current, { y: 40, opacity: 0, duration: 0.5, ease: EASE });
+      });
+    },
+    { dependencies: [visible] }
+  );
   const [consent, setConsent] = useState<ConsentState>({
     essential: true,
     analytics: false,
@@ -44,10 +57,10 @@ export default function CookieBanner() {
 
   return (
     <div
+      ref={banner}
       className={cn(
-        "fixed bottom-4 left-4 right-4 z-50 max-w-2xl mx-auto",
-        "bg-navy border border-white/10 rounded-2xl shadow-2xl",
-        "animate-slide-up"
+        "fixed bottom-[calc(1rem+var(--quote-bar,0px))] left-4 right-4 z-50 max-w-2xl mx-auto",
+        "bg-navy border border-white/10 rounded-2xl shadow-2xl"
       )}
       role="dialog"
       aria-label="Cookie consent"

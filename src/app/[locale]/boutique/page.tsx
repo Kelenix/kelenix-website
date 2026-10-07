@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ShieldCheck, ArrowUpRight, Tag, ShoppingBag } from "lucide-react";
 import ProductGrid from "@/components/home/ProductGrid";
+import Aurora from "@/components/motion/Aurora";
 import { products, promo, STORE_URL } from "@/data/chariow";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -23,7 +24,7 @@ export default async function BoutiquePage({ params }: Props) {
     <>
       {/* Hero */}
       <section className="relative bg-gradient-hero pt-28 pb-20 overflow-hidden">
-        <div className="aurora-bg opacity-60" />
+        <Aurora className="opacity-60" />
         <div className="grid-floor opacity-40" />
         <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-4xl text-center">
           <span className="inline-flex items-center gap-2 glass-pill text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-6">

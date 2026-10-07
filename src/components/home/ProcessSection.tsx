@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ShoppingCart, PenTool, Code2, ShieldCheck, Rocket, ArrowRight, Check } from "lucide-react";
 import Magnetic from "@/components/motion/Magnetic";
+import Aurora from "@/components/motion/Aurora";
 import { gsap, useReveal, useMotion, playInView, EASE } from "@/lib/gsap";
 
 const steps = [
@@ -117,8 +118,6 @@ export default function ProcessSection() {
     /* ---- Mouvements d'ambiance, uniquement quand la section est visible ---- */
     const ambient = gsap.timeline({ defaults: { ease: "sine.inOut" } });
     ambient
-      .to(one("[data-aurora='a']"), { xPercent: 30, yPercent: 22, scale: 1.25, duration: 18, repeat: -1, yoyo: true }, 0)
-      .to(one("[data-aurora='b']"), { xPercent: -28, yPercent: -18, scale: 0.9, duration: 22, repeat: -1, yoyo: true }, 0)
       .to(one("[data-scene-halo]"), { opacity: 0.95, scale: 1.08, duration: 2.5, repeat: -1, yoyo: true }, 0)
       .fromTo(
         one("[data-scene-panel]"),
@@ -177,18 +176,7 @@ export default function ProcessSection() {
     // overflow-clip (et non hidden) : la scène peut rester collée pendant que les étapes défilent.
     <section ref={root} className="relative py-28 bg-navy-dark overflow-clip">
       {/* Décor */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none opacity-70">
-        <div
-          data-aurora="a"
-          className="absolute -top-[12%] -left-[8%] w-[46vw] h-[46vw] rounded-full blur-[70px] opacity-55"
-          style={{ background: "radial-gradient(circle at center, rgba(47,168,255,0.55), transparent 70%)" }}
-        />
-        <div
-          data-aurora="b"
-          className="absolute -bottom-[14%] -right-[6%] w-[40vw] h-[40vw] rounded-full blur-[70px] opacity-55"
-          style={{ background: "radial-gradient(circle at center, rgba(255,193,7,0.30), transparent 70%)" }}
-        />
-      </div>
+      <Aurora className="opacity-70" />
       <div className="grid-floor opacity-50" />
 
       <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl">

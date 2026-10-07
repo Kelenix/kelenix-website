@@ -10,6 +10,8 @@ import CookieBanner from "@/components/layout/CookieBanner";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import MotionRoot from "@/components/motion/MotionRoot";
+import AutoReveal from "@/components/motion/AutoReveal";
+import MobileQuoteBar from "@/components/layout/MobileQuoteBar";
 import "@/app/globals.css";
 
 type Props = {
@@ -109,17 +111,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   return (
-    <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
-        {/* Avant le premier affichage : masque les éléments à révéler (classe `anim`), sauf si
-            « réduire les animations » est activé. Filet de sécurité : si le JS d'animation
-            n'a pas démarré après 4 s, tout redevient visible. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){var r=document.documentElement;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;r.classList.add('anim');setTimeout(function(){if(!r.dataset.motion)r.classList.remove('anim')},4000)})()",
-          }}
-        />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -129,11 +122,12 @@ export default async function LocaleLayout({ children, params }: Props) {
           <MotionRoot />
           <Header />
           <main className="min-h-screen pt-16">
-            {children}
+            <AutoReveal>{children}</AutoReveal>
           </main>
           <Footer settings={footerSettings} services={footerServices} />
           <WhatsAppButton />
           <ScrollToTop />
+          <MobileQuoteBar />
           <CookieBanner />
         </NextIntlClientProvider>
       </body>
