@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Save, Loader2, Bold, Italic, List, ListOrdered, Heading2, Heading3, Quote, Upload, X } from "lucide-react";
+import { slugify } from "@/lib/utils";
 
 type BlogData = {
   id?: string;
@@ -134,7 +135,7 @@ export default function BlogForm({ post }: { post?: BlogData }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-semibold text-navy mb-2">Slug *</label>
-          <input name="slug" value={form.slug} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <input name="slug" value={form.slug} onChange={handleChange} onBlur={() => setForm(prev => ({ ...prev, slug: slugify(prev.slug) }))} required placeholder="mon-slug" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
         </div>
         <div>
           <label className="block text-sm font-semibold text-navy mb-2">Catégorie *</label>

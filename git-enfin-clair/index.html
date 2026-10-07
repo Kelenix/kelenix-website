@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<!--
+  Modèle "formation / ebook". Produit fictif.
+  Pour un vrai produit, remplacer : le nom, le programme, les prix (19 € et 39 €, y compris dans le JSON-LD),
+  les avis (ce sont des exemples) et le lien de paiement : constante CHECKOUT_URL en haut de js/main.js.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git, enfin clair · La formation pour comprendre Git, pas le réciter</title>
+<meta name="description" content="Formation vidéo et ebook pour développeurs débutants : branches, erreurs à réparer, travail en équipe et conflits, expliqués simplement en 6 modules.">
+<meta name="theme-color" content="#171B24">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Git, enfin clair · Comprendre Git, pas le réciter">
+<meta property="og:description" content="6 modules pour créer des branches, réparer une erreur et travailler en équipe sans stress.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('anim');
+    setTimeout(function () { if (!window.gsap) document.documentElement.classList.remove('anim'); }, 3000);
+  }
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Git, enfin clair",
+  "description": "Formation vidéo et ebook pour comprendre Git : branches, réparation d'erreurs, travail en équipe, conflits.",
+  "inLanguage": "fr",
+  "provider": { "@type": "Organization", "name": "Git, enfin clair" },
+  "offers": { "@type": "Offer", "price": "19", "priceCurrency": "EUR", "category": "Paid" }
+}
+</script>
+</head>
+<body>
+
+<svg width="0" height="0" class="sprite" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500" fill="none" stroke="currentColor" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="progress" aria-hidden="true"><i id="progress"></i></div>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="logo" href="#top" aria-label="Git, enfin clair, retour en haut de page"><i aria-hidden="true"></i>git, enfin clair</a>
+    <nav class="nav__links" aria-label="Sections de la page">
+      <a href="#programme">Programme</a>
+      <a href="#avis">Avis</a>
+      <a href="#prix">Prix</a>
+      <a href="#faq">Questions</a>
+    </nav>
+    <a class="nav__buy" href="#prix">Obtenir · 19&nbsp;€</a>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="kicker" data-hero>Formation vidéo + ebook · Pour développeurs débutants</p>
+        <h1 class="hero__title" id="heroTitle">Git, <em>enfin clair.</em></h1>
+        <p class="hero__lead" data-hero>Arrêtez de copier des commandes sans les comprendre. En 6 modules, vous saurez créer des branches, réparer une erreur et travailler en équipe sans stress.</p>
+        <div class="hero__cta" data-hero>
+          <a class="btn" href="#prix" data-magnet>Obtenir la formation <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <p class="hero__price"><b>19&nbsp;€</b> <s><span class="sr-only">au lieu de </span>39&nbsp;€</s></p>
+        </div>
+        <a class="hero__more" href="#programme" data-hero>Voir le programme</a>
+      </div>
+
+      <div class="lab" data-hero role="img" aria-label="Démonstration animée : on crée une branche, on y ajoute un commit, puis on la fusionne dans main. Le graphe se met à jour à chaque commande.">
+        <div class="term" aria-hidden="true">
+          <div class="term__bar"><i></i><i></i><i></i><span>~/mon-projet</span></div>
+          <div class="term__body" id="term">
+            <p class="t-cmd" data-step="branch">git switch -c nouvelle-page</p>
+            <p class="t-out">Basculement sur la nouvelle branche 'nouvelle-page'</p>
+            <p class="t-cmd" data-step="commit">git commit -m "Ajoute la page contact"</p>
+            <p class="t-out">[nouvelle-page 3f2a1c9] Ajoute la page contact</p>
+            <p class="t-cmd" data-step="back">git switch main</p>
+            <p class="t-cmd" data-step="merge">git merge nouvelle-page</p>
+            <p class="t-out t-ok">Fusion réussie. Rien n'est cassé.</p>
+          </div>
+        </div>
+        <svg class="graph" id="graph" viewBox="0 0 240 290" aria-hidden="true">
+          <path class="g-line g-main" d="M60 14V110"/>
+          <path class="g-line g-main" id="gMainB" pathLength="1" d="M60 110V250"/>
+          <path class="g-line g-feat" id="gBranch" pathLength="1" d="M60 110C60 150 170 128 170 168"/>
+          <path class="g-line g-feat" id="gMerge" pathLength="1" d="M170 168V196C170 236 60 214 60 250"/>
+          <circle class="g-dot g-dot--main" cx="60" cy="50" r="9"/>
+          <circle class="g-dot g-dot--main" cx="60" cy="110" r="9"/>
+          <circle class="g-dot g-dot--feat" id="gC3" cx="170" cy="182" r="9"/>
+          <circle class="g-dot g-dot--merge" id="gC5" cx="60" cy="250" r="10"/>
+          <circle class="g-head" id="gHead" cx="60" cy="250" r="16"/>
+          <text class="g-tag" x="82" y="54">main</text>
+          <text class="g-tag g-tag--feat" id="gTag" x="96" y="212">nouvelle-page</text>
+          <text class="g-tag g-tag--head" id="gHeadTag" x="6" y="254">HEAD</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEME ============ -->
+  <section class="pain" aria-labelledby="painTitle">
+    <div class="wrap">
+      <p class="kicker" data-reveal>Vous connaissez ça</p>
+      <h2 id="painTitle" data-reveal>Trois messages qui gâchent une journée.</h2>
+      <ul class="pain__grid">
+        <li class="err" data-tilt="-5">
+          <pre><code><span class="e-r">error:</span> failed to push some refs
+<span class="e-y">hint:</span> Updates were rejected because
+the tip of your branch is behind</code></pre>
+          <p>Vous aviez juste voulu envoyer votre travail.</p>
+        </li>
+        <li class="err" data-tilt="3">
+          <pre><code><span class="e-r">CONFLICT</span> (content): Merge conflict
+in src/app.js
+Automatic merge failed</code></pre>
+          <p>Et maintenant, on garde quelle version&nbsp;?</p>
+        </li>
+        <li class="err" data-tilt="-2">
+          <pre><code>You are in <span class="e-r">'detached HEAD'</span> state.
+You can look around, make
+experimental changes…</code></pre>
+          <p>Personne ne vous a jamais expliqué ce que c'est.</p>
+        </li>
+      </ul>
+      <p class="pain__out" data-reveal>Git n'est pas compliqué. Il est mal expliqué. Une fois le modèle compris, ces trois messages deviennent de simples informations.</p>
+    </div>
+  </section>
+
+  <!-- ============ PROGRAMME (le graphe se dessine au défilement) ============ -->
+  <section class="prog" id="programme" aria-labelledby="progTitle">
+    <div class="wrap prog__grid">
+      <div class="prog__intro">
+        <p class="kicker" data-reveal>Le programme</p>
+        <h2 id="progTitle" data-reveal>6 modules, dans l'ordre où ça se comprend.</h2>
+        <p data-reveal>Chaque module est un commit de plus dans votre tête. On part du modèle, pas des commandes, et chaque notion sert à la suivante.</p>
+        <a class="btn btn--ghost" href="#prix" data-reveal>Voir le prix <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+
+      <div class="tree" id="tree">
+        <span class="tree__line" aria-hidden="true"><i id="treeFill"></i></span>
+        <svg class="tree__branch" aria-hidden="true" viewBox="0 0 40 100" preserveAspectRatio="none"><path id="treeBranch" pathLength="1" d="M0 0C0 6 40 4 40 12V88C40 96 0 94 0 100"/></svg>
+        <ol class="tree__list">
+          <li class="mod" style="--c:var(--ink)"><span class="mod__dot" aria-hidden="true"></span>
+            <div class="mod__card"><span class="mod__hash">a1f3c20 · Module 1</span><h3>Ce que Git fait vraiment</h3>
+              <ul><li>Le commit, enfin expliqué simplement</li><li>Zone de travail, index, dépôt</li><li>Lire un historique sans se perdre</li></ul></div></li>
+          <li class="mod" style="--c:var(--ink)"><span class="mod__dot" aria-hidden="true"></span>
+            <div class="mod__card"><span class="mod__hash">7be09d4 · Module 2</span><h3>Les branches, sans peur</h3>
+              <ul><li>Créer, changer, supprimer une branche</li><li>Fusionner sans rien écraser</li><li>Ce qu'est vraiment HEAD</li></ul></div></li>
+          <li class="mod mod--side" style="--c:var(--coral)"><span class="mod__dot" aria-hidden="true"></span>
+            <div class="mod__card"><span class="mod__hash">3f2a1c9 · Module 3</span><h3>Réparer ses erreurs</h3>
+              <ul><li>Annuler un fichier, un commit, une fusion</li><li>restore, reset, revert&nbsp;: lequel, quand</li><li>reflog, le filet de sécurité</li></ul></div></li>
+          <li class="mod mod--side" style="--c:var(--coral)"><span class="mod__dot" aria-hidden="true"></span>
+            <div class="mod__card"><span class="mod__hash">c84e7a1 · Module 4</span><h3>Travailler à plusieurs</h3>
+              <ul><li>Dépôt distant, push, pull, fetch</li><li>Ouvrir sa première pull request</li><li>Relire le code des autres</li></ul></div></li>
+          <li class="mod" style="--c:var(--teal)"><span class="mod__dot" aria-hidden="true"></span>
+            <div class="mod__card"><span class="mod__hash">e9d15b6 · Module 5</span><h3>Les conflits, calmement</h3>
+              <ul><li>Pourquoi un conflit arrive</li><li>Le résoudre pas à pas</li><li>Les éviter la plupart du temps</li></ul></div></li>
+          <li class="mod" style="--c:var(--amber)"><span class="mod__dot" aria-hidden="true"></span>
+            <div class="mod__card"><span class="mod__hash">52c0f8e · Module 6</span><h3>Un historique propre</h3>
+              <ul><li>Des messages de commit utiles</li><li>rebase, sans casser l'équipe</li><li>.gitignore et les bons réflexes</li></ul></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AVIS ============ -->
+  <section class="reviews" id="avis" aria-labelledby="revTitle">
+    <div class="wrap">
+      <p class="kicker kicker--light" data-reveal>Ce qu'en disent les élèves</p>
+      <h2 id="revTitle" data-reveal>Ce que ça change, concrètement.</h2>
+      <p class="reviews__note" data-reveal>Avis d'exemple, à remplacer par ceux de vos élèves.</p>
+    </div>
+    <div class="reviews__rows">
+      <ul class="reviews__row" data-dir="-1">
+        <li class="rev"><p>J'utilisais Git depuis deux ans sans comprendre ce que je tapais. Le module sur les branches a tout débloqué.</p><footer><i aria-hidden="true">IR</i><span><b>Inès R.</b>Développeuse front-end</span></footer></li>
+        <li class="rev"><p>Le chapitre « réparer ses erreurs » m'a évité une catastrophe dès la première semaine.</p><footer><i aria-hidden="true">TL</i><span><b>Thomas L.</b>Étudiant en informatique</span></footer></li>
+        <li class="rev"><p>Enfin une formation qui explique le pourquoi avant le comment.</p><footer><i aria-hidden="true">AD</i><span><b>Awa D.</b>Développeuse back-end</span></footer></li>
+      </ul>
+      <ul class="reviews__row" data-dir="1">
+        <li class="rev"><p>Les conflits ne me font plus peur. Vraiment.</p><footer><i aria-hidden="true">KB</i><span><b>Karim B.</b>Développeur junior</span></footer></li>
+        <li class="rev"><p>Court, clair, et l'aide-mémoire reste ouvert sur mon deuxième écran.</p><footer><i aria-hidden="true">LM</i><span><b>Léa M.</b>Intégratrice web</span></footer></li>
+        <li class="rev"><p>J'ai enfin osé ouvrir ma première pull request.</p><footer><i aria-hidden="true">MT</i><span><b>Marc T.</b>En reconversion</span></footer></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ PRIX + PAIEMENT ============ -->
+  <section class="price" id="prix" aria-labelledby="priceTitle">
+    <div class="wrap price__grid">
+      <div class="price__copy">
+        <p class="kicker" data-reveal>Prix et paiement</p>
+        <h2 id="priceTitle" data-reveal>Tout, en un seul paiement.</h2>
+        <ul class="incl">
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Les 6 modules vidéo</b>À regarder à votre rythme.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>L'ebook complet en PDF</b>Tout le cours, à garder sous la main.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>L'aide-mémoire des commandes</b>Une page, les commandes qui servent vraiment.</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Les exercices corrigés</b>Un dépôt d'entraînement par module.</span></li>
+        </ul>
+      </div>
+
+      <div class="ticket" id="ticket">
+        <p class="ticket__label">Offre de lancement</p>
+        <p class="ticket__old"><span class="sr-only">Prix habituel : </span><span id="oldPrice">39&nbsp;€<i aria-hidden="true"></i></span></p>
+        <p class="ticket__new"><span id="newPrice">19</span>&nbsp;€</p>
+        <p class="ticket__sub">Paiement unique. Pas d'abonnement.</p>
+        <a class="btn btn--buy" href="#prix" data-buy data-magnet><svg aria-hidden="true"><use href="#i-lock"/></svg>Payer 19&nbsp;€ et commencer</a>
+        <ul class="ticket__notes">
+          <li>Accès immédiat après le paiement</li>
+          <li>Paiement sécurisé sur la page de votre prestataire</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq" id="faq" aria-labelledby="faqTitle">
+    <div class="wrap faq__grid">
+      <h2 id="faqTitle" data-reveal>Avant de payer, on se demande souvent…</h2>
+      <div class="faq__list">
+        <details data-reveal><summary>Je n'ai jamais utilisé Git. C'est pour moi&nbsp;?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Oui. Le premier module part de zéro. Il faut seulement savoir ouvrir un terminal et écrire un peu de code, dans n'importe quel langage.</p></details>
+        <details data-reveal><summary>J'utilise déjà Git tous les jours. Ça m'apporte quoi&nbsp;?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Si vous tapez des commandes sans savoir ce qu'elles font vraiment, les modules 1, 3 et 5 sont faits pour vous&nbsp;: le modèle, les erreurs, les conflits.</p></details>
+        <details data-reveal><summary>Comment je reçois la formation&nbsp;?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Après le paiement, vous recevez un lien d'accès par email. Les vidéos se regardent en ligne, l'ebook et l'aide-mémoire se téléchargent.</p></details>
+        <details data-reveal><summary>C'est un abonnement&nbsp;?<svg aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Non. Vous payez une seule fois.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section class="final" aria-labelledby="finalTitle">
+    <div class="wrap final__in">
+      <p class="final__cmd" aria-hidden="true"><span>$</span> git commit -m "<b id="finalMsg">Je comprends enfin Git</b>"</p>
+      <h2 id="finalTitle">Votre prochain commit, vous saurez ce qu'il fait.</h2>
+      <a class="btn btn--buy" id="finalBuy" href="#prix" data-buy data-magnet>Obtenir la formation · 19&nbsp;€ <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span class="logo"><i aria-hidden="true"></i>git, enfin clair</span>
+    <p>Site de démonstration. La formation, les prix et les avis affichés sont des exemples à remplacer. Git est une marque de Software Freedom Conservancy, ce site n'y est pas affilié.</p>
+    <p>© <span id="year">2026</span></p>
+  </div>
+</footer>
+
+<div class="buybar" id="buybar">
+  <p><b>19&nbsp;€</b> <s>39&nbsp;€</s></p>
+  <a href="#prix">Obtenir la formation</a>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="js/main.js" defer></script>
+<script src="js/animations.js" defer></script>
+</body>
+</html>

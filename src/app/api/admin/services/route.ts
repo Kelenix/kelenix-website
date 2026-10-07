@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { slugSchema } from "@/lib/slug-schema";
 
 const schema = z.object({
-  slug: z.string().min(1).max(100),
+  slug: slugSchema,
   titleFr: z.string().min(1).max(200),
   titleEn: z.string().min(1).max(200),
   shortDescFr: z.string().min(1),

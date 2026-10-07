@@ -3,9 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { BlogCategory } from "@prisma/client";
 import { auth } from "@/lib/auth";
+import { slugSchema } from "@/lib/slug-schema";
 
 const schema = z.object({
-  slug: z.string().min(1).max(100),
+  slug: slugSchema,
   titleFr: z.string().min(1).max(300),
   titleEn: z.string().min(1).max(300),
   excerptFr: z.string().min(1).max(500),

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Save, Loader2, Upload, X } from "lucide-react";
+import { slugify } from "@/lib/utils";
 
 type ProjectData = {
   id?: string;
@@ -97,7 +98,7 @@ export default function PortfolioForm({ project }: { project?: ProjectData }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-semibold text-navy mb-2">Slug *</label>
-          <input name="slug" value={form.slug} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <input name="slug" value={form.slug} onChange={handleChange} onBlur={() => setForm(prev => ({ ...prev, slug: slugify(prev.slug) }))} required placeholder="mon-slug" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
         </div>
         <div>
           <label className="block text-sm font-semibold text-navy mb-2">Catégorie *</label>

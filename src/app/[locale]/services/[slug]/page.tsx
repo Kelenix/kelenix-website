@@ -1,8 +1,9 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { decodeSlug, slugify } from "@/lib/utils";
 import {
   ArrowRight,
   ChevronRight,
@@ -63,7 +64,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const service = await prisma.service.findUnique({ where: { slug } });
   if (!service) return {};
   const isEn = locale === "en";
@@ -124,9 +126,18 @@ function Accordion({ items }: { items: FaqItem[] }) {
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
-  const { locale, slug } = await params;
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const service = await prisma.service.findUnique({ where: { slug } });
-  if (!service) notFound();
+  if (!service) {
+    // Ancien lien vers un slug non normalisé (« Custom SaaS ») : on renvoie vers le slug corrigé s'il existe.
+    const canonical = slugify(slug);
+    if (canonical && canonical !== slug) {
+      const renamed = await prisma.service.findUnique({ where: { slug: canonical }, select: { slug: true } });
+      if (renamed) redirect({ href: { pathname: "/services/[slug]", params: { slug: renamed.slug } }, locale });
+    }
+    notFound();
+  }
 
   const t = await getTranslations("common");
   const isEn = locale === "en";

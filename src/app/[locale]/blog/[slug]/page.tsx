@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { ChevronRight, Calendar, User, ArrowRight, Link2 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { decodeSlug, formatDate } from "@/lib/utils";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -25,7 +25,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const post = await prisma.blogPost.findUnique({ where: { slug } });
   if (!post) return {};
   const isEn = locale === "en";
@@ -93,7 +94,8 @@ function ShareButtons({ title, locale }: { title: string; locale: string }) {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { locale, slug } = await params;
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const post = await prisma.blogPost.findUnique({ where: { slug } });
   if (!post) notFound();
 

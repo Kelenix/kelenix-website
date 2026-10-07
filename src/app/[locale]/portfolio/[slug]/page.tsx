@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { decodeSlug } from "@/lib/utils";
 import Image from "next/image";
 import { ArrowRight, ChevronRight, Target, Lightbulb, BarChart3 } from "lucide-react";
 
@@ -24,7 +25,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const project = await prisma.project.findUnique({ where: { slug } });
   if (!project) return {};
   const isEn = locale === "en";
@@ -56,7 +58,8 @@ function parseGallery(raw: string): string[] {
 }
 
 export default async function ProjectDetailPage({ params }: Props) {
-  const { locale, slug } = await params;
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const project = await prisma.project.findUnique({ where: { slug } });
   if (!project) notFound();
 
