@@ -1,11 +1,9 @@
-"use client";
-
-import { useRef } from "react";
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { gsap, useReveal, useMotion } from "@/lib/gsap";
+import { getTranslations } from "next-intl/server";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import Reveal from "@/components/motion/Reveal";
+import SectionHeading, { MoreLink } from "@/components/home/SectionHeading";
 
 type Project = {
   slug: string;
@@ -16,102 +14,57 @@ type Project = {
   client: string;
 };
 
-// Couleur de badge par catégorie
-const categoryColors: Record<string, string> = {
-  WEB: "bg-sky",
-  MOBILE: "bg-purple-500",
-  AI: "bg-gold text-navy",
-  SOFTWARE: "bg-emerald-500",
-  CONSULTING: "bg-indigo-500",
-  TRAINING: "bg-orange-500",
-};
-
-export default function PortfolioSection({ projects, locale }: { projects: Project[]; locale: string }) {
-  const t = useTranslations("portfolio");
-  const root = useRef<HTMLElement>(null);
-  useReveal(root);
-
-  // Chaque visuel se dévoile par un masque, puis glisse légèrement pendant le défilement.
-  useMotion(root, (q) => {
-    q("[data-cover]").forEach((cover) => {
-      gsap.fromTo(
-        cover,
-        { clipPath: "inset(0% 100% 0% 0%)" },
-        { clipPath: "inset(0% 0% 0% 0%)", duration: 0.9, ease: "power3.inOut", scrollTrigger: { trigger: cover, start: "top 88%", once: true } }
-      );
-      gsap.fromTo(
-        cover.querySelector("[data-cover-img]"),
-        { yPercent: -7 },
-        { yPercent: 7, ease: "none", scrollTrigger: { trigger: cover, start: "top bottom", end: "bottom top", scrub: 0.4 } }
-      );
-    });
-  });
+// Réalisations : deux colonnes décalées sur ordinateur (quatre projets), carrousel à faire glisser sur téléphone (tous).
+export default async function PortfolioSection({ projects, locale }: { projects: Project[]; locale: string }) {
+  const t = await getTranslations("home.work");
+  if (!projects.length) return null;
 
   return (
-    <section ref={root} className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
-      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[42rem] h-[42rem] rounded-full bg-sky/5 blur-3xl pointer-events-none" />
-      <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
-        <div className="text-center mb-16">
-          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-            {t("title")} <span className="text-sky">{t("titleHighlight")}</span>
-          </h2>
-          <p data-reveal className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
-        </div>
+    <Reveal className="overflow-hidden bg-white py-16 sm:py-20 lg:py-28">
+      <div className="container mx-auto max-w-7xl px-5 xl:px-8">
+        <SectionHeading title={t("title")} lead={t("lead")} action={<MoreLink href="/portfolio">{t("viewAll")}</MoreLink>} />
 
-        <div className="flex flex-col gap-4 mb-12 max-w-6xl mx-auto">
-          {projects.slice(0, 6).map((p, i) => {
-            const badge = categoryColors[p.category] ?? "bg-sky";
+        <ul className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0 lg:gap-x-12">
+          {projects.slice(0, 6).map((p) => {
+            const title = locale === "fr" ? p.titleFr : p.titleEn;
             return (
-              <div key={p.slug} data-reveal={i % 2 ? "right" : "left"}>
-              <Link
-                href={{ pathname: "/portfolio/[slug]", params: { slug: p.slug } }}
-                className="group flex flex-col sm:flex-row gap-4 sm:gap-5 bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-sky/30 p-3 sm:p-4"
-              >
-                <div data-cover className="relative w-full sm:w-52 h-44 sm:h-28 shrink-0 overflow-hidden rounded-xl">
-                  {/* Calque plus haut que le cadre : il peut glisser sans découvrir les bords. */}
-                  <div data-cover-img className="absolute inset-x-0 -inset-y-[12%]">
-                    <Image
-                      src={p.coverImage}
-                      alt={locale === "fr" ? p.titleFr : p.titleEn}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 208px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+              <li key={p.slug} data-reveal className="w-[82vw] max-w-sm shrink-0 snap-start md:w-auto md:max-w-none md:even:mt-20 md:[&:nth-child(n+5)]:hidden">
+                <Link href={{ pathname: "/portfolio/[slug]", params: { slug: p.slug } }} className="group block">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
+                    {/* Calque plus haut que le cadre : il peut glisser sans découvrir les bords. */}
+                    <div data-parallax="5" className="absolute inset-x-0 -inset-y-[7%]">
+                      <Image
+                        src={p.coverImage}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 768px) 82vw, (max-width: 1280px) 46vw, 600px"
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                      />
+                    </div>
+                    <span className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1 text-xs font-semibold text-navy">
+                      {t.has(`categories.${p.category}`) ? t(`categories.${p.category}`) : p.category}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="absolute bottom-4 right-4 hidden h-12 w-12 translate-y-2 items-center justify-center rounded-full bg-white text-navy opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:flex"
+                    >
+                      <ArrowUpRight size={20} />
+                    </span>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy/50 to-transparent" />
-                  <span className={`absolute top-3 left-3 ${badge} text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md`}>
-                    {p.category}
-                  </span>
-                </div>
-
-                <div className="flex flex-col flex-1 min-w-0 justify-center">
-                  <p className="text-xs text-gray-400 mb-1.5">{p.client}</p>
-                  <h3 className="font-heading font-bold text-navy text-base sm:text-lg mb-3 leading-snug group-hover:text-sky transition-colors line-clamp-2">
-                    {locale === "fr" ? p.titleFr : p.titleEn}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-sky text-sm font-semibold">
-                    {t("viewProject")}
-                    <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-              </div>
+                  <h3 className="mt-4 text-lg font-semibold leading-snug text-navy transition-colors group-hover:text-azure sm:mt-5 sm:text-xl">{title}</h3>
+                  <p className="mt-1 text-sm text-muted">{p.client}</p>
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
 
-        <div data-reveal className="text-center">
-          <Link
-            href="/portfolio"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200 shadow-lg shadow-navy/20"
-          >
-            {t("viewAll")} <ArrowRight size={16} />
-          </Link>
+        <div data-reveal className="mt-6 md:hidden">
+          <MoreLink href="/portfolio" variant="block">
+            {t("viewAll")}
+          </MoreLink>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

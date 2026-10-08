@@ -60,20 +60,20 @@ export default function CookieBanner() {
       ref={banner}
       className={cn(
         "fixed bottom-[calc(1rem+var(--quote-bar,0px))] left-4 right-4 z-50 max-w-2xl mx-auto",
-        "bg-navy border border-white/10 rounded-2xl shadow-2xl"
+        "bg-white border border-line rounded-3xl shadow-[0_24px_60px_-24px_rgba(11,31,58,0.4)]"
       )}
       role="dialog"
       aria-label="Cookie consent"
     >
       <div className="p-5">
         <div className="flex items-start gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-sky/10 flex items-center justify-center flex-shrink-0">
-            <Cookie size={20} className="text-sky" />
+          <div className="w-10 h-10 rounded-xl bg-mist flex items-center justify-center flex-shrink-0">
+            <Cookie size={20} className="text-azure" />
           </div>
           <div className="flex-1">
-            <p className="text-sm text-gray-300 leading-relaxed">
+            <p className="text-sm text-muted leading-relaxed">
               {t("message")}{" "}
-              <Link href="/cookies" className="text-sky hover:underline">
+              <Link href="/cookies" className="font-medium text-azure hover:underline">
                 {t("policyLink")}
               </Link>
               .
@@ -81,7 +81,7 @@ export default function CookieBanner() {
           </div>
           <button
             onClick={declineAll}
-            className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
+            className="text-muted hover:text-navy transition-colors flex-shrink-0 cursor-pointer"
             aria-label="Close"
           >
             <X size={18} />
@@ -90,15 +90,15 @@ export default function CookieBanner() {
 
         {/* Customization Panel */}
         {customizing && (
-          <div className="bg-white/5 rounded-xl p-4 mb-4 space-y-3">
+          <div className="bg-mist rounded-2xl p-4 mb-4 space-y-3">
             {(["essential", "analytics", "marketing"] as const).map((key) => (
               <label key={key} className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <span className="text-sm text-white font-medium capitalize">
+                  <span className="text-sm text-navy font-medium capitalize">
                     {t(key)}
                   </span>
                   {key === "essential" && (
-                    <span className="ml-2 text-xs text-gray-400">(requis)</span>
+                    <span className="ml-2 text-xs text-muted">(requis)</span>
                   )}
                 </div>
                 <div className="relative">
@@ -117,7 +117,7 @@ export default function CookieBanner() {
                     }}
                     className={cn(
                       "w-10 h-5 rounded-full transition-colors cursor-pointer",
-                      consent[key] ? "bg-sky" : "bg-white/20",
+                      consent[key] ? "bg-azure" : "bg-[#C5D0DE]",
                       key === "essential" && "opacity-50 cursor-not-allowed"
                     )}
                   >
@@ -135,19 +135,19 @@ export default function CookieBanner() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={acceptAll}
-            className="flex-1 sm:flex-none px-5 py-2 bg-sky text-white font-medium text-sm rounded-lg hover:bg-sky-dark transition-colors"
+            className="flex-1 sm:flex-none px-5 py-2.5 bg-navy text-white font-semibold text-sm rounded-full hover:bg-azure transition-colors cursor-pointer"
           >
             {t("accept")}
           </button>
           <button
             onClick={declineAll}
-            className="flex-1 sm:flex-none px-5 py-2 bg-white/10 text-white font-medium text-sm rounded-lg hover:bg-white/20 transition-colors border border-white/10"
+            className="flex-1 sm:flex-none px-5 py-2.5 bg-white text-navy font-semibold text-sm rounded-full hover:bg-mist transition-colors border border-line cursor-pointer"
           >
             {t("decline")}
           </button>
           <button
             onClick={() => setCustomizing(!customizing)}
-            className="flex items-center gap-1.5 px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 text-muted hover:text-navy text-sm transition-colors cursor-pointer"
           >
             {t("customize")}
             {customizing ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -155,7 +155,7 @@ export default function CookieBanner() {
           {customizing && (
             <button
               onClick={saveCustom}
-              className="px-5 py-2 bg-gold text-navy font-medium text-sm rounded-lg hover:bg-gold-dark transition-colors"
+              className="px-5 py-2.5 bg-azure text-white font-semibold text-sm rounded-full hover:bg-azure-dark transition-colors cursor-pointer"
             >
               {t("save")}
             </button>

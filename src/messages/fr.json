@@ -3,7 +3,7 @@
     "home": "Accueil",
     "about": "À propos",
     "services": "Services",
-    "portfolio": "Portfolio",
+    "portfolio": "Réalisations",
     "shop": "Boutique",
     "blog": "Blog",
     "testimonials": "Témoignages",
@@ -13,108 +13,11 @@
     "partners": "Partenaires",
     "quote": "Demander un devis",
     "language": "Langue",
-    "quoteBar": "Un projet en tête ?"
-  },
-  "hero": {
-    "badge": "Innovation & Excellence Technologique",
-    "title": "L'intelligence au service de",
-    "titleHighlight": "l'innovation mondiale",
-    "subtitle": "Kelenix Tech accompagne les entreprises, PME et startups dans leur transformation numérique grâce à des solutions technologiques innovantes, fiables et accessibles.",
-    "cta1": "Demander un devis gratuit",
-    "cta2": "Découvrir nos services",
-    "stat1Value": "150+",
-    "stat1Label": "Projets livrés",
-    "stat2Value": "80+",
-    "stat2Label": "Clients satisfaits",
-    "stat3Value": "5+",
-    "stat3Label": "Années d'expérience",
-    "stat4Value": "15+",
-    "stat4Label": "Technologies maîtrisées",
-    "lab": {
-      "aria": "Démonstration animée : un projet client passe par les cinq étapes Kelenix, du devis à la mise en ligne.",
-      "url": "votre-projet.com",
-      "draft": "En chantier",
-      "live": "En ligne",
-      "toast": "Mise en ligne réussie",
-      "steps": [
-        "Devis",
-        "Design",
-        "Code",
-        "Tests",
-        "Livraison"
-      ],
-      "cmds": [
-        "kelenix new votre-projet",
-        "kelenix design",
-        "kelenix build",
-        "kelenix test",
-        "kelenix deploy"
-      ],
-      "outs": [
-        "Besoin cadré, devis validé",
-        "Maquettes approuvées",
-        "Fonctionnalités développées",
-        "Tous les tests passent",
-        "Votre projet est en ligne"
-      ]
-    }
-  },
-  "pain": {
-    "badge": "Vous connaissez ça ?",
-    "title": "Trois situations qui freinent",
-    "titleHighlight": "votre entreprise",
-    "items": [
-      {
-        "title": "Un site qui ne rapporte rien",
-        "text": "Il est en ligne depuis des mois, mais aucun client ne vous contacte grâce à lui."
-      },
-      {
-        "title": "Un prestataire qui ne répond plus",
-        "text": "Délais dépassés, messages sans réponse, et un projet livré à moitié."
-      },
-      {
-        "title": "Des outils qui ne se parlent pas",
-        "text": "Excel d'un côté, WhatsApp de l'autre : chaque jour, des heures perdues à tout ressaisir."
-      }
-    ],
-    "outro": "Un projet numérique ne devrait pas être une source de stress. Avec un processus clair et un seul interlocuteur, il devient un moteur de croissance."
-  },
-  "trust": {
-    "title": "Ils nous font confiance",
-    "subtitle": "Des entreprises de toutes tailles nous font confiance pour leurs projets technologiques"
-  },
-  "process": {
-    "badge": "Notre Processus",
-    "title": "De la commande à",
-    "titleHighlight": "votre logiciel livré",
-    "subtitle": "Un parcours clair et maîtrisé : suivez votre projet à chaque étape, de la première demande jusqu'à la mise en production.",
-    "cubeLabel": "Votre logiciel",
-    "appLabel": "Build Kelenix",
-    "building": "Construction en cours…",
-    "delivered": "Livré ✓",
-    "cta": "Démarrer mon projet",
-    "steps": {
-      "order": {
-        "title": "Commande & Devis",
-        "description": "Vous décrivez votre besoin, nous établissons un devis clair et un cahier des charges sous 48h."
-      },
-      "design": {
-        "title": "Conception & Design",
-        "description": "Architecture technique, maquettes UI/UX et validation de l'expérience avant la moindre ligne de code."
-      },
-      "build": {
-        "title": "Développement",
-        "description": "Nos équipes développent votre solution en cycles agiles, avec des démos régulières pour rester alignés."
-      },
-      "test": {
-        "title": "Tests & Qualité",
-        "description": "Tests automatisés, contrôle qualité et corrections pour une solution fiable, sécurisée et performante."
-      },
-      "deliver": {
-        "title": "Livraison & Support",
-        "description": "Mise en production, formation et accompagnement continu : votre logiciel est entre vos mains."
-      }
-    }
+    "quoteBar": "Un projet en tête ?",
+    "quoteShort": "Devis",
+    "main": "Navigation principale",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
   },
   "shop": {
     "badge": "Boutique — Snap",
@@ -184,48 +87,6 @@
       }
     }
   },
-  "whyUs": {
-    "badge": "Pourquoi Kelenix Tech ?",
-    "title": "Ce qui nous",
-    "titleHighlight": "distingue",
-    "subtitle": "Nous combinons expertise technique et approche centrée client pour livrer des solutions d'excellence",
-    "items": {
-      "expertise": {
-        "title": "Expertise Reconnue",
-        "description": "Une équipe de développeurs seniors avec plus de 5 ans d'expérience dans les technologies les plus avancées"
-      },
-      "agile": {
-        "title": "Approche Agile",
-        "description": "Méthodologie agile pour des livraisons rapides, itératives et alignées avec vos objectifs"
-      },
-      "support": {
-        "title": "Support 24/7",
-        "description": "Accompagnement continu et support technique disponible pour garantir la continuité de vos services"
-      },
-      "quality": {
-        "title": "Qualité Garantie",
-        "description": "Code testé, documenté et maintenu selon les meilleures pratiques de l'industrie"
-      },
-      "international": {
-        "title": "Portée Internationale",
-        "description": "Expertise pour des projets à vocation mondiale avec une équipe multilingue et multiculturelle"
-      },
-      "accessible": {
-        "title": "Solutions Accessibles",
-        "description": "Des tarifs compétitifs sans compromis sur la qualité, adaptés à toutes les tailles d'entreprise"
-      }
-    }
-  },
-  "stats": {
-    "badge": "Nos Chiffres",
-    "title": "Des résultats qui",
-    "titleHighlight": "parlent d'eux-mêmes",
-    "projects": "Projets livrés",
-    "clients": "Clients satisfaits",
-    "years": "Années d'expérience",
-    "technologies": "Technologies maîtrisées",
-    "satisfaction": "Taux de satisfaction"
-  },
   "portfolio": {
     "badge": "Portfolio",
     "title": "Nos",
@@ -265,13 +126,6 @@
       "news": "Actualités Tech",
       "guides": "Guides"
     }
-  },
-  "contactCta": {
-    "title": "Prêt à lancer votre",
-    "titleHighlight": "projet ?",
-    "subtitle": "Contactez-nous dès aujourd'hui pour discuter de vos besoins et obtenir un devis personnalisé gratuit.",
-    "cta1": "Démarrer mon projet",
-    "cta2": "Nous contacter"
   },
   "contact": {
     "badge": "Contact",
@@ -452,7 +306,8 @@
       "tiktok": "TikTok",
       "youtube": "YouTube",
       "twitter": "Twitter / X"
-    }
+    },
+    "slogan": "L'intelligence au service de l'innovation mondiale."
   },
   "cookies": {
     "message": "Nous utilisons des cookies pour améliorer votre expérience. En continuant à naviguer, vous acceptez notre",
@@ -498,5 +353,268 @@
     "required": "Ce champ est requis",
     "invalidEmail": "Email invalide",
     "invalidPhone": "Numéro de téléphone invalide"
+  },
+  "home": {
+    "hero": {
+      "badge": "Devis gratuit, réponse sous 48 h",
+      "title1": "De l'idée au logiciel livré.",
+      "title2": "Sans mauvaise surprise.",
+      "leadStrong": "Kelenix conçoit et développe vos sites, applications et solutions d'IA.",
+      "lead": "Un devis clair sous 48 h, un seul interlocuteur et un suivi à chaque étape, jusqu'à la mise en ligne.",
+      "cta1": "Demander un devis gratuit",
+      "cta2": "Voir nos réalisations",
+      "note": "Gratuit et sans engagement.",
+      "mock": {
+        "aria": "Aperçu d'une application de gestion sur mesure, en version web et mobile.",
+        "url": "app.votre-entreprise.com",
+        "workspace": "Votre entreprise",
+        "nav": [
+          "Tableau de bord",
+          "Commandes",
+          "Clients",
+          "Factures",
+          "Rapports"
+        ],
+        "title": "Tableau de bord",
+        "period": "Ce mois",
+        "action": "Nouvelle commande",
+        "kpis": [
+          {
+            "label": "Chiffre d'affaires",
+            "value": "48 250 €",
+            "delta": "+12 %"
+          },
+          {
+            "label": "Commandes",
+            "value": "312",
+            "delta": "+8 %"
+          },
+          {
+            "label": "Clients actifs",
+            "value": "1 204",
+            "delta": "+5 %"
+          }
+        ],
+        "chartTitle": "Ventes",
+        "chartLegend": "30 derniers jours",
+        "ordersTitle": "Dernières commandes",
+        "orders": [
+          {
+            "name": "Awa Diallo",
+            "amount": "240 €",
+            "status": "Payée"
+          },
+          {
+            "name": "Marc Lefèvre",
+            "amount": "1 180 €",
+            "status": "Payée"
+          },
+          {
+            "name": "Sarah Nguyen",
+            "amount": "86 €",
+            "status": "En attente"
+          },
+          {
+            "name": "Karim Haddad",
+            "amount": "430 €",
+            "status": "Payée"
+          }
+        ],
+        "steps": [
+          "Devis",
+          "Design",
+          "Code",
+          "Tests",
+          "Livraison"
+        ],
+        "toastTitle": "Mise en ligne réussie",
+        "toastText": "Version 2.4 déployée",
+        "phoneHello": "Bonjour, Awa",
+        "phoneLabel": "Ventes du jour",
+        "phoneValue": "1 936 €",
+        "phoneList": "Aujourd'hui"
+      }
+    },
+    "proof": {
+      "projects": "Projets livrés",
+      "clients": "Clients accompagnés",
+      "years": "Années d'expérience",
+      "satisfaction": "Taux de satisfaction"
+    },
+    "pain": {
+      "title": "Un projet numérique ne devrait pas être une source de stress.",
+      "lead": "Trois situations que nous entendons souvent, et ce que nous faisons à la place.",
+      "before": "Le problème",
+      "after": "Avec Kelenix",
+      "items": [
+        {
+          "problem": "Un site qui ne rapporte rien",
+          "detail": "En ligne depuis des mois, mais aucun client ne vous contacte grâce à lui.",
+          "solution": "Un site pensé pour être trouvé sur Google et pour déclencher des demandes."
+        },
+        {
+          "problem": "Un prestataire qui ne répond plus",
+          "detail": "Délais dépassés, messages sans réponse, projet livré à moitié.",
+          "solution": "Un seul interlocuteur, des démos régulières et un planning tenu."
+        },
+        {
+          "problem": "Des outils qui ne se parlent pas",
+          "detail": "Excel d'un côté, WhatsApp de l'autre : des heures perdues à tout ressaisir.",
+          "solution": "Un logiciel sur mesure qui centralise vos données et supprime les ressaisies."
+        }
+      ]
+    },
+    "services": {
+      "title": "Ce que nous construisons pour vous.",
+      "lead": "Du site vitrine au logiciel métier, une seule équipe pour tout votre projet.",
+      "viewAll": "Tous les services",
+      "more": {
+        "title": "Un besoin différent ?",
+        "text": "Décrivez-le-nous : nous vous disons sous 48 h si nous pouvons vous aider.",
+        "cta": "Parlons-en"
+      },
+      "fallback": [
+        {
+          "icon": "Code",
+          "title": "Logiciels sur mesure",
+          "text": "Des applications adaptées à vos besoins métier et à vos processus internes."
+        },
+        {
+          "icon": "Globe",
+          "title": "Sites web",
+          "text": "Des sites professionnels, rapides et optimisés pour le référencement."
+        },
+        {
+          "icon": "Monitor",
+          "title": "Applications web",
+          "text": "Des applications modernes et évolutives pour digitaliser votre activité."
+        },
+        {
+          "icon": "Smartphone",
+          "title": "Applications mobiles",
+          "text": "Des applications iOS et Android, natives ou multiplateformes."
+        },
+        {
+          "icon": "Brain",
+          "title": "Intelligence artificielle",
+          "text": "Des solutions d'IA pour automatiser vos tâches et mieux décider."
+        },
+        {
+          "icon": "TrendingUp",
+          "title": "Consulting IT",
+          "text": "Une stratégie digitale et un accompagnement technologique."
+        },
+        {
+          "icon": "GraduationCap",
+          "title": "Formation tech",
+          "text": "Des formations pratiques en programmation pour vos équipes."
+        }
+      ]
+    },
+    "process": {
+      "title": "Cinq étapes, aucune zone d'ombre.",
+      "lead": "Vous savez à tout moment où en est votre projet, de la première demande à la mise en production.",
+      "cta": "Démarrer mon projet",
+      "steps": [
+        {
+          "title": "Devis",
+          "text": "Vous décrivez votre besoin. Sous 48 h, vous recevez un devis clair et un cahier des charges."
+        },
+        {
+          "title": "Conception",
+          "text": "Architecture et maquettes sont validées avec vous, avant la moindre ligne de code."
+        },
+        {
+          "title": "Développement",
+          "text": "Des cycles courts et des démos régulières : vous voyez votre projet avancer."
+        },
+        {
+          "title": "Tests",
+          "text": "Tests automatisés et contrôle qualité, pour une solution fiable et sécurisée."
+        },
+        {
+          "title": "Livraison",
+          "text": "Mise en production, formation de vos équipes et accompagnement continu."
+        }
+      ]
+    },
+    "why": {
+      "title": "Pourquoi les entreprises choisissent Kelenix.",
+      "ratingLabel": "Note moyenne donnée par nos clients",
+      "checks": [
+        "Code testé",
+        "Code documenté",
+        "Code maintenu"
+      ],
+      "items": {
+        "expertise": {
+          "title": "Une équipe senior",
+          "text": "Des développeurs expérimentés, à l'aise avec les technologies les plus récentes."
+        },
+        "agile": {
+          "title": "Des livraisons rapides",
+          "text": "Une méthode agile : des versions fréquentes, alignées sur vos objectifs."
+        },
+        "support": {
+          "title": "Support 24/7",
+          "text": "Un accompagnement continu pour garantir la continuité de vos services."
+        },
+        "quality": {
+          "title": "Une qualité vérifiable",
+          "text": "Un code testé, documenté et maintenu selon les bonnes pratiques du métier."
+        },
+        "international": {
+          "title": "Une portée internationale",
+          "text": "Une équipe multilingue, habituée aux projets menés à distance."
+        },
+        "accessible": {
+          "title": "Des tarifs accessibles",
+          "text": "Des prix adaptés à toutes les tailles d'entreprise, sans compromis sur la qualité."
+        }
+      }
+    },
+    "work": {
+      "title": "Des projets livrés, pas des promesses.",
+      "lead": "Quelques réalisations récentes, pour des entreprises de toutes tailles.",
+      "viewAll": "Toutes les réalisations",
+      "view": "Voir le projet",
+      "categories": {
+        "WEB": "Web",
+        "MOBILE": "Mobile",
+        "AI": "IA",
+        "SOFTWARE": "Logiciel",
+        "CONSULTING": "Consulting",
+        "TRAINING": "Formation"
+      }
+    },
+    "voices": {
+      "title": "Ce que nos clients en disent.",
+      "ratingLabel": "Note moyenne",
+      "viewAll": "Tous les témoignages"
+    },
+    "blog": {
+      "title": "Conseils et actualités tech.",
+      "viewAll": "Tous les articles",
+      "read": "Lire l'article",
+      "categories": {
+        "DEVELOPMENT": "Développement",
+        "AI": "Intelligence artificielle",
+        "DIGITAL": "Stratégie digitale",
+        "NEWS": "Actualités",
+        "GUIDES": "Guides"
+      }
+    },
+    "faq": {
+      "title": "Les questions qu'on nous pose souvent.",
+      "lead": "Vous ne trouvez pas votre réponse ?",
+      "contact": "Écrivez-nous",
+      "viewAll": "Toutes les questions"
+    },
+    "cta": {
+      "title": "Parlons de votre projet.",
+      "text": "Décrivez-nous votre besoin : vous recevez un devis personnalisé sous 48 h, gratuitement.",
+      "cta1": "Demander un devis gratuit",
+      "cta2": "Nous contacter"
+    }
   }
 }

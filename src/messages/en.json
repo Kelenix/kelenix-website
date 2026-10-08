@@ -3,7 +3,7 @@
     "home": "Home",
     "about": "About",
     "services": "Services",
-    "portfolio": "Portfolio",
+    "portfolio": "Work",
     "shop": "Store",
     "blog": "Blog",
     "testimonials": "Testimonials",
@@ -13,108 +13,11 @@
     "partners": "Partners",
     "quote": "Get a Quote",
     "language": "Language",
-    "quoteBar": "Got a project in mind?"
-  },
-  "hero": {
-    "badge": "Innovation & Technological Excellence",
-    "title": "Intelligence in service of",
-    "titleHighlight": "global innovation",
-    "subtitle": "Kelenix Tech supports businesses, SMEs and startups in their digital transformation through innovative, reliable and accessible technology solutions.",
-    "cta1": "Get a free quote",
-    "cta2": "Discover our services",
-    "stat1Value": "150+",
-    "stat1Label": "Projects delivered",
-    "stat2Value": "80+",
-    "stat2Label": "Satisfied clients",
-    "stat3Value": "5+",
-    "stat3Label": "Years of experience",
-    "stat4Value": "15+",
-    "stat4Label": "Technologies mastered",
-    "lab": {
-      "aria": "Animated demo: a client project goes through the five Kelenix steps, from quote to launch.",
-      "url": "your-project.com",
-      "draft": "In progress",
-      "live": "Live",
-      "toast": "Launch successful",
-      "steps": [
-        "Quote",
-        "Design",
-        "Code",
-        "Tests",
-        "Delivery"
-      ],
-      "cmds": [
-        "kelenix new your-project",
-        "kelenix design",
-        "kelenix build",
-        "kelenix test",
-        "kelenix deploy"
-      ],
-      "outs": [
-        "Needs scoped, quote approved",
-        "Mockups approved",
-        "Features developed",
-        "All tests passing",
-        "Your project is live"
-      ]
-    }
-  },
-  "pain": {
-    "badge": "Sound familiar?",
-    "title": "Three situations holding",
-    "titleHighlight": "your business back",
-    "items": [
-      {
-        "title": "A website that brings in nothing",
-        "text": "It has been online for months, yet no customer ever contacts you through it."
-      },
-      {
-        "title": "A contractor who stops answering",
-        "text": "Missed deadlines, unanswered messages, and a project delivered half-finished."
-      },
-      {
-        "title": "Tools that don't talk to each other",
-        "text": "Excel on one side, WhatsApp on the other: hours lost every day re-entering everything."
-      }
-    ],
-    "outro": "A digital project should not be a source of stress. With a clear process and a single point of contact, it becomes a growth engine."
-  },
-  "trust": {
-    "title": "They trust us",
-    "subtitle": "Companies of all sizes trust us for their technology projects"
-  },
-  "process": {
-    "badge": "Our Process",
-    "title": "From order to",
-    "titleHighlight": "your delivered software",
-    "subtitle": "A clear, controlled journey: follow your project at every stage, from the first request all the way to production.",
-    "cubeLabel": "Your software",
-    "appLabel": "Kelenix Build",
-    "building": "Building…",
-    "delivered": "Delivered ✓",
-    "cta": "Start my project",
-    "steps": {
-      "order": {
-        "title": "Order & Quote",
-        "description": "You describe your needs, we deliver a clear quote and specifications within 48 hours."
-      },
-      "design": {
-        "title": "Design & UX",
-        "description": "Technical architecture, UI/UX mockups and experience validation before a single line of code."
-      },
-      "build": {
-        "title": "Development",
-        "description": "Our teams build your solution in agile cycles, with regular demos to stay aligned."
-      },
-      "test": {
-        "title": "Testing & Quality",
-        "description": "Automated tests, QA and fixes for a reliable, secure and high-performing solution."
-      },
-      "deliver": {
-        "title": "Delivery & Support",
-        "description": "Production launch, training and ongoing support: your software is in your hands."
-      }
-    }
+    "quoteBar": "Got a project in mind?",
+    "quoteShort": "Quote",
+    "main": "Main navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "shop": {
     "badge": "Store — Snap",
@@ -184,48 +87,6 @@
       }
     }
   },
-  "whyUs": {
-    "badge": "Why Kelenix Tech?",
-    "title": "What sets us",
-    "titleHighlight": "apart",
-    "subtitle": "We combine technical expertise and a client-centered approach to deliver excellence",
-    "items": {
-      "expertise": {
-        "title": "Recognized Expertise",
-        "description": "A team of senior developers with over 5 years of experience in the most advanced technologies"
-      },
-      "agile": {
-        "title": "Agile Approach",
-        "description": "Agile methodology for fast, iterative deliveries aligned with your objectives"
-      },
-      "support": {
-        "title": "24/7 Support",
-        "description": "Continuous support and technical assistance available to ensure service continuity"
-      },
-      "quality": {
-        "title": "Quality Guaranteed",
-        "description": "Tested, documented and maintained code following industry best practices"
-      },
-      "international": {
-        "title": "International Reach",
-        "description": "Expertise for global projects with a multilingual and multicultural team"
-      },
-      "accessible": {
-        "title": "Accessible Solutions",
-        "description": "Competitive rates without compromising quality, adapted to businesses of all sizes"
-      }
-    }
-  },
-  "stats": {
-    "badge": "Our Numbers",
-    "title": "Results that",
-    "titleHighlight": "speak for themselves",
-    "projects": "Projects delivered",
-    "clients": "Satisfied clients",
-    "years": "Years of experience",
-    "technologies": "Technologies mastered",
-    "satisfaction": "Satisfaction rate"
-  },
   "portfolio": {
     "badge": "Portfolio",
     "title": "Our",
@@ -265,13 +126,6 @@
       "news": "Tech News",
       "guides": "Guides"
     }
-  },
-  "contactCta": {
-    "title": "Ready to launch your",
-    "titleHighlight": "project?",
-    "subtitle": "Contact us today to discuss your needs and get a free personalized quote.",
-    "cta1": "Start my project",
-    "cta2": "Contact us"
   },
   "contact": {
     "badge": "Contact",
@@ -452,7 +306,8 @@
       "tiktok": "TikTok",
       "youtube": "YouTube",
       "twitter": "Twitter / X"
-    }
+    },
+    "slogan": "Intelligence in service of global innovation."
   },
   "cookies": {
     "message": "We use cookies to improve your experience. By continuing to browse, you accept our",
@@ -498,5 +353,268 @@
     "required": "This field is required",
     "invalidEmail": "Invalid email",
     "invalidPhone": "Invalid phone number"
+  },
+  "home": {
+    "hero": {
+      "badge": "Free quote, reply within 48 hours",
+      "title1": "From idea to shipped software.",
+      "title2": "No bad surprises.",
+      "leadStrong": "Kelenix designs and builds your websites, apps and AI solutions.",
+      "lead": "A clear quote within 48 hours, a single point of contact and updates at every step, all the way to launch.",
+      "cta1": "Get a free quote",
+      "cta2": "See our work",
+      "note": "Free, with no commitment.",
+      "mock": {
+        "aria": "Preview of a custom management application, on web and mobile.",
+        "url": "app.your-company.com",
+        "workspace": "Your company",
+        "nav": [
+          "Dashboard",
+          "Orders",
+          "Customers",
+          "Invoices",
+          "Reports"
+        ],
+        "title": "Dashboard",
+        "period": "This month",
+        "action": "New order",
+        "kpis": [
+          {
+            "label": "Revenue",
+            "value": "€48,250",
+            "delta": "+12%"
+          },
+          {
+            "label": "Orders",
+            "value": "312",
+            "delta": "+8%"
+          },
+          {
+            "label": "Active customers",
+            "value": "1,204",
+            "delta": "+5%"
+          }
+        ],
+        "chartTitle": "Sales",
+        "chartLegend": "Last 30 days",
+        "ordersTitle": "Latest orders",
+        "orders": [
+          {
+            "name": "Awa Diallo",
+            "amount": "€240",
+            "status": "Paid"
+          },
+          {
+            "name": "Marc Lefèvre",
+            "amount": "€1,180",
+            "status": "Paid"
+          },
+          {
+            "name": "Sarah Nguyen",
+            "amount": "€86",
+            "status": "Pending"
+          },
+          {
+            "name": "Karim Haddad",
+            "amount": "€430",
+            "status": "Paid"
+          }
+        ],
+        "steps": [
+          "Quote",
+          "Design",
+          "Code",
+          "Tests",
+          "Delivery"
+        ],
+        "toastTitle": "Launch successful",
+        "toastText": "Version 2.4 deployed",
+        "phoneHello": "Hello, Awa",
+        "phoneLabel": "Today's sales",
+        "phoneValue": "€1,936",
+        "phoneList": "Today"
+      }
+    },
+    "proof": {
+      "projects": "Projects delivered",
+      "clients": "Clients served",
+      "years": "Years of experience",
+      "satisfaction": "Satisfaction rate"
+    },
+    "pain": {
+      "title": "A digital project shouldn't be a source of stress.",
+      "lead": "Three situations we hear about often, and what we do instead.",
+      "before": "The problem",
+      "after": "With Kelenix",
+      "items": [
+        {
+          "problem": "A website that brings in nothing",
+          "detail": "Online for months, yet no customer ever contacts you through it.",
+          "solution": "A site built to be found on Google and to turn visits into enquiries."
+        },
+        {
+          "problem": "A contractor who stops answering",
+          "detail": "Missed deadlines, unanswered messages, a half-finished project.",
+          "solution": "One point of contact, regular demos and a schedule that holds."
+        },
+        {
+          "problem": "Tools that don't talk to each other",
+          "detail": "Excel on one side, WhatsApp on the other: hours lost re-entering everything.",
+          "solution": "Custom software that centralises your data and removes double entry."
+        }
+      ]
+    },
+    "services": {
+      "title": "What we build for you.",
+      "lead": "From a showcase site to business software, one team for your whole project.",
+      "viewAll": "All services",
+      "more": {
+        "title": "Need something else?",
+        "text": "Tell us about it: we'll let you know within 48 hours whether we can help.",
+        "cta": "Let's talk"
+      },
+      "fallback": [
+        {
+          "icon": "Code",
+          "title": "Custom software",
+          "text": "Applications tailored to your business needs and internal processes."
+        },
+        {
+          "icon": "Globe",
+          "title": "Websites",
+          "text": "Professional, fast websites optimised for search engines."
+        },
+        {
+          "icon": "Monitor",
+          "title": "Web applications",
+          "text": "Modern, scalable applications to digitise your business."
+        },
+        {
+          "icon": "Smartphone",
+          "title": "Mobile applications",
+          "text": "iOS and Android apps, native or cross-platform."
+        },
+        {
+          "icon": "Brain",
+          "title": "Artificial intelligence",
+          "text": "AI solutions to automate your tasks and make better decisions."
+        },
+        {
+          "icon": "TrendingUp",
+          "title": "IT consulting",
+          "text": "Digital strategy and technology guidance."
+        },
+        {
+          "icon": "GraduationCap",
+          "title": "Tech training",
+          "text": "Hands-on programming training for your teams."
+        }
+      ]
+    },
+    "process": {
+      "title": "Five steps, no grey areas.",
+      "lead": "You always know where your project stands, from the first request to production.",
+      "cta": "Start my project",
+      "steps": [
+        {
+          "title": "Quote",
+          "text": "You describe what you need. Within 48 hours you get a clear quote and a specification."
+        },
+        {
+          "title": "Design",
+          "text": "Architecture and mockups are approved with you before a single line of code."
+        },
+        {
+          "title": "Development",
+          "text": "Short cycles and regular demos: you watch your project move forward."
+        },
+        {
+          "title": "Testing",
+          "text": "Automated tests and quality checks, for a reliable and secure solution."
+        },
+        {
+          "title": "Delivery",
+          "text": "Go-live, training for your teams and ongoing support."
+        }
+      ]
+    },
+    "why": {
+      "title": "Why businesses choose Kelenix.",
+      "ratingLabel": "Average rating given by our clients",
+      "checks": [
+        "Tested code",
+        "Documented code",
+        "Maintained code"
+      ],
+      "items": {
+        "expertise": {
+          "title": "A senior team",
+          "text": "Experienced developers, at ease with the latest technologies."
+        },
+        "agile": {
+          "title": "Fast deliveries",
+          "text": "An agile method: frequent releases, aligned with your goals."
+        },
+        "support": {
+          "title": "24/7 support",
+          "text": "Ongoing assistance to keep your services running."
+        },
+        "quality": {
+          "title": "Quality you can check",
+          "text": "Code that is tested, documented and maintained to industry best practice."
+        },
+        "international": {
+          "title": "International reach",
+          "text": "A multilingual team, used to running projects remotely."
+        },
+        "accessible": {
+          "title": "Accessible pricing",
+          "text": "Prices suited to every business size, with no compromise on quality."
+        }
+      }
+    },
+    "work": {
+      "title": "Delivered projects, not promises.",
+      "lead": "A few recent projects, for businesses of every size.",
+      "viewAll": "All projects",
+      "view": "View project",
+      "categories": {
+        "WEB": "Web",
+        "MOBILE": "Mobile",
+        "AI": "AI",
+        "SOFTWARE": "Software",
+        "CONSULTING": "Consulting",
+        "TRAINING": "Training"
+      }
+    },
+    "voices": {
+      "title": "What our clients say.",
+      "ratingLabel": "Average rating",
+      "viewAll": "All testimonials"
+    },
+    "blog": {
+      "title": "Tech advice and news.",
+      "viewAll": "All articles",
+      "read": "Read the article",
+      "categories": {
+        "DEVELOPMENT": "Development",
+        "AI": "Artificial intelligence",
+        "DIGITAL": "Digital strategy",
+        "NEWS": "News",
+        "GUIDES": "Guides"
+      }
+    },
+    "faq": {
+      "title": "The questions we get asked most.",
+      "lead": "Can't find your answer?",
+      "contact": "Write to us",
+      "viewAll": "All questions"
+    },
+    "cta": {
+      "title": "Let's talk about your project.",
+      "text": "Tell us what you need: you'll get a personalised quote within 48 hours, free of charge.",
+      "cta1": "Get a free quote",
+      "cta2": "Contact us"
+    }
   }
 }

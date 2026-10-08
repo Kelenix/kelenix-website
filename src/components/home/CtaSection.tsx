@@ -1,58 +1,46 @@
-"use client";
-
-import { useRef } from "react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, MessageCircle } from "lucide-react";
 import Magnetic from "@/components/motion/Magnetic";
-import { gsap, useReveal, useMotion } from "@/lib/gsap";
+import Reveal from "@/components/motion/Reveal";
 
-export default function CtaSection() {
-  const t = useTranslations("contactCta");
-  const root = useRef<HTMLElement>(null);
-  useReveal(root);
-
-  // Les deux halos de fond se croisent pendant que la section traverse l'écran.
-  useMotion(root, (q) => {
-    const scrollTrigger = { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 0.6 };
-    gsap.fromTo(q("[data-blob='a']"), { xPercent: -30, yPercent: 20 }, { xPercent: 40, yPercent: -20, ease: "none", scrollTrigger });
-    gsap.fromTo(q("[data-blob='b']"), { xPercent: 30, yPercent: -20 }, { xPercent: -40, yPercent: 20, ease: "none", scrollTrigger });
-  });
+// Dernier appel à l'action : une grande carte bleue, seul aplat de couleur forte de la page.
+export default async function CtaSection() {
+  const t = await getTranslations("home.cta");
 
   return (
-    <section ref={root} className="py-24 bg-gradient-to-br from-sky via-sky/80 to-navy relative overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div data-blob="a" className="absolute top-10 left-10 w-72 h-72 rounded-full bg-white blur-3xl" />
-        <div data-blob="b" className="absolute bottom-10 right-10 w-72 h-72 rounded-full bg-gold blur-3xl" />
-      </div>
+    <Reveal className="bg-white px-3 py-16 sm:px-5 sm:py-20 lg:py-28">
+      <div data-reveal="scale" className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-linear-to-br from-[#0A4FAE] via-azure to-[#1580EE] px-6 py-14 text-center text-white sm:rounded-[2.5rem] sm:px-12 sm:py-20 lg:py-24">
+        {/* Halos : blanc en haut à gauche, bleu clair en bas à droite */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div data-parallax="12" className="absolute -left-[10%] -top-[40%] h-[90%] w-[55%] bg-[radial-gradient(closest-side,rgba(255,255,255,0.28),rgba(255,255,255,0))]" />
+          <div data-parallax="-12" className="absolute -bottom-[45%] -right-[8%] h-[95%] w-[50%] bg-[radial-gradient(closest-side,rgba(108,196,255,0.6),rgba(108,196,255,0))]" />
+        </div>
 
-      <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-4xl text-center">
-        <h2 data-split className="font-heading text-3xl sm:text-4xl xl:text-5xl font-extrabold text-white mb-6 leading-tight">
-          {t("title")}{" "}
-          <span className="text-gold">{t("titleHighlight")}</span>
-        </h2>
-        <p data-reveal className="text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-          {t("subtitle")}
-        </p>
-        <div data-reveal="scale" className="flex flex-wrap justify-center gap-4">
-          <Magnetic>
+        <div className="relative mx-auto max-w-3xl">
+          <h2 data-lines className="text-balance font-display text-[2.4rem] font-medium leading-[1.04] tracking-[-0.03em] sm:text-6xl lg:text-7xl">
+            {t("title")}
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-pretty text-[1.05rem] leading-relaxed text-white/85 sm:text-xl">{t("text")}</p>
+          <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Magnetic className="w-full sm:w-auto">
+              <Link
+                href="/devis"
+                className="group flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-base font-semibold text-navy shadow-[0_14px_30px_-12px_rgba(6,15,28,0.5)] transition-colors hover:bg-gold"
+              >
+                {t("cta1")}
+                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Magnetic>
             <Link
-              href="/devis"
-              className="group flex items-center gap-2.5 px-8 py-4 bg-gold text-navy font-bold text-base rounded-xl hover:bg-gold-dark transition-colors duration-200 shadow-lg hover:shadow-xl"
+              href="/contact"
+              className="flex w-full items-center justify-center rounded-full border border-white/45 px-7 py-4 text-base font-semibold text-white transition-colors hover:bg-white/12 sm:w-auto"
             >
-              {t("cta1")} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              {t("cta2")}
             </Link>
-          </Magnetic>
-          <Link
-            href="/contact"
-            className="flex items-center gap-2.5 px-8 py-4 bg-white/10 border border-white/30 text-white font-semibold text-base rounded-xl hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
-          >
-            <MessageCircle size={18} />
-            {t("cta2")}
-          </Link>
+          </div>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { fontVariables } from "@/app/fonts";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={fontVariables}>
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
       </head>

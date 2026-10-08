@@ -66,9 +66,44 @@ const REVEAL_FROM: Record<string, gsap.TweenVars> = {
 
 // Apparitions au défilement, pilotées par des attributs dans le JSX :
 //   data-reveal ("up" par défaut, "left", "right", "scale") : l'élément arrive en fondu ;
-//   data-split : le titre arrive mot par mot (data-nosplit garde un groupe de mots entier).
+//   data-split : le titre arrive mot par mot (data-nosplit garde un groupe de mots entier) ;
+//   data-lines : le titre se dévoile ligne par ligne, derrière un masque ;
+//   data-count="150+" : le chiffre compte depuis zéro quand il arrive à l'écran ;
+//   data-parallax="-8" : l'élément glisse de ce pourcentage pendant que son parent traverse l'écran.
 // Les transitions CSS de l'élément sont coupées le temps de l'apparition pour ne pas la ralentir.
 export function setupReveals(q: Query) {
+  q("[data-lines]").forEach((el) => {
+    SplitText.create(el, {
+      type: "lines",
+      mask: "lines",
+      linesClass: "reveal-line",
+      autoSplit: true,
+      onSplit: (self) => {
+        gsap.set(el, { opacity: 1 });
+        return gsap.from(self.lines, {
+          yPercent: 108,
+          duration: 0.95,
+          ease: "power4.out",
+          stagger: 0.09,
+          scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        });
+      },
+    });
+  });
+
+  q("[data-count]").forEach((el) => {
+    countUp(el, { duration: 1.8, scrollTrigger: { trigger: el, start: "top 92%", once: true } });
+  });
+
+  q("[data-parallax]").forEach((el) => {
+    const amount = Number(el.dataset.parallax) || 0;
+    gsap.fromTo(
+      el,
+      { yPercent: -amount },
+      { yPercent: amount, ease: "none", scrollTrigger: { trigger: el.parentElement, start: "top bottom", end: "bottom top", scrub: 0.4 } }
+    );
+  });
+
   const items = q("[data-reveal]");
   items.forEach((el) => gsap.set(el, { opacity: 0, transition: "none", ...(REVEAL_FROM[el.dataset.reveal || "up"] ?? REVEAL_FROM.up) }));
   ScrollTrigger.batch(items, {

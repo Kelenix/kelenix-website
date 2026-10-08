@@ -1,68 +1,57 @@
-"use client";
+import { getTranslations } from "next-intl/server";
+import { Check, MessageSquareOff, TrendingDown, Unplug } from "lucide-react";
+import Reveal from "@/components/motion/Reveal";
 
-import { useRef } from "react";
-import { useTranslations } from "next-intl";
-import { TrendingDown, MessageSquareOff, Unplug } from "lucide-react";
-import { gsap, useReveal, useMotion } from "@/lib/gsap";
+const icons = [TrendingDown, MessageSquareOff, Unplug];
 
-const cards = [
-  { icon: TrendingDown, tilt: -4, accent: "text-red-400 bg-red-400/10 border-red-400/25" },
-  { icon: MessageSquareOff, tilt: 3, accent: "text-gold bg-gold/10 border-gold/25" },
-  { icon: Unplug, tilt: -2, accent: "text-sky bg-sky/10 border-sky/25" },
-];
+type Item = { problem: string; detail: string; solution: string };
 
-type Item = { title: string; text: string };
-
-// Les problèmes du client, avant de présenter les services qui y répondent.
-export default function PainSection() {
-  const t = useTranslations("pain");
+// Les problèmes du client et, pour chacun, ce que Kelenix fait à la place.
+export default async function PainSection() {
+  const t = await getTranslations("home.pain");
   const items = t.raw("items") as Item[];
-  const root = useRef<HTMLElement>(null);
-  useReveal(root);
-
-  // Les trois cartes tombent en place, inclinées, au rythme du défilement.
-  useMotion(root, (q) => {
-    q("[data-pain]").forEach((card, i) => {
-      const tilt = Number(card.dataset.pain);
-      gsap.fromTo(
-        card,
-        { y: 140 + i * 50, rotation: tilt * 4, opacity: 0 },
-        { y: 0, rotation: tilt, opacity: 1, ease: "none", scrollTrigger: { trigger: q("[data-pain-grid]")[0], start: "top 95%", end: "top 45%", scrub: 0.7 } }
-      );
-    });
-  });
 
   return (
-    <section ref={root} className="relative py-24 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-        <div className="text-center mb-14">
-          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy">
-            {t("title")} <span className="text-sky">{t("titleHighlight")}</span>
+    <Reveal className="bg-white py-16 sm:py-20 lg:py-28">
+      <div className="container mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20 xl:px-8">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <h2 data-lines className="text-balance font-display text-[2.1rem] font-medium leading-[1.06] tracking-[-0.03em] text-navy sm:text-5xl lg:text-[3.4rem]">
+            {t("title")}
           </h2>
+          <p data-reveal className="mt-4 max-w-md text-pretty text-[1.05rem] leading-relaxed text-muted sm:mt-5 sm:text-lg">
+            {t("lead")}
+          </p>
         </div>
 
-        <ul data-pain-grid className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto mb-14">
+        <ul className="flex flex-col gap-4 sm:gap-5">
           {items.map((item, i) => {
-            const { icon: Icon, tilt, accent } = cards[i % cards.length];
+            const Icon = icons[i % icons.length];
             return (
-              <li key={item.title} data-pain={tilt} className="rounded-3xl bg-navy p-7 shadow-[0_30px_60px_-30px_rgba(11,31,58,0.6)]">
-                <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center mb-5 ${accent}`}>
-                  <Icon size={22} />
+              <li key={item.problem} data-reveal className="rounded-3xl border border-line bg-mist/70 p-5 sm:p-7">
+                <div className="flex items-start gap-4">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FDECEA] text-[#C4372D]">
+                    <Icon size={20} />
+                  </span>
+                  <div>
+                    <p className="sr-only">{t("before")}</p>
+                    <h3 className="text-lg font-semibold leading-snug text-navy line-through decoration-[#E0564E]/60 decoration-2">{item.problem}</h3>
+                    <p className="mt-1 text-[15px] leading-relaxed text-muted">{item.detail}</p>
+                  </div>
                 </div>
-                <h3 className="font-heading font-bold text-white text-lg mb-2 leading-snug">{item.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{item.text}</p>
+                <div className="mt-5 flex items-start gap-3 rounded-2xl border border-line bg-white p-4 sm:items-center">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-azure text-white sm:mt-0">
+                    <Check size={14} strokeWidth={3} />
+                  </span>
+                  <p className="text-[15px] font-medium leading-snug text-navy sm:text-base">
+                    <span className="sr-only">{t("after")} : </span>
+                    {item.solution}
+                  </p>
+                </div>
               </li>
             );
           })}
         </ul>
-
-        <p data-reveal className="max-w-2xl mx-auto text-center text-lg text-gray-600 leading-relaxed">
-          {t("outro")}
-        </p>
       </div>
-    </section>
+    </Reveal>
   );
 }

@@ -32,8 +32,8 @@ export default function ProofNotifications() {
   const item = proofItems[index];
 
   return (
-    <div className="fixed bottom-[calc(1rem+var(--quote-bar,0px))] left-4 z-[90] max-w-[330px] pointer-events-none">
-          <div ref={card} className="glass-light rounded-2xl p-3.5 pr-9 shadow-xl relative pointer-events-auto" style={{ visibility: "hidden" }}>
+    <div className="hidden sm:block fixed bottom-[calc(1rem+var(--quote-bar,0px))] left-4 z-[90] max-w-[330px] pointer-events-none">
+          <div ref={card} className="bg-white border border-line rounded-2xl p-3.5 pr-9 shadow-[0_18px_44px_-20px_rgba(11,31,58,0.4)] relative pointer-events-auto" style={{ visibility: "hidden" }}>
             <button
               onClick={() => setClosed(true)}
               className="absolute top-2 right-2 text-gray-400 hover:text-navy transition-colors"
@@ -47,7 +47,7 @@ export default function ProofNotifications() {
               <div
                 className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
                   item.type === "purchase"
-                    ? "bg-sky/15 text-sky"
+                    ? "bg-sky/15 text-azure"
                     : "bg-emerald-500/15 text-emerald-500"
                 }`}
               >

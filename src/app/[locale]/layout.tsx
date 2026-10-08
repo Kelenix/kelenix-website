@@ -12,6 +12,7 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import MotionRoot from "@/components/motion/MotionRoot";
 import AutoReveal from "@/components/motion/AutoReveal";
 import MobileQuoteBar from "@/components/layout/MobileQuoteBar";
+import { fontVariables } from "@/app/fonts";
 import "@/app/globals.css";
 
 type Props = {
@@ -111,13 +112,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   return (
-    <html lang={locale} className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang={locale} className={`scroll-smooth ${fontVariables}`} data-scroll-behavior="smooth">
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="font-body antialiased bg-white text-gray-900">
+      <body className="font-body antialiased bg-white text-navy">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <MotionRoot />
           <Header />
@@ -125,9 +124,9 @@ export default async function LocaleLayout({ children, params }: Props) {
             <AutoReveal>{children}</AutoReveal>
           </main>
           <Footer settings={footerSettings} services={footerServices} />
-          <WhatsAppButton />
+          <WhatsAppButton phone={footerSettings.whatsapp} />
           <ScrollToTop />
-          <MobileQuoteBar />
+          <MobileQuoteBar whatsapp={footerSettings.whatsapp} />
           <CookieBanner />
         </NextIntlClientProvider>
       </body>

@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
-export default function WhatsAppButton() {
+// Bulle flottante (ordinateur). Sur mobile, WhatsApp est dans la barre du bas (MobileQuoteBar).
+export default function WhatsAppButton({ phone }: { phone: string }) {
   const t = useTranslations("whatsapp");
-  const locale = useLocale();
   const [hovered, setHovered] = useState(false);
 
   const message = encodeURIComponent(t("message"));
-  const phone = "33612345678";
   const href = `https://wa.me/${phone}?text=${message}`;
 
   return (
@@ -19,7 +18,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "fixed bottom-[calc(1.5rem+var(--quote-bar,0px))] right-6 z-40 flex items-center gap-3",
+        "hidden lg:flex fixed bottom-6 right-6 z-40 items-center gap-3",
         "transition-all duration-300",
         hovered ? "scale-105" : "scale-100"
       )}
@@ -30,7 +29,7 @@ export default function WhatsAppButton() {
       {/* Tooltip */}
       <div
         className={cn(
-          "bg-navy text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap",
+          "bg-white border border-line text-navy text-xs font-medium px-3 py-2 rounded-full shadow-lg whitespace-nowrap",
           "transition-all duration-300",
           hovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
         )}

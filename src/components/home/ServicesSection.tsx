@@ -1,112 +1,96 @@
-"use client";
-
-import { useRef } from "react";
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 import {
-  Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap,
-  Layers, Cpu, Wrench, Database, Cloud, ShieldCheck, ArrowRight,
+  ArrowRight, ArrowUpRight, Brain, ChevronRight, Cloud, Code, Cpu, Database, Globe, GraduationCap, Layers, Monitor, ShieldCheck, Smartphone,
+  TrendingUp, Wrench,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useReveal } from "@/lib/gsap";
+import { Link } from "@/i18n/navigation";
+import Reveal from "@/components/motion/Reveal";
+import SectionHeading, { MoreLink } from "@/components/home/SectionHeading";
 
 const iconMap: Record<string, React.ElementType> = {
-  Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap,
-  Layers, Cpu, Wrench, Database, Cloud, ShieldCheck,
+  Code, Globe, Monitor, Smartphone, Brain, TrendingUp, GraduationCap, Layers, Cpu, Wrench, Database, Cloud, ShieldCheck,
 };
 
-// Palette cyclique : chaque carte reçoit une couleur selon son ordre d'affichage.
-const colorPalette: { grad: string; glow: string }[] = [
-  { grad: "from-blue-500 to-sky-dark",     glow: "bg-blue-500/20" },
-  { grad: "from-sky to-blue-400",          glow: "bg-sky/20" },
-  { grad: "from-indigo-500 to-sky",        glow: "bg-indigo-500/20" },
-  { grad: "from-purple-500 to-indigo-500", glow: "bg-purple-500/20" },
-  { grad: "from-gold to-gold-dark",        glow: "bg-gold/25" },
-  { grad: "from-emerald-500 to-teal-500",  glow: "bg-emerald-500/20" },
-  { grad: "from-orange-500 to-amber-500",  glow: "bg-orange-500/20" },
-];
+type HomeService = { slug: string; titleFr: string; titleEn: string; shortDescFr: string; shortDescEn: string; icon: string };
+type Fallback = { icon: string; title: string; text: string };
 
-type HomeService = {
-  slug: string;
-  titleFr: string;
-  titleEn: string;
-  shortDescFr: string;
-  shortDescEn: string;
-  icon: string;
-};
+const spanClass: Record<number, string> = { 2: "lg:col-span-2", 3: "lg:col-span-3", 4: "lg:col-span-4", 6: "lg:col-span-6" };
 
-export default function ServicesSection({ services, locale }: { services: HomeService[]; locale: string }) {
-  const t = useTranslations("services");
+// Services : grille « bento » sur ordinateur (deux grandes cartes puis des petites),
+// liste compacte sur téléphone. Sans service en base, on affiche la liste par défaut des traductions.
+export default async function ServicesSection({ services, locale }: { services: HomeService[]; locale: string }) {
+  const t = await getTranslations("home.services");
   const isEn = locale === "en";
-  const root = useRef<HTMLElement>(null);
-  useReveal(root);
 
-  if (services.length === 0) return null;
+  const cards = services.length
+    ? services.map((s) => ({
+        key: s.slug,
+        href: { pathname: "/services/[slug]" as const, params: { slug: s.slug } },
+        icon: s.icon,
+        title: isEn ? s.titleEn : s.titleFr,
+        text: isEn ? s.shortDescEn : s.shortDescFr,
+      }))
+    : (t.raw("fallback") as Fallback[]).map((s) => ({ key: s.title, href: "/services" as const, icon: s.icon, title: s.title, text: s.text }));
+
+  // La tuile « autre besoin » complète la dernière rangée (grille de 6 colonnes : 3 + 3, puis 2 + 2 + 2).
+  const used = cards.reduce((sum, _, i) => sum + (i < 2 ? 3 : 2), 0) % 6;
+  const lastSpan = used === 0 ? 6 : 6 - used;
 
   return (
-    <section ref={root} className="relative py-24 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
-      <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-sky/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
-      <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-            {t("title")}{" "}
-            <span className="text-sky">{t("titleHighlight")}</span>
-          </h2>
-          <p data-reveal className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
-        </div>
+    <Reveal className="bg-mist py-16 sm:py-20 lg:py-28">
+      <div className="container mx-auto max-w-7xl px-5 xl:px-8">
+        <SectionHeading title={t("title")} lead={t("lead")} action={<MoreLink href="/services">{t("viewAll")}</MoreLink>} />
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-          {services.map((service, i) => {
-            const Icon = iconMap[service.icon] ?? Code;
-            const c = colorPalette[i % colorPalette.length];
-
+        <ul className="divide-y divide-line overflow-hidden rounded-3xl border border-line bg-white md:grid md:grid-cols-2 md:gap-5 md:divide-y-0 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent lg:grid-cols-6">
+          {cards.map((card, i) => {
+            const Icon = iconMap[card.icon] ?? Code;
+            const large = i < 2;
             return (
-              <div key={service.slug} data-reveal="scale" className="flex">
-              <Link
-                href={{ pathname: "/services/[slug]", params: { slug: service.slug } }}
-                className="group relative glass-light glass-hover rounded-3xl p-6 overflow-hidden flex flex-col w-full"
-              >
-                {/* Halo au survol */}
-                <div className={cn("absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500", c.glow)} />
-
-                <div className={cn(
-                  "relative w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-gradient-to-br shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300",
-                  c.grad
-                )}>
-                  <Icon size={22} className="text-white" strokeWidth={2.2} />
-                </div>
-                <h3 className="relative font-heading font-bold text-navy text-base mb-2 group-hover:text-sky transition-colors">
-                  {isEn ? service.titleEn : service.titleFr}
-                </h3>
-                <p className="relative text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
-                  {isEn ? service.shortDescEn : service.shortDescFr}
-                </p>
-                <div className="relative mt-auto flex items-center gap-1 text-sky text-sm font-semibold">
-                  {t("learnMore")}
-                  <ArrowRight size={14} className="ml-1 group-hover:translate-x-1.5 transition-transform" />
-                </div>
-              </Link>
-              </div>
+              <li key={card.key} data-reveal className={`md:flex ${large ? "lg:col-span-3" : "lg:col-span-2"}`}>
+                <Link
+                  href={card.href}
+                  className={`group relative flex w-full items-center gap-4 p-4 active:bg-mist md:flex-col md:items-start md:gap-0 md:overflow-hidden md:rounded-3xl md:border md:border-line md:bg-white md:p-7 md:transition-colors md:hover:border-sky/60 ${large ? "lg:min-h-[17.5rem] lg:p-9" : ""}`}
+                >
+                  {large && <Icon aria-hidden="true" strokeWidth={0.9} className="pointer-events-none absolute -bottom-10 -right-8 hidden h-52 w-52 text-sky/15 lg:block" />}
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-mist text-azure transition-colors md:mb-6 md:h-12 md:w-12 md:group-hover:bg-azure md:group-hover:text-white">
+                    <Icon size={22} />
+                  </span>
+                  <span className="relative min-w-0 flex-1 md:flex-none">
+                    <span className={`block font-semibold leading-snug text-navy ${large ? "text-[1.05rem] md:text-2xl" : "text-[1.05rem] md:text-xl"}`}>{card.title}</span>
+                    <span className={`mt-2 hidden text-[15px] leading-relaxed text-muted md:block ${large ? "max-w-sm lg:text-base" : ""}`}>{card.text}</span>
+                  </span>
+                  <ChevronRight size={18} className="shrink-0 text-muted md:hidden" />
+                  <span className="absolute right-7 top-7 hidden h-10 w-10 items-center justify-center rounded-full border border-line text-navy transition-colors group-hover:border-navy group-hover:bg-navy group-hover:text-white md:flex">
+                    <ArrowUpRight size={18} />
+                  </span>
+                </Link>
+              </li>
             );
           })}
-        </div>
 
-        {/* View All */}
-        <div data-reveal className="text-center">
-          <Link
-            href="/services"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200 shadow-lg shadow-navy/20"
-          >
-            {t("viewAll")} <ArrowRight size={16} />
-          </Link>
+          <li data-reveal className={`md:flex ${cards.length % 2 === 0 ? "md:col-span-2" : ""} ${spanClass[lastSpan]}`}>
+            <Link
+              href="/contact"
+              className="group flex w-full flex-col justify-between gap-5 bg-linear-to-br from-azure to-sky p-5 text-white md:rounded-3xl md:p-7 lg:flex-row lg:items-center"
+            >
+              <span>
+                <span className="block text-xl font-semibold leading-snug md:text-2xl">{t("more.title")}</span>
+                <span className="mt-1.5 block max-w-md text-[15px] leading-relaxed text-white/85">{t("more.text")}</span>
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-white px-5 py-3 text-sm font-semibold text-navy lg:self-auto">
+                {t("more.cta")}
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </li>
+        </ul>
+
+        <div data-reveal className="mt-5 md:hidden">
+          <MoreLink href="/services" variant="block">
+            {t("viewAll")}
+          </MoreLink>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

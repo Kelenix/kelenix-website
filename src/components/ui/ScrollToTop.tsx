@@ -21,10 +21,10 @@ export default function ScrollToTop() {
       onClick={scrollTop}
       aria-label="Retour en haut"
       className={cn(
-        "fixed bottom-[calc(6rem+var(--quote-bar,0px))] right-6 z-40 w-10 h-10 rounded-full",
-        "bg-navy/80 backdrop-blur border border-white/20 text-white",
-        "flex items-center justify-center shadow-lg",
-        "hover:bg-sky hover:border-sky transition-all duration-300",
+        "fixed bottom-[calc(6rem+var(--quote-bar,0px))] right-6 z-40 w-11 h-11 rounded-full cursor-pointer",
+        "bg-white border border-line text-navy",
+        "hidden lg:flex items-center justify-center shadow-[0_10px_30px_-12px_rgba(11,31,58,0.35)]",
+        "hover:bg-navy hover:border-navy hover:text-white transition-all duration-300",
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       )}
     >

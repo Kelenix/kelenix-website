@@ -1,10 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Open+Sans:wght@400;500;600;700&display=swap');
-
 @import "tailwindcss";
 
 /* =========================================================
    Tailwind v4 — @theme (remplace tailwind.config.ts)
    ========================================================= */
+/* Polices : variables posées sur <html> par next/font (src/app/fonts.ts) */
+@theme inline {
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 @theme {
   /* --- Couleurs --- */
   --color-sky:           #2FA8FF;
@@ -17,10 +22,12 @@
   --color-navy-light:    #122848;
   --color-navy-dark:     #060F1C;
   --color-neutral-light: #F5F7FA;
-
-  /* --- Polices --- */
-  --font-heading: 'Montserrat', sans-serif;
-  --font-body:    'Open Sans', sans-serif;
+  /* Refonte claire : bleu des boutons et liens (contraste AA sur blanc), fonds et filets */
+  --color-azure:         #0F6FE6;
+  --color-azure-dark:    #0B58BD;
+  --color-mist:          #F3F7FC;
+  --color-line:          #E2E9F2;
+  --color-muted:         #55657D;
 
   /* --- Ombres --- */
   --shadow-card:       0 4px 24px rgba(11,31,58,0.08);
@@ -91,23 +98,29 @@ html.lenis {
 
 body {
   font-family: var(--font-body);
-  color: #1a1a1a;
+  color: #0B1F3A;
   background-color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
 }
 
 /* =========================================================
    Scrollbar
    ========================================================= */
+/* Carrousels à faire glisser (téléphone) : pas de barre de défilement visible. */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 ::-webkit-scrollbar       { width: 6px; }
-::-webkit-scrollbar-track { background: #F5F7FA; }
-::-webkit-scrollbar-thumb { background: #2FA8FF; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #0B1F3A; }
+::-webkit-scrollbar-track { background: #F3F7FC; }
+::-webkit-scrollbar-thumb { background: #B9C6D8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #0F6FE6; }
 
 /* =========================================================
    Prose (blog)
@@ -157,6 +170,7 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-reduced-motion: no-preference) {
   [data-reveal],
   [data-split],
+  [data-lines],
   [data-hero],
   /* Pages sans attributs explicites : mêmes sélecteurs que dans AutoReveal.tsx. */
   [data-auto-reveal]:not([data-ready]) :is(h1, h2, h1 + p, h2 + p, .grid > *, form) {
@@ -164,7 +178,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   /* Filet de sécurité : tant que MotionRoot n'a pas posé data-motion sur <html> (JS bloqué
      ou très lent), tout redevient visible après 4 s. */
-  html:not([data-motion]) :is([data-reveal], [data-split], [data-hero]),
+  html:not([data-motion]) :is([data-reveal], [data-split], [data-lines], [data-hero]),
   html:not([data-motion]) [data-auto-reveal] :is(h1, h2, h1 + p, h2 + p, .grid > *, form) {
     animation: motion-failsafe 0s linear 4s forwards;
   }
@@ -172,6 +186,9 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes motion-failsafe {
   to { opacity: 1; }
 }
+/* Titres dévoilés ligne par ligne (data-lines) : le masque garde la place des jambages (g, p, j). */
+.reveal-line { padding-bottom: 0.14em; }
+.reveal-line-mask { margin-bottom: -0.14em; }
 
 .reveal {
   opacity: 0;

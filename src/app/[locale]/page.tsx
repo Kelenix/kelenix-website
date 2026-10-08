@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
-import ProcessSection from "@/components/home/ProcessSection";
-import PromoPopup from "@/components/home/PromoPopup";
-import ProofNotifications from "@/components/home/ProofNotifications";
+import ProofStrip from "@/components/home/ProofStrip";
+import PainSection from "@/components/home/PainSection";
 import ServicesSection from "@/components/home/ServicesSection";
+import ProcessSection from "@/components/home/ProcessSection";
 import WhyUsSection from "@/components/home/WhyUsSection";
-import StatsSection from "@/components/home/StatsSection";
 import PortfolioSection from "@/components/home/PortfolioSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import BlogSection from "@/components/home/BlogSection";
-import CtaSection from "@/components/home/CtaSection";
-import PainSection from "@/components/home/PainSection";
 import FaqSection from "@/components/home/FaqSection";
+import CtaSection from "@/components/home/CtaSection";
+import PromoPopup from "@/components/home/PromoPopup";
+import ProofNotifications from "@/components/home/ProofNotifications";
 import { prisma } from "@/lib/prisma";
 import { getSiteStats } from "@/lib/site-stats";
 
@@ -35,7 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
 
-  const [projects, testimonials, blogPosts, stats, homeServices, faqs] = await Promise.all([
+  // Base injoignable : chaque requête renvoie null, et la section concernée se masque.
+  const offline = () => null;
+
+  const [dbProjects, dbTestimonials, dbPosts, stats, dbServices, dbFaqs] = await Promise.all([
     prisma.project.findMany({
       where: { published: true, featured: true },
       orderBy: { createdAt: "desc" },
@@ -48,11 +51,11 @@ export default async function HomePage({ params }: Props) {
         coverImage: true,
         client: true,
       },
-    }).catch(() => []),
+    }).catch(offline),
     prisma.testimonial.findMany({
       where: { published: true, showOnHome: true },
       orderBy: { createdAt: "desc" },
-    }).catch(() => []),
+    }).catch(offline),
     prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { publishedAt: "desc" },
@@ -68,35 +71,43 @@ export default async function HomePage({ params }: Props) {
         category: true,
         publishedAt: true,
       },
-    }).catch(() => []),
+    }).catch(offline),
     getSiteStats(),
     prisma.service.findMany({
       where: { published: true },
       orderBy: { order: "asc" },
       select: { slug: true, titleFr: true, titleEn: true, shortDescFr: true, shortDescEn: true, icon: true },
-    }).catch(() => []),
+    }).catch(offline),
     prisma.faq.findMany({
       where: { published: true },
       orderBy: { order: "asc" },
       take: 5,
       select: { questionFr: true, questionEn: true, answerFr: true, answerEn: true },
-    }).catch(() => []),
+    }).catch(offline),
   ]);
-  const faqItems = faqs.map((f) => (locale === "en" ? { q: f.questionEn, a: f.answerEn } : { q: f.questionFr, a: f.answerFr }));
 
-  const heroStatValues = [stats.projects, stats.clients, stats.years, stats.technologies];
-  const homeStatValues = [stats.projects, stats.clients, stats.years, stats.technologies, stats.satisfaction];
+  // En développement sans base de données : contenu d'exemple, pour voir toutes les sections en local.
+  const dbDown = [dbProjects, dbTestimonials, dbPosts, dbServices, dbFaqs].some((rows) => rows === null);
+  const preview = dbDown && process.env.NODE_ENV === "development" ? await import("@/data/home-preview") : null;
+
+  const projects = dbProjects ?? (preview?.previewProjects as NonNullable<typeof dbProjects> | undefined) ?? [];
+  const testimonials = dbTestimonials ?? (preview?.previewTestimonials as unknown as NonNullable<typeof dbTestimonials> | undefined) ?? [];
+  const blogPosts = dbPosts ?? (preview?.previewPosts as unknown as NonNullable<typeof dbPosts> | undefined) ?? [];
+  const homeServices = dbServices ?? preview?.previewServices ?? [];
+  const faqs = dbFaqs ?? preview?.previewFaqs ?? [];
+
+  const faqItems = faqs.map((f) => (locale === "en" ? { q: f.questionEn, a: f.answerEn } : { q: f.questionFr, a: f.answerFr }));
 
   return (
     <>
-      <HeroSection statValues={heroStatValues} />
+      <HeroSection />
+      <ProofStrip stats={stats} />
       <PainSection />
       <ServicesSection services={homeServices} locale={locale} />
       <ProcessSection />
-      <WhyUsSection />
-      <StatsSection statValues={homeStatValues} />
+      <WhyUsSection rating={stats.rating} />
       <PortfolioSection projects={projects} locale={locale} />
-      <TestimonialsSection testimonials={testimonials} locale={locale} />
+      <TestimonialsSection testimonials={testimonials} locale={locale} rating={stats.rating} />
       <BlogSection posts={blogPosts} locale={locale} />
       <FaqSection items={faqItems} />
       <CtaSection />

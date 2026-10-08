@@ -1,89 +1,90 @@
-"use client";
+import { getTranslations } from "next-intl/server";
+import { Award, Check, Globe2, Headphones, Shield, Star, Wallet, Zap } from "lucide-react";
+import Reveal from "@/components/motion/Reveal";
+import SectionHeading from "@/components/home/SectionHeading";
 
-import { useRef } from "react";
-import { useTranslations } from "next-intl";
-import { Award, Zap, Headphones, Shield, Globe2, DollarSign } from "lucide-react";
-import { useReveal } from "@/lib/gsap";
+const TECH = ["Next.js", "React", "Node.js", "Flutter", "Python", "PostgreSQL"];
 
-const icons = {
-  expertise: Award,
-  agile: Zap,
-  support: Headphones,
-  quality: Shield,
-  international: Globe2,
-  accessible: DollarSign,
-};
-
-// Accent par carte (dégradé de l'icône + halo)
-const accents: Record<ItemKey, { from: string; to: string; glow: string; ring: string }> = {
-  expertise:     { from: "from-sky",        to: "to-sky-dark",     glow: "bg-sky/25",     ring: "ring-sky/20" },
-  agile:         { from: "from-gold",       to: "to-gold-dark",    glow: "bg-gold/25",    ring: "ring-gold/20" },
-  support:       { from: "from-sky-light",  to: "to-sky",          glow: "bg-sky/25",     ring: "ring-sky/20" },
-  quality:       { from: "from-emerald-400",to: "to-emerald-600",  glow: "bg-emerald-400/25", ring: "ring-emerald-400/20" },
-  international: { from: "from-indigo-400",  to: "to-navy",         glow: "bg-indigo-400/25", ring: "ring-indigo-400/20" },
-  accessible:    { from: "from-gold-light",  to: "to-gold-dark",   glow: "bg-gold/25",    ring: "ring-gold/20" },
-};
-
-type ItemKey = keyof typeof icons;
-
-export default function WhyUsSection() {
-  const t = useTranslations("whyUs");
-  const items: ItemKey[] = ["expertise", "agile", "support", "quality", "international", "accessible"];
-  const root = useRef<HTMLElement>(null);
-  useReveal(root);
-
+function Card({
+  icon: Icon,
+  title,
+  text,
+  className = "",
+  children,
+}: {
+  icon: React.ElementType;
+  title: string;
+  text: string;
+  className?: string;
+  children?: React.ReactNode;
+}) {
   return (
-    <section ref={root} className="relative py-24 bg-neutral-light overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42rem] h-[42rem] rounded-full bg-sky/5 blur-3xl pointer-events-none" />
-      <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
-        <div className="text-center mb-16">
-          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-            {t("title")}{" "}
-            <span className="text-sky">{t("titleHighlight")}</span>
-          </h2>
-          <p data-reveal className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((key, i) => {
-            const Icon = icons[key];
-            const a = accents[key];
-            return (
-              <div key={key} data-reveal className="flex">
-              <div className="group relative glass-light glass-hover rounded-3xl p-8 overflow-hidden w-full">
-                {/* Halo décoratif */}
-                <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full ${a.glow} blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-
-                {/* Numéro filigrane */}
-                <span className="absolute top-4 right-6 font-heading text-6xl font-extrabold text-navy/[0.04] group-hover:text-navy/[0.07] transition-colors select-none pointer-events-none">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
-                {/* Icône */}
-                <div
-                  className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${a.from} ${a.to} flex items-center justify-center mb-6 shadow-lg ring-4 ${a.ring} group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}
-                >
-                  <Icon size={24} className="text-white" strokeWidth={2.2} />
-                </div>
-
-                <h3 className="relative font-heading font-bold text-navy text-lg mb-3">
-                  {t(`items.${key}.title`)}
-                </h3>
-                <p className="relative text-gray-500 text-sm leading-relaxed">
-                  {t(`items.${key}.description`)}
-                </p>
-
-                {/* Trait animé en bas */}
-                <div className={`mt-6 h-1 w-10 rounded-full bg-gradient-to-r ${a.from} ${a.to} group-hover:w-20 transition-all duration-500`} />
-              </div>
-              </div>
-            );
-          })}
+    <li data-reveal className={`flex flex-col gap-5 rounded-3xl border border-line bg-white p-5 sm:gap-6 sm:p-7 ${children ? "lg:flex-row lg:items-center lg:justify-between lg:gap-10 lg:p-9" : ""} ${className}`}>
+      <div className="flex max-w-sm gap-4 sm:block">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-mist text-azure sm:mb-5">
+          <Icon size={22} />
+        </span>
+        <div>
+          <h3 className="text-lg font-semibold leading-snug text-navy sm:text-xl">{title}</h3>
+          <p className="mt-1.5 text-[15px] leading-relaxed text-muted sm:mt-2">{text}</p>
         </div>
       </div>
-    </section>
+      {children}
+    </li>
+  );
+}
+
+// Les raisons de choisir Kelenix : deux cartes larges illustrées, quatre cartes simples et la note des clients.
+export default async function WhyUsSection({ rating }: { rating: string }) {
+  const t = await getTranslations("home.why");
+  const checks = t.raw("checks") as string[];
+  const item = (key: string) => ({ title: t(`items.${key}.title`), text: t(`items.${key}.text`) });
+
+  return (
+    <Reveal className="bg-mist py-16 sm:py-20 lg:py-28">
+      <div className="container mx-auto max-w-7xl px-5 xl:px-8">
+        <SectionHeading title={t("title")} />
+
+        <ul className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <Card icon={Award} {...item("expertise")} className="md:col-span-2">
+            <ul aria-hidden="true" className="flex max-w-[17rem] flex-wrap gap-2">
+              {TECH.map((name) => (
+                <li key={name} className="rounded-full border border-line bg-mist/70 px-3.5 py-1.5 text-sm font-medium text-navy">
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </Card>
+          <Card icon={Zap} {...item("agile")} />
+          <Card icon={Headphones} {...item("support")} />
+          <Card icon={Shield} {...item("quality")} className="md:col-span-2">
+            <ul aria-hidden="true" className="flex w-full max-w-[17rem] flex-col gap-2.5 rounded-2xl bg-mist/70 p-4">
+              {checks.map((label) => (
+                <li key={label} className="flex items-center gap-2.5 text-sm font-medium text-navy">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white">
+                    <Check size={12} strokeWidth={3.5} />
+                  </span>
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </Card>
+          <Card icon={Globe2} {...item("international")} />
+          <Card icon={Wallet} {...item("accessible")} />
+
+          <li data-reveal className="flex flex-col justify-between gap-6 rounded-3xl bg-linear-to-br from-azure to-sky p-6 text-white sm:p-7 md:col-span-2 lg:col-span-1">
+            <span aria-hidden="true" className="flex gap-1 text-gold">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={20} fill="currentColor" />
+              ))}
+            </span>
+            <p>
+              <span className="block font-display text-6xl font-medium leading-none tracking-[-0.03em] tabular-nums">{rating}</span>
+              <span className="mt-2 block text-[15px] text-white/85">{t("ratingLabel")}</span>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </Reveal>
   );
 }

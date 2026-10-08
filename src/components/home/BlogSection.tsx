@@ -1,12 +1,10 @@
-"use client";
-
-import { useRef } from "react";
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { ArrowRight, Calendar, User } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { ArrowRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
-import { useReveal } from "@/lib/gsap";
+import Reveal from "@/components/motion/Reveal";
+import SectionHeading, { MoreLink } from "@/components/home/SectionHeading";
 
 type Post = {
   slug: string;
@@ -20,91 +18,84 @@ type Post = {
   publishedAt: Date | null;
 };
 
-export default function BlogSection({ posts, locale }: { posts: Post[]; locale: string }) {
-  const t = useTranslations("blog");
-  const root = useRef<HTMLElement>(null);
-  useReveal(root);
+function Cover({ post, title, sizes, className }: { post: Post; title: string; sizes: string; className: string }) {
+  return (
+    <div className={`relative shrink-0 overflow-hidden bg-linear-to-br from-sky/30 to-azure/40 ${className}`}>
+      {post.coverImage && (
+        <Image src={post.coverImage} alt={title} fill sizes={sizes} className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+      )}
+    </div>
+  );
+}
 
+// Blog : un article à la une et deux articles en ligne. Sur téléphone, les suivants sont des lignes compactes.
+export default async function BlogSection({ posts, locale }: { posts: Post[]; locale: string }) {
+  const t = await getTranslations("home.blog");
   if (!posts.length) return null;
 
+  const [first, ...rest] = posts.slice(0, 3);
+  const text = (post: Post) => ({
+    title: locale === "fr" ? post.titleFr : post.titleEn,
+    excerpt: locale === "fr" ? post.excerptFr : post.excerptEn,
+    category: t.has(`categories.${post.category}`) ? t(`categories.${post.category}`) : post.category,
+    date: post.publishedAt ? formatDate(post.publishedAt, locale) : null,
+  });
+  const lead = text(first);
+
   return (
-    <section ref={root} className="py-24 bg-neutral-light">
-      <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-        <div className="text-center mb-16">
-          <span data-reveal className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h2 data-split className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-            {t("title")} <span className="text-sky">{t("titleHighlight")}</span>
-          </h2>
-          <p data-reveal className="text-gray-500 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
-        </div>
+    <Reveal className="bg-white py-16 sm:py-20 lg:py-28">
+      <div className="container mx-auto max-w-7xl px-5 xl:px-8">
+        <SectionHeading title={t("title")} action={<MoreLink href="/blog">{t("viewAll")}</MoreLink>} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {posts.slice(0, 3).map((post) => (
-            <div key={post.slug} data-reveal className="flex">
-            <Link
-              href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}
-              className="group w-full bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100"
-            >
-              {/* Cover Image */}
-              <div className="relative h-48 overflow-hidden">
-                {post.coverImage ? (
-                  <Image
-                    src={post.coverImage}
-                    alt={locale === "fr" ? post.titleFr : post.titleEn}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-navy to-sky/50" />
-                )}
-                <div className="absolute top-3 left-3">
-                  <span className="bg-sky text-white text-xs font-semibold px-2.5 py-1 rounded-full capitalize">
-                    {post.category.toLowerCase()}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
-                  <span className="flex items-center gap-1.5">
-                    <User size={12} />
-                    {post.authorName}
-                  </span>
-                  {post.publishedAt && (
-                    <span className="flex items-center gap-1.5">
-                      <Calendar size={12} />
-                      {formatDate(post.publishedAt, locale)}
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-heading font-bold text-navy text-base mb-3 line-clamp-2 group-hover:text-sky transition-colors">
-                  {locale === "fr" ? post.titleFr : post.titleEn}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-4">
-                  {locale === "fr" ? post.excerptFr : post.excerptEn}
-                </p>
-                <div className="flex items-center gap-1 text-sky text-sm font-medium">
-                  {t("readMore")} <ArrowRight size={14} />
-                </div>
-              </div>
+        <div className={`grid gap-8 lg:gap-12 ${rest.length ? "lg:grid-cols-[1.2fr_1fr]" : ""}`}>
+          <article data-reveal>
+            <Link href={{ pathname: "/blog/[slug]", params: { slug: first.slug } }} className="group block">
+              <Cover post={first} title={lead.title} sizes="(max-width: 1024px) 100vw, 660px" className="aspect-[16/10] rounded-3xl" />
+              <p className="mt-5 text-sm text-muted">
+                <span className="font-semibold text-azure">{lead.category}</span>
+                {lead.date && <span className="before:mx-2 before:content-['·']">{lead.date}</span>}
+              </p>
+              <h3 className="mt-2 text-balance font-display text-2xl font-medium leading-tight tracking-[-0.02em] text-navy transition-colors group-hover:text-azure sm:text-[2rem]">
+                {lead.title}
+              </h3>
+              <p className="mt-3 line-clamp-2 max-w-xl text-[15px] leading-relaxed text-muted sm:text-base">{lead.excerpt}</p>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-[15px] font-semibold text-navy">
+                {t("read")}
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </span>
             </Link>
+          </article>
+
+          {rest.length > 0 && (
+            <div className="flex flex-col divide-y divide-line border-t border-line lg:border-t-0">
+              {rest.map((post) => {
+                const item = text(post);
+                return (
+                  <article key={post.slug} data-reveal className="py-5 first:lg:pt-0 sm:py-7">
+                    <Link href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }} className="group flex items-center gap-4 sm:gap-6">
+                      <Cover post={post} title={item.title} sizes="(max-width: 640px) 96px, 176px" className="h-24 w-24 rounded-2xl sm:h-36 sm:w-44" />
+                      <div className="min-w-0">
+                        <p className="text-[13px] text-muted sm:text-sm">
+                          <span className="font-semibold text-azure">{item.category}</span>
+                          {item.date && <span className="hidden before:mx-2 before:content-['·'] sm:inline">{item.date}</span>}
+                        </p>
+                        <h3 className="mt-1 line-clamp-3 text-base font-semibold leading-snug text-navy transition-colors group-hover:text-azure sm:text-xl">{item.title}</h3>
+                        <p className="mt-2 hidden line-clamp-2 text-[15px] leading-relaxed text-muted lg:[display:-webkit-box]">{item.excerpt}</p>
+                      </div>
+                    </Link>
+                  </article>
+                );
+              })}
             </div>
-          ))}
+          )}
         </div>
 
-        <div data-reveal className="text-center">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy text-white font-semibold rounded-xl hover:bg-sky transition-colors duration-200"
-          >
-            {t("viewAll")} <ArrowRight size={16} />
-          </Link>
+        <div data-reveal className="mt-6 md:hidden">
+          <MoreLink href="/blog" variant="block">
+            {t("viewAll")}
+          </MoreLink>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }
