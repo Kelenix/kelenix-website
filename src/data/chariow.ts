@@ -102,32 +102,3 @@ export const promo = {
   code: "BIENVENUE10",
   percent: 10,
 };
-
-// Preuve sociale : vrais achats & avis (prénom + pays seulement = respect vie privée)
-export type ProofItem =
-  | { type: "purchase"; name: string; country: string; flag: string; product: string; when: string }
-  | { type: "review"; name: string; country: string; flag: string; product: string; comment: string; when: string };
-
-export const proofItems: ProofItem[] = [
-  { type: "purchase", name: "Leo", country: "Italie", flag: "🇮🇹", product: "Masterclass Java", when: "il y a 2 h" },
-  {
-    type: "review",
-    name: "Hugues",
-    country: "Burkina Faso",
-    flag: "🇧🇫",
-    product: "Bases de Données SQL",
-    comment: "Un livre très riche et très bien expliqué, je le recommande aux débutants.",
-    when: "il y a 1 j",
-  },
-  { type: "purchase", name: "Gregory", country: "Madagascar", flag: "🇲🇬", product: "Masterclass Java", when: "il y a 5 h" },
-  {
-    type: "review",
-    name: "Leo",
-    country: "Italie",
-    flag: "🇮🇹",
-    product: "Masterclass Java",
-    comment: "Très instructif. Merci !",
-    when: "il y a 3 j",
-  },
-  { type: "purchase", name: "Sam", country: "Bénin", flag: "🇧🇯", product: "Masterclass Java", when: "il y a 8 h" },
-];

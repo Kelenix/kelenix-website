@@ -11,7 +11,6 @@ import BlogSection from "@/components/home/BlogSection";
 import FaqSection from "@/components/home/FaqSection";
 import CtaSection from "@/components/home/CtaSection";
 import PromoPopup from "@/components/home/PromoPopup";
-import ProofNotifications from "@/components/home/ProofNotifications";
 import { prisma } from "@/lib/prisma";
 import { getSiteStats } from "@/lib/site-stats";
 
@@ -112,9 +111,8 @@ export default async function HomePage({ params }: Props) {
       <FaqSection items={faqItems} />
       <CtaSection />
 
-      {/* Intégrations Chariow */}
+      {/* Intégration Chariow */}
       <PromoPopup />
-      <ProofNotifications />
     </>
   );
 }

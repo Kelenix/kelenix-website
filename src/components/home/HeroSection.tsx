@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import {
   ArrowRight, BarChart3, Bell, Check, ChevronRight, FileText, Home, LayoutDashboard, Lock, Plus, Rocket, ShoppingBag, Users,
 } from "lucide-react";
@@ -233,13 +233,16 @@ async function HeroMock() {
 
 export default async function HeroSection() {
   const t = await getTranslations("home.hero");
+  // Largeur de la phrase la plus longue du titre, en em : la taille du texte s'y ajuste pour que
+  // chaque phrase tienne sur une ligne à partir de la tablette (deux lignes au total).
+  const fit = (await getLocale()) === "en" ? 13.6 : 10.8;
 
   return (
     <HeroMotion className="relative overflow-hidden bg-white">
       {/* Voile bleu très léger en haut de page */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-[radial-gradient(70%_60%_at_50%_0%,rgba(47,168,255,0.10),transparent)]" />
 
-      <div className="container relative mx-auto max-w-5xl px-5 pt-10 text-center sm:pt-14 lg:pt-20">
+      <div className="container relative mx-auto max-w-7xl px-5 pt-10 text-center sm:pt-14 lg:pt-20">
         <Link
           href="/devis"
           className="group inline-flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-3 pr-2.5 text-[13px] font-medium text-navy shadow-[0_1px_2px_rgba(11,31,58,0.05)] transition-colors hover:border-sky/60 sm:text-sm"
@@ -249,9 +252,12 @@ export default async function HeroSection() {
           <ChevronRight size={14} className="text-muted transition-transform group-hover:translate-x-0.5" />
         </Link>
 
-        <h1 className="mt-6 font-display text-[2.7rem] font-medium leading-[1.02] tracking-[-0.035em] text-navy sm:mt-7 sm:text-6xl lg:text-7xl xl:text-[5.4rem]">
-          <span className="block text-balance">{t("title1")}</span>
-          <span className="block text-balance">{t("title2")}</span>
+        <h1
+          style={{ "--fit": fit } as React.CSSProperties}
+          className="mt-6 font-display text-[2.7rem] font-medium leading-[1.02] tracking-[-0.035em] text-navy sm:mt-7 sm:text-[length:min(5.4rem,calc((100vw_-_3rem)/var(--fit)))]"
+        >
+          <span className="block text-balance sm:whitespace-nowrap">{t("title1")}</span>
+          <span className="block text-balance sm:whitespace-nowrap">{t("title2")}</span>
         </h1>
 
         <p className="mx-auto mt-5 max-w-2xl text-pretty text-[1.05rem] leading-relaxed text-muted sm:mt-6 sm:text-xl">

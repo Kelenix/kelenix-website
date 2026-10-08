@@ -71,17 +71,6 @@ const benefits = [
   },
 ];
 
-const partnerLogos = [
-  { name: "TechCorp" },
-  { name: "CloudBase" },
-  { name: "DataSync" },
-  { name: "NexaDigital" },
-  { name: "SmartAI" },
-  { name: "BuildSoft" },
-  { name: "AgileTeams" },
-  { name: "DevPulse" },
-];
-
 const partnerTypes = [
   { valueFr: "Revendeur", valueEn: "Reseller" },
   { valueFr: "Intégrateur", valueEn: "Integrator" },
@@ -129,20 +118,6 @@ export default async function PartnersPage({ params }: Props) {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Partenaires technologiques */}
-      <section className="border-y border-line bg-mist py-12 sm:py-16">
-        <div className={container}>
-          <h2 className="mb-6 text-center text-sm font-semibold text-muted sm:mb-8">{isEn ? "Our technology partners" : "Nos partenaires technologiques"}</h2>
-          <ul className="flex flex-wrap justify-center gap-2.5 sm:gap-3">
-            {partnerLogos.map((logo) => (
-              <li key={logo.name} className="rounded-full border border-line bg-white px-5 py-2.5 text-[15px] font-semibold text-navy">
-                {logo.name}
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 

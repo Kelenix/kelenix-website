@@ -5,6 +5,21 @@ import { container } from "@/components/site/styles";
 type Href = React.ComponentProps<typeof Link>["href"];
 export type Crumb = { label: string; href?: Href };
 
+// Un mot composé (« E-commerce ») reste d'un seul tenant : pas de retour à la ligne au trait d'union.
+function keepHyphens(title: React.ReactNode) {
+  if (typeof title !== "string" || !title.includes("-")) return title;
+  return title.split(" ").flatMap((word, i) => [
+    i > 0 ? " " : "",
+    word.includes("-") ? (
+      <span key={i} className="whitespace-nowrap">
+        {word}
+      </span>
+    ) : (
+      word
+    ),
+  ]);
+}
+
 // En-tête des pages intérieures : fond blanc, voile bleu léger, grand titre serif.
 // data-no-reveal : le titre s'affiche tout de suite, sans attendre le JavaScript (voir AutoReveal).
 export default function PageHero({
@@ -32,7 +47,7 @@ export default function PageHero({
           <nav aria-label="Breadcrumb" className="mb-6 sm:mb-8">
             <ol className={`flex flex-wrap items-center gap-1.5 text-sm text-muted ${centered ? "justify-center" : ""}`}>
               {breadcrumb.map((crumb, i) => (
-                <li key={crumb.label} className="flex min-w-0 items-center gap-1.5">
+                <li key={crumb.label} className={`min-w-0 items-center gap-1.5 ${crumb.href ? "flex" : "hidden sm:flex"}`}>
                   {i > 0 && <ChevronRight size={14} className="shrink-0 text-muted/60" />}
                   {crumb.href ? (
                     <Link href={crumb.href} className="transition-colors hover:text-navy">
@@ -55,7 +70,7 @@ export default function PageHero({
           </p>
         )}
         <h1 className={`max-w-4xl text-balance font-display text-[2.4rem] font-medium leading-[1.04] tracking-[-0.03em] text-navy sm:text-6xl lg:text-[4.25rem] ${centered ? "mx-auto" : ""}`}>
-          {title}
+          {keepHyphens(title)}
         </h1>
         {lead && <p className={`mt-5 max-w-2xl text-pretty text-[1.05rem] leading-relaxed text-muted sm:text-xl ${centered ? "mx-auto" : ""}`}>{lead}</p>}
         {children && <div className={`mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center ${centered ? "sm:justify-center" : ""}`}>{children}</div>}

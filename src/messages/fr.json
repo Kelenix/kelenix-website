@@ -44,11 +44,6 @@
     "dismiss": "Non merci, plus tard",
     "close": "Fermer"
   },
-  "proof": {
-    "bought": "vient d'acheter",
-    "verified": "Achat vérifié",
-    "close": "Fermer"
-  },
   "services": {
     "badge": "Nos Services",
     "title": "Solutions technologiques",
@@ -161,7 +156,7 @@
     "badge": "Devis Gratuit",
     "title": "Demandez votre",
     "titleHighlight": "devis personnalisé",
-    "subtitle": "En 5 étapes simples, décrivez votre projet et recevez une estimation personnalisée sous 48h",
+    "subtitle": "En 4 étapes simples, décrivez votre projet et recevez une estimation personnalisée sous 48h",
     "steps": {
       "service": "Type de service",
       "project": "Votre projet",

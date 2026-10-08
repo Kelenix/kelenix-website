@@ -8,7 +8,7 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 // Barre d'action fixée en bas sur mobile : WhatsApp + « Demander un devis ». Elle apparaît après
 // le premier écran et s'efface à l'approche du pied de page. Sa hauteur est publiée dans --quote-bar
-// pour que les notifications et le bandeau cookies remontent au-dessus.
+// pour que le bandeau cookies remonte au-dessus.
 export default function MobileQuoteBar({ whatsapp }: { whatsapp: string }) {
   const t = useTranslations("nav");
   const tw = useTranslations("whatsapp");

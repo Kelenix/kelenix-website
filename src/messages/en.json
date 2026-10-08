@@ -44,11 +44,6 @@
     "dismiss": "No thanks, later",
     "close": "Close"
   },
-  "proof": {
-    "bought": "just bought",
-    "verified": "Verified purchase",
-    "close": "Close"
-  },
   "services": {
     "badge": "Our Services",
     "title": "Custom technology",
@@ -161,7 +156,7 @@
     "badge": "Free Quote",
     "title": "Request your",
     "titleHighlight": "personalized quote",
-    "subtitle": "In 5 simple steps, describe your project and receive a personalized estimate within 48 hours",
+    "subtitle": "In 4 simple steps, describe your project and receive a personalized estimate within 48 hours",
     "steps": {
       "service": "Service type",
       "project": "Your project",
