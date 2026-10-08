@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     const testimonial = await prisma.testimonial.create({
       data: { ...parsed, photo: parsed.photo ?? null },
     });
+    revalidatePath("/", "layout");
     return NextResponse.json(testimonial);
   } catch (error) {
     if (error instanceof z.ZodError) {

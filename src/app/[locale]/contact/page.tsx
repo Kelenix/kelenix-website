@@ -1,3 +1,5 @@
+// Rendue à chaque requête : la page lit la base sans repli, elle ne doit pas être générée au build.
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Mail, Phone, MapPin, Clock, MessageCircle } from "lucide-react";

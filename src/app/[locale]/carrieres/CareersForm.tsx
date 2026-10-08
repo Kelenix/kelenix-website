@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Send, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/tracking";
 import { btnPrimary, input, label } from "@/components/site/styles";
 
 export default function CareersForm({ locale }: { locale: string }) {
@@ -37,6 +38,7 @@ export default function CareersForm({ locale }: { locale: string }) {
       });
       if (res.ok) {
         setSuccess(true);
+        track({ name: "candidature" });
         setForm({ name: "", email: "", phone: "", position: "", message: "" });
       } else {
         setError(isEn ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");

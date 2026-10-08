@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { excerpt, notifyAdmins } from "@/lib/push";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { sendContactNotification } from "@/lib/email";
@@ -28,6 +29,9 @@ export async function POST(request: Request) {
     const data = schema.parse(body);
 
     await prisma.contactMessage.create({ data });
+    after(() =>
+      notifyAdmins({ title: `Nouveau message — ${data.firstName} ${data.lastName}`, body: excerpt(data.message), url: "/admin/messages" })
+    );
     await sendContactNotification(data);
 
     return NextResponse.json({ success: true });

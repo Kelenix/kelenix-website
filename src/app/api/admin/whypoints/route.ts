@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
@@ -24,5 +25,6 @@ export async function POST(request: Request) {
       published: body.published ?? true,
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json(point);
 }

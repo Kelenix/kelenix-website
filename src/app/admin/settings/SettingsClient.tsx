@@ -37,7 +37,14 @@ const sections: Section[] = [
       { key: "meta_title_en", label: "Titre méta (EN)" },
       { key: "meta_description_fr", label: "Description méta (FR)", textarea: true },
       { key: "meta_description_en", label: "Description méta (EN)", textarea: true },
-      { key: "google_analytics_id", label: "Google Analytics ID (G-XXXXXXXX)" },
+    ],
+  },
+  {
+    title: "Publicité et mesure (chargés seulement si le visiteur accepte les cookies — laisser vide pour ne rien charger)",
+    fields: [
+      { key: "meta_pixel_id", label: "Pixel Meta — Facebook / Instagram (ex : 123456789012345)" },
+      { key: "google_analytics_id", label: "Google Analytics (ex : G-XXXXXXXXXX)" },
+      { key: "google_ads_id", label: "Google Ads (ex : AW-123456789)" },
     ],
   },
   {

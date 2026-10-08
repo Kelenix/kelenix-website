@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { notifyAdmins } from "@/lib/push";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { sendApplicationNotification } from "@/lib/email";
@@ -33,6 +34,13 @@ export async function POST(request: Request) {
     };
 
     await prisma.jobApplication.create({ data: appData });
+    after(() =>
+      notifyAdmins({
+        title: `Nouvelle candidature — ${appData.name}`,
+        body: appData.position || "Candidature spontanée",
+        url: "/admin/careers?tab=applications",
+      })
+    );
     await sendApplicationNotification(appData);
 
     return NextResponse.json({ success: true });

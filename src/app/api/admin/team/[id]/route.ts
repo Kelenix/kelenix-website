@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
@@ -21,6 +22,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       published: body.published ?? true,
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json(member);
 }
 
@@ -29,5 +31,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   if (!session?.user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const { id } = await params;
   await prisma.teamMember.delete({ where: { id } });
+  revalidatePath("/", "layout");
   return NextResponse.json({ success: true });
 }

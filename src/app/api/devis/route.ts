@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { notifyAdmins } from "@/lib/push";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { sendQuoteNotification } from "@/lib/email";
@@ -39,6 +40,13 @@ export async function POST(request: Request) {
     };
 
     await prisma.quoteRequest.create({ data: saved });
+    after(() =>
+      notifyAdmins({
+        title: `Nouvelle demande de devis — ${saved.firstName} ${saved.lastName}`,
+        body: `${saved.projectName} · ${saved.budget}`,
+        url: "/admin/messages?tab=devis",
+      })
+    );
     await sendQuoteNotification(saved);
 
     return NextResponse.json({ success: true });

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
         faqEn: parsed.faqEn ?? "[]",
       },
     });
+    revalidatePath("/", "layout");
     return NextResponse.json(service);
   } catch (error) {
     if (error instanceof z.ZodError) {

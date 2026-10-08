@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { BlogCategory } from "@prisma/client";
@@ -41,6 +42,7 @@ export async function PUT(request: Request, { params }: Props) {
         publishedAt: parsed.published && !existing?.publishedAt ? new Date() : existing?.publishedAt ?? null,
       },
     });
+    revalidatePath("/", "layout");
     return NextResponse.json(post);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -58,6 +60,7 @@ export async function DELETE(_request: Request, { params }: Props) {
   try {
     const { id } = await params;
     await prisma.blogPost.delete({ where: { id } });
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

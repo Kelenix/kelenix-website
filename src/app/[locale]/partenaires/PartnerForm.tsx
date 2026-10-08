@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Send, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/tracking";
 import { btnPrimary, input, label } from "@/components/site/styles";
 
 type PartnerType = { valueFr: string; valueEn: string };
@@ -48,6 +49,7 @@ export default function PartnerForm({
       });
       if (res.ok) {
         setSuccess(true);
+        track({ name: "lead", source: "partenaire" });
         setForm({ company: "", name: "", email: "", phone: "", partnerType: "", message: "" });
       } else {
         setError(isEn ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");

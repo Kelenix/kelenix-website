@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { BlogCategory } from "@prisma/client";
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
         publishedAt: parsed.published ? new Date() : null,
       },
     });
+    revalidatePath("/", "layout");
     return NextResponse.json(post);
   } catch (error) {
     if (error instanceof z.ZodError) {

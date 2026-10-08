@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { notifyAdmins } from "@/lib/push";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { sendNewsletterConfirmation } from "@/lib/email";
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
     }
 
     await prisma.newsletter.create({ data: { email } });
+    after(() => notifyAdmins({ title: "Nouvel abonné à la newsletter", body: email, url: "/admin/newsletter" }));
     await sendNewsletterConfirmation(email);
     return NextResponse.json({ success: true });
   } catch (error) {

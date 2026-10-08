@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Header from "@/components/layout/Header";
@@ -12,8 +12,14 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import MotionRoot from "@/components/motion/MotionRoot";
 import AutoReveal from "@/components/motion/AutoReveal";
 import MobileQuoteBar from "@/components/layout/MobileQuoteBar";
+import Tracking from "@/components/layout/Tracking";
+import { STORE_URL } from "@/data/chariow";
 import { fontVariables } from "@/app/fonts";
 import "@/app/globals.css";
+
+// Les pages statiques du site public sont régénérées au plus toutes les 5 minutes. Les routes admin
+// purgent en plus le cache à chaque modification (revalidatePath("/", "layout")).
+export const revalidate = 300;
 
 type Props = {
   children: React.ReactNode;
@@ -72,13 +78,15 @@ export default async function LocaleLayout({ children, params }: Props) {
   if (!routing.locales.includes(locale as "fr" | "en")) {
     notFound();
   }
+  // Donne la langue à next-intl sans lire les en-têtes de la requête : la page peut être rendue statiquement.
+  setRequestLocale(locale);
 
   const messages = await getMessages();
 
   let s: Record<string, string> = {};
   try {
     const settingsRows = await prisma.siteSettings.findMany({
-      where: { key: { in: ["company_email","company_phone","company_whatsapp","company_address","company_linkedin","company_facebook","company_instagram","company_youtube","company_twitter"] } },
+      where: { key: { in: ["company_email","company_phone","company_whatsapp","company_address","company_linkedin","company_facebook","company_instagram","company_youtube","company_twitter","meta_pixel_id","google_analytics_id","google_ads_id"] } },
     });
     s = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
   } catch (e) {
@@ -96,6 +104,15 @@ export default async function LocaleLayout({ children, params }: Props) {
     instagram: s.company_instagram || "https://instagram.com/kelenix",
     youtube:   s.company_youtube   || "https://youtube.com/@kelenix",
     twitter:   s.company_twitter   || "https://x.com/kelenix",
+  };
+
+  // Identifiants de mesure saisis dans l'admin : on ne garde que ceux qui ont la forme attendue,
+  // car ils finissent dans l'adresse de scripts externes.
+  const trackingId = (value: string | undefined, pattern: RegExp) => (value && pattern.test(value.trim()) ? value.trim() : null);
+  const tracking = {
+    metaPixelId: trackingId(s.meta_pixel_id, /^\d{6,20}$/),
+    googleAnalyticsId: trackingId(s.google_analytics_id, /^G-[A-Z0-9]{4,20}$/i),
+    googleAdsId: trackingId(s.google_ads_id, /^AW-\d{6,20}$/i),
   };
 
   // Services affichés dans le footer — issus de la base, pour refléter
@@ -128,6 +145,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <ScrollToTop />
           <MobileQuoteBar whatsapp={footerSettings.whatsapp} />
           <CookieBanner />
+          <Tracking {...tracking} storeUrl={STORE_URL} />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
@@ -24,6 +25,7 @@ export async function PUT(request: Request, { params }: Props) {
     const { id } = await params;
     const parsed = schema.parse(await request.json());
     const job = await prisma.jobPosting.update({ where: { id }, data: parsed });
+    revalidatePath("/", "layout");
     return NextResponse.json(job);
   } catch (error) {
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
@@ -39,6 +41,7 @@ export async function DELETE(_req: Request, { params }: Props) {
   try {
     const { id } = await params;
     await prisma.jobPosting.delete({ where: { id } });
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

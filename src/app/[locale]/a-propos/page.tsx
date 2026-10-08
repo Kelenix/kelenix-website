@@ -1,3 +1,5 @@
+// Rendue à chaque requête : la page lit la base sans repli, elle ne doit pas être générée au build.
+export const dynamic = "force-dynamic";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";

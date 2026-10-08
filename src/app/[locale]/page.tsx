@@ -12,6 +12,7 @@ import FaqSection from "@/components/home/FaqSection";
 import CtaSection from "@/components/home/CtaSection";
 import PromoPopup from "@/components/home/PromoPopup";
 import { prisma } from "@/lib/prisma";
+import { setRequestLocale } from "next-intl/server";
 import { getSiteStats } from "@/lib/site-stats";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   // Base injoignable : chaque requête renvoie null, et la section concernée se masque.
   const offline = () => null;

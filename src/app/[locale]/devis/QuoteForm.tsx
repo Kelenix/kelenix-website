@@ -8,6 +8,7 @@ import {
   Sprout, Banknote, Wallet, Gem, Zap, Calendar, CalendarDays, CalendarRange, Infinity as InfinityIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/tracking";
 import { btnDark, btnGhost, btnPrimary, input, label } from "@/components/site/styles";
 
 type FormData = {
@@ -115,6 +116,7 @@ export default function QuoteForm({ locale }: { locale: string }) {
       });
       if (res.ok) {
         setStatus("success");
+        track({ name: "lead", source: "devis" });
         return;
       }
       // Message d'erreur explicite selon le cas

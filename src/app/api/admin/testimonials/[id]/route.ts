@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
@@ -30,6 +31,7 @@ export async function PUT(request: Request, { params }: Props) {
       where: { id },
       data: { ...parsed, photo: parsed.photo ?? null },
     });
+    revalidatePath("/", "layout");
     return NextResponse.json(testimonial);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -47,6 +49,7 @@ export async function DELETE(_request: Request, { params }: Props) {
   try {
     const { id } = await params;
     await prisma.testimonial.delete({ where: { id } });
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

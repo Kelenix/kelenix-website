@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-error";
 import { z } from "zod";
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
     }
     const data = schema.parse(await req.json());
     const app = await prisma.mobileApp.create({ data });
+    revalidatePath("/", "layout");
     return NextResponse.json(app);
   } catch (e) {
     return handleApiError(e);

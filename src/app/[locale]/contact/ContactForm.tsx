@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Send, Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/tracking";
 import { btnGhost, btnPrimary, input, label } from "@/components/site/styles";
 
 export default function ContactForm({ locale }: { locale: string }) {
@@ -43,6 +44,7 @@ export default function ContactForm({ locale }: { locale: string }) {
       });
       if (res.ok) {
         setStatus("success");
+        track({ name: "lead", source: "contact" });
         setForm({ firstName: "", lastName: "", email: "", phone: "", company: "", service: "", budget: "", message: "" });
       } else setStatus("error");
     } catch {

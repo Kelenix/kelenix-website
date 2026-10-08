@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Cookie, X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gsap, useGSAP, MOTION, EASE } from "@/lib/gsap";
+import { CONSENT_EVENT, CONSENT_KEY, OPEN_COOKIES_EVENT, clearTrackingCookies, parseConsent } from "@/lib/tracking";
 
 type ConsentState = {
   essential: boolean;
@@ -36,22 +37,46 @@ export default function CookieBanner() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("kelenix_cookies");
+    const saved = localStorage.getItem(CONSENT_KEY);
     if (!saved) {
       const timer = setTimeout(() => setVisible(true), 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
+  // Lien « Gérer mes cookies » du pied de page : le bandeau se rouvre sur le choix déjà fait.
+  useEffect(() => {
+    const reopen = () => {
+      const saved = parseConsent(localStorage.getItem(CONSENT_KEY));
+      if (saved) setConsent(saved);
+      setCustomizing(true);
+      setVisible(true);
+    };
+    window.addEventListener(OPEN_COOKIES_EVENT, reopen);
+    return () => window.removeEventListener(OPEN_COOKIES_EVENT, reopen);
+  }, []);
+
   const save = (data: ConsentState) => {
-    localStorage.setItem("kelenix_cookies", JSON.stringify(data));
+    const previous = parseConsent(localStorage.getItem(CONSENT_KEY));
+    localStorage.setItem(CONSENT_KEY, JSON.stringify(data));
     localStorage.setItem("kelenix_cookies_date", new Date().toISOString());
     setVisible(false);
+    // Choix modifié après coup : on efface les cookies de mesure si un accord est retiré, puis on
+    // recharge la page pour repartir avec les seuls scripts autorisés.
+    if (previous && (previous.analytics !== data.analytics || previous.marketing !== data.marketing)) {
+      if (!data.analytics || !data.marketing) clearTrackingCookies();
+      window.location.reload();
+      return;
+    }
+    // Premier choix : Tracking.tsx charge (ou non) les outils de mesure.
+    window.dispatchEvent(new Event(CONSENT_EVENT));
   };
 
   const acceptAll = () => save({ essential: true, analytics: true, marketing: true });
   const declineAll = () => save({ essential: true, analytics: false, marketing: false });
   const saveCustom = () => save(consent);
+  // La croix refuse tout au premier affichage ; si un choix existe déjà, elle ferme sans rien changer.
+  const close = () => (localStorage.getItem(CONSENT_KEY) ? setVisible(false) : declineAll());
 
   if (!visible) return null;
 
@@ -80,7 +105,7 @@ export default function CookieBanner() {
             </p>
           </div>
           <button
-            onClick={declineAll}
+            onClick={close}
             className="text-muted hover:text-navy transition-colors flex-shrink-0 cursor-pointer"
             aria-label="Close"
           >

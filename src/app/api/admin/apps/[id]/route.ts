@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-error";
 import { z } from "zod";
@@ -22,6 +23,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const { id } = await params;
     const data = schema.parse(await req.json());
     const app = await prisma.mobileApp.update({ where: { id }, data });
+    revalidatePath("/", "layout");
     return NextResponse.json(app);
   } catch (e) {
     return handleApiError(e);
@@ -36,6 +38,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   try {
     const { id } = await params;
     await prisma.mobileApp.delete({ where: { id } });
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch (e) {
     return handleApiError(e);

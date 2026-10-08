@@ -40,7 +40,7 @@ export default async function CookiesPage({ params }: Props) {
       descFr: "Utilisés pour vous présenter des publicités pertinentes et mesurer l'efficacité de nos campagnes publicitaires.",
       descEn: "Used to show you relevant advertisements and measure the effectiveness of our advertising campaigns.",
       duration: "90 jours / 90 days",
-      examples: "fbp, _gcl_au",
+      examples: "_fbp (Meta : Facebook, Instagram), _gcl_au (Google Ads)",
     },
     {
       nameFr: "Cookies de préférences",

@@ -27,6 +27,11 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Service worker des notifications de l'admin : jamais mis en cache, pour que ses mises à jour passent tout de suite.
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }],
+      },
+      {
         source: "/(.*)",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },

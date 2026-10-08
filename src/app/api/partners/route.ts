@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { notifyAdmins } from "@/lib/push";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { sendPartnerNotification } from "@/lib/email";
@@ -35,6 +36,13 @@ export async function POST(request: Request) {
     };
 
     await prisma.partnerRequest.create({ data: partnerData });
+    after(() =>
+      notifyAdmins({
+        title: `Nouvelle demande de partenariat — ${partnerData.company}`,
+        body: [partnerData.name, partnerData.partnerType].filter(Boolean).join(" · "),
+        url: "/admin/partners",
+      })
+    );
     await sendPartnerNotification(partnerData);
 
     return NextResponse.json({ success: true });

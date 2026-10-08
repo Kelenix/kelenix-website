@@ -5,6 +5,7 @@ import Logo from "@/components/ui/Logo";
 import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { OPEN_COOKIES_EVENT, track } from "@/lib/tracking";
 
 const SocialIcons = {
   linkedin: () => (
@@ -56,7 +57,10 @@ export default function Footer({ settings, services = [] }: { settings: FooterSe
       });
       const data = await res.json();
       if (data.exists) setStatus("exists");
-      else setStatus("success");
+      else {
+        setStatus("success");
+        track({ name: "newsletter" });
+      }
       setEmail("");
     } catch {
       setStatus("success");
@@ -240,6 +244,9 @@ export default function Footer({ settings, services = [] }: { settings: FooterSe
             <Link href="/cookies" className="transition-colors hover:text-navy">
               {t("legal.cookies")}
             </Link>
+            <button type="button" onClick={() => window.dispatchEvent(new Event(OPEN_COOKIES_EVENT))} className="cursor-pointer transition-colors hover:text-navy">
+              {t("legal.manage")}
+            </button>
           </div>
         </div>
       </div>

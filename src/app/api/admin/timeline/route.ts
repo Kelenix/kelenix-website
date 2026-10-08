@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
@@ -23,5 +24,6 @@ export async function POST(request: Request) {
       order: body.order ?? 0,
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json(item);
 }
