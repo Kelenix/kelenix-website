@@ -134,27 +134,30 @@ body {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
-.prose-kelenix h2 { font-size: 1.5rem; font-weight: 700; }
+.prose-kelenix h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
 .prose-kelenix h3 { font-size: 1.25rem; font-weight: 600; }
-.prose-kelenix p  { margin-bottom: 1em; line-height: 1.8; color: #374151; }
+.prose-kelenix p  { margin-bottom: 1em; line-height: 1.8; color: #3D4D66; }
 .prose-kelenix ul,
 .prose-kelenix ol { padding-left: 1.5em; margin-bottom: 1em; }
-.prose-kelenix li { margin-bottom: 0.4em; line-height: 1.7; color: #374151; }
+.prose-kelenix li { margin-bottom: 0.4em; line-height: 1.7; color: #3D4D66; }
+.prose-kelenix ul { list-style: disc; }
+.prose-kelenix ol { list-style: decimal; }
+.prose-kelenix li::marker { color: #0F6FE6; }
 .prose-kelenix strong { color: #0B1F3A; font-weight: 700; }
-.prose-kelenix a  { color: #2FA8FF; text-decoration: underline; }
+.prose-kelenix a  { color: #0F6FE6; text-decoration: underline; text-underline-offset: 3px; }
 .prose-kelenix blockquote {
-  border-left: 4px solid #2FA8FF;
+  border-left: 3px solid #0F6FE6;
   padding: 1em 1.5em;
-  background: #F5F7FA;
-  border-radius: 0 8px 8px 0;
+  background: #F3F7FC;
+  border-radius: 0 16px 16px 0;
   margin: 1.5em 0;
 }
 .prose-kelenix code {
-  background: #F5F7FA;
+  background: #F3F7FC;
   padding: 0.15em 0.4em;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.875em;
-  color: #2FA8FF;
+  color: #0B58BD;
 }
 
 /* =========================================================
@@ -173,13 +176,13 @@ body {
   [data-lines],
   [data-hero],
   /* Pages sans attributs explicites : mêmes sélecteurs que dans AutoReveal.tsx. */
-  [data-auto-reveal]:not([data-ready]) :is(h1, h2, h1 + p, h2 + p, .grid > *, form) {
+  [data-auto-reveal]:not([data-ready]) :is(h1, h2, h1 + p, h2 + p, .grid > *, form):not([data-no-reveal], [data-no-reveal] *) {
     opacity: 0;
   }
   /* Filet de sécurité : tant que MotionRoot n'a pas posé data-motion sur <html> (JS bloqué
      ou très lent), tout redevient visible après 4 s. */
   html:not([data-motion]) :is([data-reveal], [data-split], [data-lines], [data-hero]),
-  html:not([data-motion]) [data-auto-reveal] :is(h1, h2, h1 + p, h2 + p, .grid > *, form) {
+  html:not([data-motion]) [data-auto-reveal] :is(h1, h2, h1 + p, h2 + p, .grid > *, form):not([data-no-reveal], [data-no-reveal] *) {
     animation: motion-failsafe 0s linear 4s forwards;
   }
 }

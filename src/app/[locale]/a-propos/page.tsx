@@ -1,12 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getSiteStats } from "@/lib/site-stats";
-import {
-  Target, Eye, CheckCircle, Users, Award, Globe, Zap, Shield, TrendingUp,
-  ArrowRight, Lightbulb, Clock, Star, Heart,
-} from "lucide-react";
+import { Target, Eye, Check, Award, Lightbulb } from "lucide-react";
+import PageHero from "@/components/site/PageHero";
+import CtaBand from "@/components/site/CtaBand";
+import { body, card, container, h2, iconTile, lead, section } from "@/components/site/styles";
 import * as Icons from "lucide-react";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -74,113 +73,75 @@ export default async function AboutPage({ params }: Props) {
   const storyFr = settingsMap["about_story_fr"] || "Partis d'une petite équipe de 3 ingénieurs passionnés, nous sommes devenus une entreprise de plus de 20 personnes, livrant des projets complexes pour des clients sur 3 continents.";
   const storyEn = settingsMap["about_story_en"] || "From a small team of 3 passionate engineers, we have grown to become a 20+ person company, delivering complex projects for clients across 3 continents.";
 
+  const figures = [
+    { value: stats.projects, label: isEn ? "Projects delivered" : "Projets livrés" },
+    { value: stats.clients, label: isEn ? "Clients" : "Clients" },
+    { value: stats.years, label: isEn ? "Years of experience" : "Années d'expérience" },
+    { value: stats.satisfaction, label: "Satisfaction" },
+    { value: stats.team, label: isEn ? "Team members" : "Experts dans l'équipe" },
+    { value: stats.countries, label: isEn ? "Countries" : "Pays" },
+    { value: stats.rating, label: isEn ? "Client rating" : "Note clients" },
+    { value: stats.response, label: isEn ? "Response time" : "Délai de réponse" },
+  ];
+
   return (
-    <main>
-      <section className="bg-linear-to-br from-navy via-navy to-sky/20 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.12)_0%,transparent_60%)]" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-6">
-            <span data-loop="pulse" className="w-2 h-2 rounded-full bg-sky" />
-            <span className="text-sky text-sm font-medium">{t("badge")}</span>
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6">
-            {t("title")}{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-sky to-gold">
-              {t("titleHighlight")}
-            </span>
-          </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">{t("subtitle")}</p>
+    <>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")} />
+
+      {/* Histoire + chiffres */}
+      <section className={`bg-white ${section}`}>
+        <div className={`${container} grid gap-10 lg:grid-cols-2 lg:gap-20`}>
+          <div>
+            <h2 className={h2}>{isEn ? "Born from a passion for technology" : "Née d'une passion pour la technologie"}</h2>
+            <div className={`mt-6 space-y-4 ${body}`}>
+              <p>{t("story")}</p>
+              <p>{isEn ? storyEn : storyFr}</p>
+              <p>
+                {isEn
+                  ? "Today, Kelenix is a reference in software development, artificial intelligence and digital transformation, serving SMEs, startups and large companies."
+                  : "Aujourd'hui, Kelenix est une référence dans le développement logiciel, l'intelligence artificielle et la transformation numérique, servant PME, startups et grandes entreprises."}
+              </p>
+            </div>
+          </div>
+          <dl className="grid grid-cols-2 self-start overflow-hidden rounded-3xl border border-line">
+            {figures.map((figure, i) => (
+              <div key={figure.label} className={`flex flex-col-reverse border-line p-5 sm:p-7 ${i % 2 === 0 ? "border-r" : ""} ${i < figures.length - 2 ? "border-b" : ""}`}>
+                <dt className="mt-1.5 text-sm text-muted">{figure.label}</dt>
+                <dd className="font-display text-4xl font-medium leading-none tracking-[-0.03em] tabular-nums text-navy sm:text-5xl">{figure.value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-                {isEn ? "Our story" : "Notre histoire"}
+      {/* Mission, vision, valeurs */}
+      <section className={`bg-mist ${section}`}>
+        <div className={container}>
+          <h2 className={`mb-10 sm:mb-14 ${h2}`}>{isEn ? "Our fundamentals" : "Nos fondamentaux"}</h2>
+          <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
+            <div className={`p-6 sm:p-8 ${card}`}>
+              <span className={`mb-5 ${iconTile}`}>
+                <Target size={22} />
               </span>
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-6">
-                {isEn ? "Born from a passion for" : "Née d'une passion pour"}{" "}
-                <span className="text-sky">{isEn ? "technology" : "la technologie"}</span>
-              </h2>
-              <div className="space-y-4 text-gray-600 leading-relaxed">
-                <p>{t("story")}</p>
-                <p>{isEn ? storyEn : storyFr}</p>
-                <p>
-                  {isEn
-                    ? "Today, Kelenix is a reference in software development, artificial intelligence and digital transformation, serving SMEs, startups and large companies."
-                    : "Aujourd'hui, Kelenix est une référence dans le développement logiciel, l'intelligence artificielle et la transformation numérique, servant PME, startups et grandes entreprises."}
-                </p>
-              </div>
-              <div className="mt-8 grid grid-cols-3 gap-6">
-                {[
-                  { value: stats.projects, label: isEn ? "Projects" : "Projets" },
-                  { value: stats.clients, label: isEn ? "Clients" : "Clients" },
-                  { value: stats.satisfaction, label: isEn ? "Satisfaction" : "Satisfaction" },
-                ].map((stat) => (
-                  <div key={stat.label} className="text-center p-4 bg-neutral-light rounded-2xl">
-                    <div className="text-3xl font-extrabold text-sky mb-1">{stat.value}</div>
-                    <div className="text-sm text-gray-500">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
+              <h3 className="text-xl font-semibold text-navy">{t("mission.title")}</h3>
+              <p className={`mt-3 ${body}`}>{t("mission.description")}</p>
             </div>
-            <div className="relative">
-              <div className="bg-linear-to-br from-navy to-sky/40 rounded-3xl p-1 shadow-2xl">
-                <div className="bg-navy rounded-3xl p-8">
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { icon: Users, label: isEn ? "Expert team" : "Équipe d'experts", value: stats.team },
-                      { icon: Globe, label: isEn ? "Countries" : "Pays", value: stats.countries },
-                      { icon: Star, label: isEn ? "Client rating" : "Note clients", value: stats.rating },
-                      { icon: Clock, label: isEn ? "Response time" : "Délai réponse", value: stats.response },
-                    ].map((item) => (
-                      <div key={item.label} className="bg-white/5 rounded-2xl p-5 text-center border border-white/10">
-                        <item.icon size={28} className="text-sky mx-auto mb-2" />
-                        <div className="text-2xl font-extrabold text-white mb-1">{item.value}</div>
-                        <div className="text-xs text-gray-400">{item.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            <div className={`p-6 sm:p-8 ${card}`}>
+              <span className={`mb-5 ${iconTile}`}>
+                <Eye size={22} />
+              </span>
+              <h3 className="text-xl font-semibold text-navy">{t("vision.title")}</h3>
+              <p className={`mt-3 ${body}`}>{t("vision.description")}</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-              {isEn ? "Our " : "Nos "}<span className="text-sky">{isEn ? "fundamentals" : "fondamentaux"}</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-navy rounded-2xl p-8 text-white shadow-card">
-              <div className="w-12 h-12 bg-sky/20 rounded-xl flex items-center justify-center mb-6">
-                <Target size={24} className="text-sky" />
-              </div>
-              <h3 className="font-heading text-xl font-bold mb-4">{t("mission.title")}</h3>
-              <p className="text-gray-300 leading-relaxed">{t("mission.description")}</p>
-            </div>
-            <div className="bg-white rounded-2xl p-8 shadow-card border border-gray-100">
-              <div className="w-12 h-12 bg-gold/10 rounded-xl flex items-center justify-center mb-6">
-                <Eye size={24} className="text-gold" />
-              </div>
-              <h3 className="font-heading text-xl font-bold text-navy mb-4">{t("vision.title")}</h3>
-              <p className="text-gray-600 leading-relaxed">{t("vision.description")}</p>
-            </div>
-            <div className="bg-sky rounded-2xl p-8 text-white shadow-card">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-6">
-                <Lightbulb size={24} className="text-white" />
-              </div>
-              <h3 className="font-heading text-xl font-bold mb-4">{t("values.title")}</h3>
-              <ul className="space-y-2">
+            <div className="rounded-3xl bg-linear-to-br from-azure to-[#1580EE] p-6 text-white sm:p-8">
+              <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-white/18">
+                <Lightbulb size={22} />
+              </span>
+              <h3 className="text-xl font-semibold">{t("values.title")}</h3>
+              <ul className="mt-4 space-y-2.5">
                 {(["innovation", "excellence", "reliability", "accessibility", "impact", "ambition"] as const).map((v) => (
-                  <li key={v} className="flex items-center gap-2 text-sm text-white/90">
-                    <CheckCircle size={14} className="text-white shrink-0" />
+                  <li key={v} className="flex items-center gap-2.5 text-[15px] text-white/95">
+                    <Check size={16} strokeWidth={3} className="shrink-0" />
                     {t(`values.${v}`)}
                   </li>
                 ))}
@@ -190,79 +151,55 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Parcours / Timeline */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-              {t("timeline.title")}
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-              {t("timeline.subtitle")}
-            </h2>
+      {/* Parcours */}
+      <section className={`bg-white ${section}`}>
+        <div className={`${container} grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20`}>
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <h2 className={h2}>{t("timeline.title")}</h2>
+            <p className={`mt-4 ${lead}`}>{t("timeline.subtitle")}</p>
           </div>
-          <div className="relative">
-            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 rounded-full bg-linear-to-b from-sky via-sky/40 to-transparent hidden md:block" />
-            <div className="space-y-10 md:space-y-4">
-              {timeline.map((item, i) => (
-                <div
-                  key={item.year}
-                  className={`flex flex-col md:flex-row items-center gap-6 md:gap-12 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
-                >
-                  <div className={`flex-1 ${i % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
-                    <div className={`group relative bg-white rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border border-gray-100 hover:border-sky/30 inline-block max-w-sm text-left ${i % 2 === 0 ? "md:ml-auto" : ""}`}>
-                      <span className="font-heading text-sm font-extrabold text-sky">{item.year}</span>
-                      <h3 className="font-heading text-lg font-bold text-navy mt-1 mb-2">
-                        {isEn ? item.titleEn : item.titleFr}
-                      </h3>
-                      <p className="text-gray-500 text-sm leading-relaxed">
-                        {isEn ? item.descEn : item.descFr}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="relative z-10 flex flex-col items-center shrink-0">
-                    <span data-loop="ping" className="absolute w-14 h-14 rounded-full bg-sky/25 opacity-40 hidden md:block" />
-                    <div className="relative w-14 h-14 bg-linear-to-br from-sky to-navy rounded-full flex items-center justify-center text-white font-extrabold text-base shadow-lg shadow-sky/30 border-4 border-white">
-                      {item.year.slice(-2)}
-                    </div>
-                  </div>
-                  <div className="flex-1 hidden md:block" />
+          <ol className="border-t border-line">
+            {timeline.map((item) => (
+              <li key={item.year} className="grid grid-cols-[4.5rem_1fr] gap-4 border-b border-line py-6 sm:grid-cols-[7rem_1fr] sm:gap-8 sm:py-8">
+                <span className="font-display text-3xl font-medium leading-none tracking-[-0.03em] text-azure sm:text-4xl">{item.year}</span>
+                <div>
+                  <h3 className="text-xl font-semibold text-navy">{isEn ? item.titleEn : item.titleFr}</h3>
+                  <p className={`mt-2 ${body}`}>{isEn ? item.descEn : item.descFr}</p>
                 </div>
-              ))}
-            </div>
-          </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
       {/* Équipe */}
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-              {t("team.title")}
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-              {t("team.subtitle")}
-            </h2>
+      <section className={`bg-mist ${section}`}>
+        <div className={container}>
+          <div className="mb-10 max-w-2xl sm:mb-14">
+            <h2 className={h2}>{t("team.title")}</h2>
+            <p className={`mt-4 ${lead}`}>{t("team.subtitle")}</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
             {teamMembers.map((member) => (
-              <div key={member.name} className="bg-white rounded-3xl shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 overflow-hidden group border border-gray-100 hover:border-sky/30">
-                <div className="relative h-44 bg-linear-to-br from-navy via-navy-light to-sky/40 flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_30%_20%,rgba(47,168,255,0.5),transparent_55%)]" />
-                  <div className="absolute -bottom-10 -right-8 w-32 h-32 rounded-full bg-sky/20 blur-2xl" />
-                  <img
-                    src={member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0B1F3A&color=2FA8FF&size=200&bold=true`}
-                    alt={member.name}
-                    className="relative w-28 h-28 rounded-full object-cover border-4 border-white/25 ring-4 ring-sky/20 shadow-xl group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="font-heading font-bold text-navy text-lg mb-1">{member.name}</h3>
-                  <p className="text-sky text-sm font-semibold mb-3">{isEn ? member.roleEn : member.roleFr}</p>
-                  <p className="text-gray-500 text-sm leading-relaxed">{isEn ? member.bioEn : member.bioFr}</p>
+              <div key={member.name} className={`flex gap-4 p-5 sm:block sm:p-7 ${card}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- photo saisie dans l'admin : domaine libre, hors remotePatterns */}
+                <img
+                  src={member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0B1F3A&color=2FA8FF&size=200&bold=true`}
+                  alt=""
+                  width={80}
+                  height={80}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-16 w-16 shrink-0 rounded-2xl object-cover sm:mb-5 sm:h-20 sm:w-20"
+                />
+                <div className="min-w-0">
+                  <h3 className="text-lg font-semibold text-navy">{member.name}</h3>
+                  <p className="mt-0.5 text-sm font-medium text-azure">{isEn ? member.roleEn : member.roleFr}</p>
+                  <p className="mt-3 text-[15px] leading-relaxed text-muted">{isEn ? member.bioEn : member.bioFr}</p>
                   {"linkedin" in member && member.linkedin && (
-                    <a href={member.linkedin as string} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sky text-xs font-semibold hover:underline">LinkedIn →</a>
+                    <a href={member.linkedin as string} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm font-semibold text-navy underline decoration-line decoration-2 underline-offset-4 hover:decoration-azure">
+                      LinkedIn
+                    </a>
                   )}
                 </div>
               </div>
@@ -272,26 +209,20 @@ export default async function AboutPage({ params }: Props) {
       </section>
 
       {/* Pourquoi nous */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-              {isEn ? "Why choose us?" : "Pourquoi nous choisir ?"}
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-navy mb-4">
-              {isEn ? `${whyPoints.length} reasons to trust` : `${whyPoints.length} raisons de nous faire confiance`}{" "}
-              <span className="text-sky">Kelenix</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className={`bg-white ${section}`}>
+        <div className={container}>
+          <h2 className={`mb-10 max-w-3xl sm:mb-14 ${h2}`}>
+            {isEn ? `${whyPoints.length} reasons to trust Kelenix` : `${whyPoints.length} raisons de nous faire confiance`}
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {whyPoints.map((point) => (
-              <div key={point.titleFr} className="group flex gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:border-sky/30 transition-all duration-300">
-                <div className="w-12 h-12 bg-gradient-to-br from-sky to-sky-dark rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-sky/25 group-hover:scale-110 transition-transform duration-300">
-                  <DynIcon name={point.icon} size={22} className="text-white" />
-                </div>
+              <div key={point.titleFr} className={`flex gap-4 p-5 sm:p-7 ${card}`}>
+                <span className={iconTile}>
+                  <DynIcon name={point.icon} size={22} />
+                </span>
                 <div>
-                  <h3 className="font-heading font-bold text-navy mb-2">{isEn ? point.titleEn : point.titleFr}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{isEn ? point.descEn : point.descFr}</p>
+                  <h3 className="text-lg font-semibold leading-snug text-navy">{isEn ? point.titleEn : point.titleFr}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{isEn ? point.descEn : point.descFr}</p>
                 </div>
               </div>
             ))}
@@ -299,26 +230,16 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="py-16 bg-navy">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-white mb-4">
-            {isEn ? "Ready to work with us?" : "Prêt à travailler avec nous ?"}
-          </h2>
-          <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-            {isEn
-              ? "Let's discuss your project and see how Kelenix can help you achieve your goals."
-              : "Parlons de votre projet et voyons comment Kelenix peut vous aider à atteindre vos objectifs."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/devis" className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-navy font-bold rounded-xl hover:bg-yellow-400 transition-colors duration-200">
-              {isEn ? "Get a free quote" : "Obtenir un devis gratuit"} <ArrowRight size={16} />
-            </Link>
-            <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors duration-200">
-              {isEn ? "Contact us" : "Nous contacter"}
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+      <CtaBand
+        title={isEn ? "Ready to work with us?" : "Prêt à travailler avec nous ?"}
+        text={
+          isEn
+            ? "Let's discuss your project and see how Kelenix can help you achieve your goals."
+            : "Parlons de votre projet et voyons comment Kelenix peut vous aider à atteindre vos objectifs."
+        }
+        primary={{ href: "/devis", label: isEn ? "Get a free quote" : "Obtenir un devis gratuit" }}
+        secondary={{ href: "/contact", label: isEn ? "Contact us" : "Nous contacter" }}
+      />
+    </>
   );
 }

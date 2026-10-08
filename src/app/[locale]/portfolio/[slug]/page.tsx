@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { decodeSlug } from "@/lib/utils";
 import Image from "next/image";
-import { ArrowRight, ChevronRight, Target, Lightbulb, BarChart3 } from "lucide-react";
+import { Target, Lightbulb, BarChart3 } from "lucide-react";
+import PageHero from "@/components/site/PageHero";
+import CtaBand from "@/components/site/CtaBand";
+import { body, card, chip, container, h2, iconTile, section } from "@/components/site/styles";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -64,6 +66,8 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!project) notFound();
 
   const t = await getTranslations("common");
+  const tWork = await getTranslations("home.work");
+  const tNav = await getTranslations("nav");
   const isEn = locale === "en";
 
   const title = isEn ? project.titleEn : project.titleFr;
@@ -72,123 +76,78 @@ export default async function ProjectDetailPage({ params }: Props) {
   const results = isEn ? project.resultsEn : project.resultsFr;
   const technologies = parseTechnologies(project.technologies);
   const gallery = parseGallery(project.gallery);
+  const category = tWork.has(`categories.${project.category}`) ? tWork(`categories.${project.category}`) : project.category;
 
   return (
-    <main>
-      <nav className="bg-white border-b border-gray-100 py-3">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <ol className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
-            <li>
-              <Link href="/" className="hover:text-sky transition-colors">
-                {isEn ? "Home" : "Accueil"}
-              </Link>
-            </li>
-            <ChevronRight size={14} className="text-gray-300 shrink-0" />
-            <li>
-              <Link href="/portfolio" className="hover:text-sky transition-colors">
-                Portfolio
-              </Link>
-            </li>
-            <ChevronRight size={14} className="text-gray-300 shrink-0" />
-            <li className="text-navy font-medium truncate max-w-xs">{title}</li>
-          </ol>
-        </div>
-      </nav>
+    <>
+      <PageHero
+        align="left"
+        breadcrumb={[{ label: tNav("home"), href: "/" }, { label: tNav("portfolio"), href: "/portfolio" }, { label: title }]}
+        eyebrow={category}
+        title={title}
+        lead={project.client}
+      />
 
-      <section className="relative h-[60vh] min-h-[400px] overflow-hidden">
-        {project.coverImage ? (
-          <Image
-            src={project.coverImage}
-            alt={title}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-navy to-sky/30" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 container mx-auto px-4 xl:px-8 max-w-7xl">
-          <span className="inline-block bg-sky text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">
-            {project.category}
-          </span>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-3 leading-tight">
-            {title}
-          </h1>
-          <p className="text-gray-300 text-lg">{project.client}</p>
-        </div>
-      </section>
+      <section className={`bg-white ${section}`}>
+        <div className={container}>
+          {project.coverImage && (
+            <div className="relative mb-10 aspect-[16/10] overflow-hidden rounded-3xl bg-mist sm:mb-14 lg:aspect-[21/9]">
+              <Image src={project.coverImage} alt={title} fill sizes="(max-width: 1280px) 100vw, 1240px" className="object-cover" priority />
+            </div>
+          )}
 
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-neutral-light rounded-2xl p-8 border border-gray-100">
-              <div className="w-12 h-12 bg-sky/10 rounded-xl flex items-center justify-center mb-5">
-                <Target size={22} className="text-sky" />
-              </div>
-              <h2 className="font-heading font-bold text-navy text-xl mb-4">
-                {isEn ? "The problem" : "La problématique"}
-              </h2>
-              <p className="text-gray-600 leading-relaxed">{problem}</p>
+          <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
+            <div className={`bg-mist/70 p-6 sm:p-8 ${card}`}>
+              <span className={`mb-5 bg-white ${iconTile}`}>
+                <Target size={22} />
+              </span>
+              <h2 className="text-xl font-semibold text-navy">{isEn ? "The problem" : "La problématique"}</h2>
+              <p className={`mt-3 ${body}`}>{problem}</p>
             </div>
-            <div className="bg-navy rounded-2xl p-8 text-white">
-              <div className="w-12 h-12 bg-sky/20 rounded-xl flex items-center justify-center mb-5">
-                <Lightbulb size={22} className="text-sky" />
-              </div>
-              <h2 className="font-heading font-bold text-xl mb-4">
-                {isEn ? "Our solution" : "Notre solution"}
-              </h2>
-              <p className="text-gray-300 leading-relaxed">{solution}</p>
+            <div className={`p-6 sm:p-8 ${card}`}>
+              <span className={`mb-5 ${iconTile}`}>
+                <Lightbulb size={22} />
+              </span>
+              <h2 className="text-xl font-semibold text-navy">{isEn ? "Our solution" : "Notre solution"}</h2>
+              <p className={`mt-3 ${body}`}>{solution}</p>
             </div>
-            <div className="bg-sky rounded-2xl p-8 text-white">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-5">
-                <BarChart3 size={22} className="text-white" />
-              </div>
-              <h2 className="font-heading font-bold text-xl mb-4">
-                {isEn ? "Results" : "Résultats"}
-              </h2>
-              <p className="text-white/90 leading-relaxed">{results}</p>
+            <div className="rounded-3xl bg-linear-to-br from-azure to-[#1580EE] p-6 text-white sm:p-8">
+              <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-white/18">
+                <BarChart3 size={22} />
+              </span>
+              <h2 className="text-xl font-semibold">{isEn ? "Results" : "Résultats"}</h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-white/90 sm:text-base">{results}</p>
             </div>
           </div>
+
+          {technologies.length > 0 && (
+            <div className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12">
+              <h2 className="text-xl font-semibold text-navy">{isEn ? "Technologies used" : "Technologies utilisées"}</h2>
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {technologies.map((tech) => (
+                  <li key={tech} className={chip}>
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
-
-      {technologies.length > 0 && (
-        <section className="py-16 bg-neutral-light">
-          <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-            <h2 className="font-heading text-2xl font-extrabold text-navy mb-8 text-center">
-              {isEn ? "Technologies used" : "Technologies utilisées"}
-            </h2>
-            <div className="flex flex-wrap justify-center gap-3">
-              {technologies.map((tech) => (
-                <span
-                  key={tech}
-                  className="px-4 py-2 bg-white rounded-xl border border-gray-200 text-navy font-semibold text-sm shadow-sm hover:border-sky/40 hover:text-sky transition-colors"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {gallery.length > 0 && (
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-            <h2 className="font-heading text-2xl font-extrabold text-navy mb-8">
-              {isEn ? "Project gallery" : "Galerie du projet"}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className={`bg-mist ${section}`}>
+          <div className={container}>
+            <h2 className={`mb-8 sm:mb-12 ${h2}`}>{isEn ? "Project gallery" : "Galerie du projet"}</h2>
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {gallery.map((img, i) => (
-                <div key={i} className="relative h-56 rounded-2xl overflow-hidden shadow-card group">
+                <div key={i} className="group relative aspect-[4/3] overflow-hidden rounded-3xl bg-white">
                   <Image
                     src={img}
                     alt={`${title} — ${i + 1}`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                   />
                 </div>
               ))}
@@ -197,32 +156,16 @@ export default async function ProjectDetailPage({ params }: Props) {
         </section>
       )}
 
-      <section className="py-16 bg-navy">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <h2 className="font-heading text-3xl font-extrabold text-white mb-4">
-            {isEn ? "Want a similar project?" : "Vous voulez un projet similaire ?"}
-          </h2>
-          <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-            {isEn
-              ? "Contact us for a free quote and let's build your success story together."
-              : "Contactez-nous pour un devis gratuit et construisons ensemble votre histoire de succès."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/devis"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-navy font-bold rounded-xl hover:bg-yellow-400 transition-colors"
-            >
-              {isEn ? "Request a quote" : "Demander un devis"} <ArrowRight size={16} />
-            </Link>
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors"
-            >
-              {t("backToPortfolio")}
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+      <CtaBand
+        title={isEn ? "Want a similar project?" : "Vous voulez un projet similaire ?"}
+        text={
+          isEn
+            ? "Contact us for a free quote and let's build your success story together."
+            : "Contactez-nous pour un devis gratuit et construisons ensemble votre histoire de succès."
+        }
+        primary={{ href: "/devis", label: isEn ? "Request a quote" : "Demander un devis" }}
+        secondary={{ href: "/portfolio", label: t("backToPortfolio") }}
+      />
+    </>
   );
 }
