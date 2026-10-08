@@ -56,77 +56,69 @@ export default function PromoPopup() {
   if (!open) return null;
 
   return (
-        <div ref={root} className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Fond */}
-          <div
-            className="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm"
-            onClick={close}
-          />
+    <div ref={root} className="fixed inset-0 z-[100] flex items-end justify-center p-3 sm:items-center sm:p-4">
+      {/* Fond */}
+      <div className="absolute inset-0 bg-navy/45" onClick={close} />
 
-          {/* Carte */}
-          <div ref={card} className="glass relative z-10 w-full max-w-md rounded-3xl p-8 text-center overflow-hidden">
-            {/* Halo */}
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-sky/30 blur-3xl pointer-events-none" />
+      {/* Carte */}
+      <div ref={card} role="dialog" aria-modal="true" className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-line bg-white p-6 text-center shadow-[0_30px_80px_-30px_rgba(11,31,58,0.5)] sm:p-8">
+        {/* Halo */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(47,168,255,0.22),transparent)]" />
 
-            <button
-              onClick={close}
-              className="absolute top-4 right-4 w-9 h-9 rounded-full glass-pill flex items-center justify-center text-gray-300 hover:text-white transition-colors z-10"
-              aria-label={t("close")}
-            >
-              <X size={18} />
-            </button>
+        <button
+          type="button"
+          onClick={close}
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-mist text-navy transition-colors hover:bg-line"
+          aria-label={t("close")}
+        >
+          <X size={18} />
+        </button>
 
-            <div className="relative">
-              <div className="inline-flex items-center gap-2 glass-pill text-gold px-4 py-1.5 rounded-full text-sm font-semibold mb-5">
-                <Sparkles size={15} />
-                {t("badge")}
-              </div>
-
-              <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">
-                {t("title", { percent: promo.percent })}
-              </h3>
-              <p className="text-gray-300 text-sm mb-6">{t("subtitle")}</p>
-
-              {/* Code promo */}
-              <button
-                onClick={copyCode}
-                className="group w-full flex items-center justify-between gap-3 bg-white/10 border border-dashed border-sky/50 rounded-xl px-5 py-4 mb-5 hover:border-sky transition-colors"
-              >
-                <span className="font-heading text-xl font-extrabold tracking-[0.2em] text-white">
-                  {promo.code}
-                </span>
-                <span className="flex items-center gap-1.5 text-sm font-semibold text-sky">
-                  {copied ? (
-                    <>
-                      <Check size={16} /> {t("copied")}
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={16} /> {t("copy")}
-                    </>
-                  )}
-                </span>
-              </button>
-
-              <a
-                href={STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={close}
-                className="group flex items-center justify-center gap-2.5 w-full px-7 py-4 bg-gold text-navy font-bold rounded-2xl hover:bg-gold-dark transition-all hover:scale-[1.02]"
-              >
-                {t("cta")}
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </a>
-
-              <button
-                onClick={close}
-                className="mt-4 text-xs text-gray-400 hover:text-gray-200 transition-colors"
-              >
-                {t("dismiss")}
-              </button>
-            </div>
+        <div className="relative">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-gold/20 px-4 py-1.5 text-sm font-semibold text-navy">
+            <Sparkles size={15} />
+            {t("badge")}
           </div>
+
+          <h3 className="mb-3 font-display text-3xl font-medium leading-tight tracking-[-0.02em] text-navy sm:text-4xl">{t("title", { percent: promo.percent })}</h3>
+          <p className="mb-6 text-[15px] text-muted">{t("subtitle")}</p>
+
+          {/* Code promo */}
+          <button
+            type="button"
+            onClick={copyCode}
+            className="mb-4 flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-dashed border-azure/50 bg-mist px-5 py-4 transition-colors hover:border-azure"
+          >
+            <span className="text-xl font-bold tracking-[0.2em] text-navy">{promo.code}</span>
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-azure">
+              {copied ? (
+                <>
+                  <Check size={16} /> {t("copied")}
+                </>
+              ) : (
+                <>
+                  <Copy size={16} /> {t("copy")}
+                </>
+              )}
+            </span>
+          </button>
+
+          <a
+            href={STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={close}
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-azure px-7 py-4 font-semibold text-white transition-colors hover:bg-azure-dark"
+          >
+            {t("cta")}
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+          </a>
+
+          <button type="button" onClick={close} className="mt-4 cursor-pointer text-sm text-muted transition-colors hover:text-navy">
+            {t("dismiss")}
+          </button>
         </div>
+      </div>
+    </div>
   );
 }

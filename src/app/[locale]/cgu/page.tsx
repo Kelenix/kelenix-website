@@ -91,7 +91,7 @@ export default async function CGUPage({ params }: Props) {
                 {isEn
                   ? "The processing of personal data is governed by our "
                   : "Le traitement des données personnelles est régi par notre "}
-                <Link href="/politique-de-confidentialite" className="text-sky underline">
+                <Link href="/politique-de-confidentialite" className="text-azure underline">
                   {isEn ? "privacy policy" : "politique de confidentialité"}
                 </Link>.
               </p>

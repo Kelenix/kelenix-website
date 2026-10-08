@@ -112,7 +112,7 @@ export default async function PrivacyPolicyPage({ params }: Props) {
                 {isEn
                   ? "For more information about our use of cookies, please consult our "
                   : "Pour plus d'informations sur notre utilisation des cookies, consultez notre "}
-                <Link href="/cookies" className="text-sky underline">
+                <Link href="/cookies" className="text-azure underline">
                   {isEn ? "cookie policy" : "politique cookies"}
                 </Link>.
               </p>
