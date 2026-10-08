@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { ArrowRight, Calendar, User, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 type Post = {
@@ -31,7 +31,7 @@ export default function BlogGrid({
   locale: string;
   postsPerPage?: number;
 }) {
-  const t = useTranslations("blog");
+  const t = useTranslations("home.blog");
   const tCommon = useTranslations("common");
   const isEn = locale === "en";
 
@@ -39,17 +39,7 @@ export default function BlogGrid({
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [page, setPage] = useState(1);
 
-  const catLabel = (cat: string) => {
-    if (cat === "ALL") return tCommon("all");
-    const map: Record<string, string> = {
-      DEVELOPMENT: isEn ? "Development" : "Développement",
-      AI: isEn ? "Artificial Intelligence" : "Intelligence Artificielle",
-      DIGITAL: isEn ? "Digital Strategy" : "Stratégie Digitale",
-      NEWS: isEn ? "Tech News" : "Actualités Tech",
-      GUIDES: "Guides",
-    };
-    return map[cat] ?? cat;
-  };
+  const catLabel = (cat: string) => (cat === "ALL" ? tCommon("all") : t.has(`categories.${cat}`) ? t(`categories.${cat}`) : cat);
 
   const filtered = useMemo(() => {
     return posts.filter((p) => {
@@ -77,133 +67,107 @@ export default function BlogGrid({
     setPage(1);
   };
 
+  const pageButton = "flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40";
+
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
-        <div className="relative flex-1">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="mb-10 flex flex-col gap-4 lg:mb-14 lg:flex-row lg:items-center lg:justify-between">
+        {/* Catégories : rangée à faire glisser sur téléphone */}
+        <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => handleCategoryChange(cat)}
+              aria-pressed={activeCategory === cat}
+              className={`shrink-0 cursor-pointer rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
+                activeCategory === cat ? "bg-navy text-white" : "border border-line bg-white text-muted hover:text-navy"
+              }`}
+            >
+              {catLabel(cat)}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative lg:w-80">
+          <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <input
-            type="text"
+            type="search"
+            aria-label={tCommon("search")}
             placeholder={tCommon("search") + "..."}
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
+            className="w-full rounded-full border border-line bg-white py-3 pl-11 pr-4 text-[15px] text-navy transition placeholder:text-muted/70 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10"
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-10">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => handleCategoryChange(cat)}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-              activeCategory === cat
-                ? "bg-sky text-white shadow-md"
-                : "bg-white border border-gray-200 text-gray-600 hover:border-sky/40 hover:text-sky"
-            }`}
-          >
-            {catLabel(cat)}
-          </button>
-        ))}
-      </div>
-
       {paginated.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <p>{isEn ? "No articles match your search." : "Aucun article ne correspond à votre recherche."}</p>
-        </div>
+        <p className="py-16 text-center text-muted">{isEn ? "No articles match your search." : "Aucun article ne correspond à votre recherche."}</p>
       ) : (
-        <div className="flex flex-col gap-5 mb-12">
-          {paginated.map((post) => (
-            <Link
-              key={post.slug}
-              href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}
-              className="group flex flex-col sm:flex-row gap-4 sm:gap-5 bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5 border border-gray-100 hover:border-sky/30 p-3 sm:p-4"
-            >
-              <div className="relative w-full sm:w-52 h-44 sm:h-28 shrink-0 overflow-hidden rounded-xl">
-                {post.coverImage ? (
-                  <Image
-                    src={post.coverImage}
-                    alt={isEn ? post.titleEn : post.titleFr}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 256px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-navy to-sky/30" />
-                )}
-                <div className="absolute top-3 left-3">
-                  <span className="bg-sky text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-md">
-                    {catLabel(post.category)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col flex-1 min-w-0 justify-center">
-                <div className="flex items-center gap-4 text-xs text-gray-400 mb-1.5 flex-wrap">
-                  <span className="flex items-center gap-1.5">
-                    {post.authorImage ? (
-                      <img
-                        src={post.authorImage}
-                        alt={post.authorName}
-                        className="w-5 h-5 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User size={12} />
-                    )}
-                    {post.authorName}
-                  </span>
-                  {post.publishedAt && (
-                    <span className="flex items-center gap-1.5">
-                      <Calendar size={12} />
-                      {formatDate(post.publishedAt, locale)}
-                    </span>
+        <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-3">
+          {paginated.map((post) => {
+            const title = isEn ? post.titleEn : post.titleFr;
+            return (
+              <Link key={post.slug} href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }} className="group flex items-center gap-4 sm:block">
+                <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-linear-to-br from-sky/30 to-azure/40 sm:aspect-[16/10] sm:h-auto sm:w-full sm:rounded-3xl">
+                  {post.coverImage && (
+                    <Image
+                      src={post.coverImage}
+                      alt={title}
+                      fill
+                      sizes="(max-width: 640px) 96px, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
                   )}
                 </div>
-                <h3 className="font-heading font-bold text-navy text-base sm:text-lg mb-1.5 line-clamp-2 group-hover:text-sky transition-colors">
-                  {isEn ? post.titleEn : post.titleFr}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">
-                  {isEn ? post.excerptEn : post.excerptFr}
-                </p>
-                <div className="flex items-center gap-1 text-sky text-sm font-semibold">
-                  {t("readMore")} <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
+                <div className="min-w-0 sm:mt-5">
+                  <p className="text-[13px] text-muted sm:text-sm">
+                    <span className="font-semibold text-azure">{catLabel(post.category)}</span>
+                    {post.publishedAt && <span className="hidden before:mx-2 before:content-['·'] sm:inline">{formatDate(post.publishedAt, locale)}</span>}
+                  </p>
+                  <h2 className="mt-1 line-clamp-3 text-base font-semibold leading-snug text-navy transition-colors group-hover:text-azure sm:mt-2 sm:text-xl">{title}</h2>
+                  <p className="mt-2 hidden line-clamp-2 text-[15px] leading-relaxed text-muted sm:[display:-webkit-box]">{isEn ? post.excerptEn : post.excerptFr}</p>
+                  <p className="mt-3 hidden text-sm text-muted sm:block">{post.authorName}</p>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <nav aria-label="Pagination" className="mt-12 flex items-center justify-center gap-2">
           <button
+            type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:border-sky hover:text-sky transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label={isEn ? "Previous page" : "Page précédente"}
+            className={`${pageButton} border border-line bg-white text-navy hover:bg-mist`}
           >
             <ChevronLeft size={16} />
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
+              type="button"
               onClick={() => setPage(p)}
-              className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all ${
-                page === p
-                  ? "bg-sky text-white shadow-md"
-                  : "border border-gray-200 bg-white text-gray-600 hover:border-sky hover:text-sky"
-              }`}
+              aria-current={page === p ? "page" : undefined}
+              className={`${pageButton} ${page === p ? "bg-navy text-white" : "border border-line bg-white text-navy hover:bg-mist"}`}
             >
               {p}
             </button>
           ))}
           <button
+            type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:border-sky hover:text-sky transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label={isEn ? "Next page" : "Page suivante"}
+            className={`${pageButton} border border-line bg-white text-navy hover:bg-mist`}
           >
             <ChevronRight size={16} />
           </button>
-        </div>
+        </nav>
       )}
     </>
   );

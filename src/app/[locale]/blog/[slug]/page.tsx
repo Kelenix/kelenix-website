@@ -4,8 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ChevronRight, Calendar, User, ArrowRight, Link2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { decodeSlug, formatDate } from "@/lib/utils";
+import PageHero from "@/components/site/PageHero";
+import { card, container, h2, section, textLink } from "@/components/site/styles";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -50,45 +52,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function ShareButtons({ title, locale }: { title: string; locale: string }) {
+// Liens de partage : chaque réseau reçoit l'adresse publique de l'article.
+function ShareButtons({ title, url, locale }: { title: string; url: string; locale: string }) {
+  const u = encodeURIComponent(url);
+  const networks = [
+    { label: "X", name: "X", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${u}` },
+    { label: "in", name: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+    { label: "f", name: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
+  ];
   return (
-    <div className="flex items-center gap-3 flex-wrap">
-      <span className="text-sm font-semibold text-gray-600">
-        {locale === "fr" ? "Partager :" : "Share:"}
-      </span>
-      <a
-        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-9 h-9 rounded-xl bg-sky/10 flex items-center justify-center hover:bg-sky/20 transition-colors text-sky font-bold text-xs"
-        title="Twitter / X"
-      >
-        X
-      </a>
-      <a
-        href={`https://www.linkedin.com/shareArticle?mini=true&title=${encodeURIComponent(title)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-9 h-9 rounded-xl bg-blue-600/10 flex items-center justify-center hover:bg-blue-600/20 transition-colors text-blue-600 font-bold text-xs"
-        title="LinkedIn"
-      >
-        in
-      </a>
-      <a
-        href={`https://www.facebook.com/sharer/sharer.php?u=`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center hover:bg-blue-500/20 transition-colors text-blue-500 font-bold text-xs"
-        title="Facebook"
-      >
-        f
-      </a>
-      <button
-        className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-        title={locale === "fr" ? "Copier le lien" : "Copy link"}
-      >
-        <Link2 size={15} className="text-gray-600" />
-      </button>
+    <div className="flex flex-wrap items-center gap-3">
+      <span className="text-sm font-semibold text-navy">{locale === "fr" ? "Partager" : "Share"}</span>
+      {networks.map((network) => (
+        <a
+          key={network.name}
+          href={network.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${locale === "fr" ? "Partager sur" : "Share on"} ${network.name}`}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white text-sm font-bold text-navy transition-colors hover:border-navy hover:bg-navy hover:text-white"
+        >
+          {network.label}
+        </a>
+      ))}
     </div>
   );
 }
@@ -100,11 +86,13 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const t = await getTranslations("common");
-  const tBlog = await getTranslations("blog");
+  const tBlog = await getTranslations("home.blog");
+  const tNav = await getTranslations("nav");
   const isEn = locale === "en";
 
   const title = isEn ? post.titleEn : post.titleFr;
   const content = isEn ? post.contentEn : post.contentFr;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL || "https://kelenix.com"}/${locale}/blog/${post.slug}`;
 
   const relatedPosts = await prisma.blogPost.findMany({
     where: { published: true, category: post.category, slug: { not: slug } },
@@ -121,170 +109,98 @@ export default async function BlogPostPage({ params }: Props) {
     },
   });
 
-  const catLabel = (cat: string) => {
-    const map: Record<string, string> = {
-      DEVELOPMENT: isEn ? "Development" : "Développement",
-      AI: isEn ? "Artificial Intelligence" : "Intelligence Artificielle",
-      DIGITAL: isEn ? "Digital Strategy" : "Stratégie Digitale",
-      NEWS: isEn ? "Tech News" : "Actualités Tech",
-      GUIDES: "Guides",
-    };
-    return map[cat] ?? cat;
-  };
+  const catLabel = (cat: string) => (tBlog.has(`categories.${cat}`) ? tBlog(`categories.${cat}`) : cat);
 
   return (
-    <main>
-      <nav className="bg-white border-b border-gray-100 py-3">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <ol className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
-            <li>
-              <Link href="/" className="hover:text-sky transition-colors">
-                {isEn ? "Home" : "Accueil"}
-              </Link>
-            </li>
-            <ChevronRight size={14} className="text-gray-300 shrink-0" />
-            <li>
-              <Link href="/blog" className="hover:text-sky transition-colors">
-                Blog
-              </Link>
-            </li>
-            <ChevronRight size={14} className="text-gray-300 shrink-0" />
-            <li className="text-navy font-medium truncate max-w-xs">{title}</li>
-          </ol>
-        </div>
-      </nav>
-
-      <section className="bg-gradient-to-br from-navy to-sky/20 py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.1)_0%,transparent_60%)]" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-4xl text-center">
-          <span className="inline-block bg-sky text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-6">
-            {catLabel(post.category)}
-          </span>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
-            {title}
-          </h1>
-          <div className="flex items-center justify-center gap-6 text-gray-300 text-sm flex-wrap">
-            <span className="flex items-center gap-2">
-              {post.authorImage ? (
-                <img src={post.authorImage} alt={post.authorName} className="w-7 h-7 rounded-full object-cover border border-white/20" />
-              ) : (
-                <User size={15} />
-              )}
-              {post.authorName}
-            </span>
-            {post.publishedAt && (
-              <span className="flex items-center gap-2">
-                <Calendar size={15} />
-                {formatDate(post.publishedAt, locale)}
-              </span>
+    <>
+      <PageHero
+        breadcrumb={[{ label: tNav("home"), href: "/" }, { label: tNav("blog"), href: "/blog" }, { label: title }]}
+        eyebrow={catLabel(post.category)}
+        title={title}
+        lead={
+          <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-base">
+            {post.authorImage && (
+              // eslint-disable-next-line @next/next/no-img-element -- photo saisie dans l'admin : domaine libre, hors remotePatterns
+              <img src={post.authorImage} alt="" width={28} height={28} className="h-7 w-7 rounded-full object-cover" />
             )}
-          </div>
-        </div>
-      </section>
+            <span className="font-medium text-navy">{post.authorName}</span>
+            {post.publishedAt && <span className="before:mr-2.5 before:content-['·']">{formatDate(post.publishedAt, locale)}</span>}
+          </span>
+        }
+      />
 
-      {post.coverImage && (
-        <div className="relative h-72 sm:h-96 overflow-hidden -mt-8">
-          <div className="container mx-auto px-4 xl:px-8 max-w-4xl h-full">
-            <div className="relative h-full rounded-3xl overflow-hidden shadow-2xl border border-white">
-              <Image
-                src={post.coverImage}
-                alt={title}
-                fill
-                sizes="(max-width: 768px) 100vw, 896px"
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-4xl">
-          <div
-            className="prose-kelenix"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-
-          <div className="mt-12 pt-8 border-t border-gray-100">
-            <ShareButtons title={title} locale={locale} />
-          </div>
-
-          {(post.authorName || post.authorBio) && (
-            <div className="mt-10 bg-neutral-light rounded-2xl p-8 flex gap-6 items-start border border-gray-100">
-              {post.authorImage ? (
-                <img
-                  src={post.authorImage}
-                  alt={post.authorName}
-                  className="w-20 h-20 rounded-full object-cover border-4 border-white shadow shrink-0"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-navy to-sky flex items-center justify-center text-white font-extrabold text-2xl shrink-0">
-                  {post.authorName.charAt(0)}
-                </div>
-              )}
-              <div>
-                <p className="text-xs font-semibold text-sky uppercase tracking-wide mb-1">
-                  {isEn ? "Written by" : "Écrit par"}
-                </p>
-                <h3 className="font-heading font-bold text-navy text-xl mb-2">{post.authorName}</h3>
-                {post.authorBio && (
-                  <p className="text-gray-500 text-sm leading-relaxed">{post.authorBio}</p>
-                )}
-              </div>
+      <article className={`bg-white ${section}`}>
+        <div className="container mx-auto max-w-4xl px-5">
+          {post.coverImage && (
+            <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-3xl bg-mist sm:mb-14">
+              <Image src={post.coverImage} alt={title} fill sizes="(max-width: 896px) 100vw, 856px" className="object-cover" priority />
             </div>
           )}
+
+          <div className="prose-kelenix mx-auto max-w-3xl" dangerouslySetInnerHTML={{ __html: content }} />
+
+          <div className="mx-auto mt-12 max-w-3xl border-t border-line pt-8">
+            <ShareButtons title={title} url={url} locale={locale} />
+
+            {(post.authorName || post.authorBio) && (
+              <div className={`mt-8 flex items-start gap-4 bg-mist/70 p-5 sm:gap-6 sm:p-7 ${card}`}>
+                {post.authorImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- photo saisie dans l'admin : domaine libre, hors remotePatterns
+                  <img src={post.authorImage} alt="" width={64} height={64} loading="lazy" className="h-14 w-14 shrink-0 rounded-2xl object-cover sm:h-16 sm:w-16" />
+                ) : (
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-azure font-display text-2xl text-white sm:h-16 sm:w-16">
+                    {post.authorName.charAt(0)}
+                  </span>
+                )}
+                <div>
+                  <p className="text-sm text-muted">{isEn ? "Written by" : "Écrit par"}</p>
+                  <p className="text-lg font-semibold text-navy">{post.authorName}</p>
+                  {post.authorBio && <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{post.authorBio}</p>}
+                </div>
+              </div>
+            )}
+
+            <Link href="/blog" className={`mt-8 inline-flex items-center gap-2 ${textLink}`}>
+              <ArrowLeft size={16} /> {t("backToBlog")}
+            </Link>
+          </div>
         </div>
-      </section>
+      </article>
 
       {relatedPosts.length > 0 && (
-        <section className="py-16 bg-neutral-light">
-          <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-            <h2 className="font-heading text-2xl font-extrabold text-navy mb-8">
-              {isEn ? "Related articles" : "Articles similaires"}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {relatedPosts.map((related: { slug: string; titleFr: string; titleEn: string; coverImage: string | null; publishedAt: Date | null; authorName: string; category: string }) => (
-                <Link
-                  key={related.slug}
-                  href={{ pathname: "/blog/[slug]", params: { slug: related.slug } }}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-gray-100"
-                >
-                  <div className="relative h-44 overflow-hidden">
-                    {related.coverImage ? (
-                      <Image src={related.coverImage} alt={isEn ? related.titleEn : related.titleFr} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-navy to-sky/30" />
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <span className="text-xs text-sky font-semibold">{catLabel(related.category)}</span>
-                    <h3 className="font-heading font-bold text-navy text-sm mt-1 line-clamp-2 group-hover:text-sky transition-colors">
-                      {isEn ? related.titleEn : related.titleFr}
-                    </h3>
-                    {related.publishedAt && (
-                      <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
-                        <Calendar size={10} /> {formatDate(related.publishedAt, locale)}
+        <section className={`bg-mist ${section}`}>
+          <div className={container}>
+            <h2 className={`mb-8 sm:mb-12 ${h2}`}>{isEn ? "Related articles" : "Articles similaires"}</h2>
+            <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
+              {relatedPosts.map((related) => {
+                const relatedTitle = isEn ? related.titleEn : related.titleFr;
+                return (
+                  <Link key={related.slug} href={{ pathname: "/blog/[slug]", params: { slug: related.slug } }} className="group flex items-center gap-4 sm:block">
+                    <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-linear-to-br from-sky/30 to-azure/40 sm:aspect-[16/10] sm:h-auto sm:w-full sm:rounded-3xl">
+                      {related.coverImage && (
+                        <Image
+                          src={related.coverImage}
+                          alt={relatedTitle}
+                          fill
+                          sizes="(max-width: 640px) 96px, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        />
+                      )}
+                    </div>
+                    <div className="min-w-0 sm:mt-5">
+                      <p className="text-[13px] text-muted sm:text-sm">
+                        <span className="font-semibold text-azure">{catLabel(related.category)}</span>
+                        {related.publishedAt && <span className="hidden before:mx-2 before:content-['·'] sm:inline">{formatDate(related.publishedAt, locale)}</span>}
                       </p>
-                    )}
-                  </div>
-                </Link>
-              ))}
+                      <h3 className="mt-1 line-clamp-3 text-base font-semibold leading-snug text-navy transition-colors group-hover:text-azure sm:mt-2 sm:text-xl">{relatedTitle}</h3>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
       )}
-
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-sky font-semibold hover:gap-3 transition-all"
-          >
-            ← {t("backToBlog")}
-          </Link>
-        </div>
-      </section>
-    </main>
+    </>
   );
 }

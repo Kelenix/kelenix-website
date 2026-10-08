@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { Clock, Lock, ShieldCheck } from "lucide-react";
+import PageHero from "@/components/site/PageHero";
+import { card, section } from "@/components/site/styles";
 import QuoteForm from "./QuoteForm";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -17,54 +20,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function DevisPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "quote" });
+  const fr = locale === "fr";
 
-  const steps = [
-    t("steps.service"),
-    t("steps.project"),
-    t("steps.budget"),
-    t("steps.contact"),
-    t("steps.confirm"),
+  const reassurance = [
+    { icon: ShieldCheck, label: fr ? "Gratuit et sans engagement" : "Free, with no commitment" },
+    { icon: Clock, label: fr ? "Devis détaillé sous 48 h" : "Detailed quote within 48 hours" },
+    { icon: Lock, label: fr ? "Vos données restent confidentielles" : "Your data stays private" },
   ];
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-navy to-navy-light py-20">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-block bg-gold/10 text-gold text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-4">
-            {t("title")}{" "}
-            <span className="text-sky">{t("titleHighlight")}</span>
-          </h1>
-          <p className="text-gray-300 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")} />
 
-          {/* Step indicators */}
-          <div className="flex items-center justify-center mt-10 gap-2 flex-wrap">
-            {steps.map((step, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5">
-                  <span className="w-5 h-5 rounded-full bg-sky/20 border border-sky/50 flex items-center justify-center text-sky text-xs font-bold">
-                    {i + 1}
-                  </span>
-                  <span className="text-white text-xs font-medium">{step}</span>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="w-4 h-px bg-white/20 hidden sm:block" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Form */}
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-3xl">
-          <div className="bg-white rounded-3xl shadow-card p-8">
+      <section className={`bg-mist ${section}`}>
+        <div className="container mx-auto max-w-3xl px-4 sm:px-5">
+          <div className={`p-5 sm:p-8 lg:p-10 ${card}`}>
             <QuoteForm locale={locale} />
           </div>
+
+          <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+            {reassurance.map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-2.5 text-sm font-medium text-navy sm:justify-center">
+                <Icon size={18} className="shrink-0 text-azure" />
+                {label}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </>

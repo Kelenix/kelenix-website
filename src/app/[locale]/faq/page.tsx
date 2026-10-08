@@ -2,8 +2,9 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { MessageCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import PageHero from "@/components/site/PageHero";
+import { btnDark, card, section } from "@/components/site/styles";
 import FaqAccordion from "./FaqAccordion";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -64,39 +65,20 @@ export default async function FaqPage({ params }: Props) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-navy to-navy-light py-20">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-4">
-            {t("title")}{" "}
-            <span className="text-sky">{t("titleHighlight")}</span>
-          </h1>
-          <p className="text-gray-300 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
-        </div>
-      </section>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")} />
 
-      {/* FAQ Content */}
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-4xl">
+      <section className={`bg-mist ${section}`}>
+        <div className="container mx-auto max-w-4xl px-5">
           {faqByCategory.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
-              <p>{isEn ? "No questions available yet." : "Aucune question disponible pour le moment."}</p>
-            </div>
+            <p className="py-12 text-center text-muted">{isEn ? "No questions available yet." : "Aucune question disponible pour le moment."}</p>
           ) : (
             <FaqAccordion categories={faqByCategory} locale={locale} />
           )}
 
-          {/* Contact CTA */}
-          <div className="mt-16 text-center bg-navy rounded-3xl p-10">
-            <MessageCircle size={40} className="text-sky mx-auto mb-4" />
-            <p className="text-white font-medium text-lg mb-2">{t("contactUs")}</p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-sky text-white rounded-xl font-semibold text-sm hover:bg-sky-dark transition-colors mt-4"
-            >
+          {/* Pas de réponse ? */}
+          <div data-no-reveal className={`mt-12 flex flex-col items-start gap-5 p-6 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:p-8 ${card}`}>
+            <p className="font-display text-2xl font-medium tracking-[-0.02em] text-navy sm:text-[1.75rem]">{t("contactUs")}</p>
+            <Link href="/contact" className={`w-full shrink-0 sm:w-auto ${btnDark}`}>
               {t("contactLink")}
             </Link>
           </div>

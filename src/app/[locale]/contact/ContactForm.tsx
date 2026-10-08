@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Send, CheckCircle, AlertCircle, Paperclip } from "lucide-react";
+import { Send, Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { btnGhost, btnPrimary, input, label } from "@/components/site/styles";
 
 export default function ContactForm({ locale }: { locale: string }) {
   const t = useTranslations("contact.form");
@@ -51,94 +52,98 @@ export default function ContactForm({ locale }: { locale: string }) {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <CheckCircle size={56} className="text-green-500 mb-4" />
-        <h3 className="font-heading font-bold text-navy text-xl mb-2">{locale === "fr" ? "Message envoyé !" : "Message sent!"}</h3>
-        <p className="text-gray-500">{t("success")}</p>
-        <button onClick={() => setStatus("idle")} className="mt-6 px-6 py-2.5 bg-sky text-white rounded-xl text-sm font-medium">
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white">
+          <Check size={30} strokeWidth={3} />
+        </div>
+        <h3 className="font-display text-3xl font-medium tracking-[-0.02em] text-navy">{locale === "fr" ? "Message envoyé !" : "Message sent!"}</h3>
+        <p className="mt-2 text-muted">{t("success")}</p>
+        <button type="button" onClick={() => setStatus("idle")} className={cn(btnGhost, "mt-7 px-6 py-3 text-[15px]")}>
           {locale === "fr" ? "Envoyer un autre message" : "Send another message"}
         </button>
       </div>
     );
   }
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/10 transition-all";
+  const set = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("firstName")} *</label>
-          <input type="text" required value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} className={inputClass} />
+          <label htmlFor="contact-first" className={label}>{t("firstName")} *</label>
+          <input id="contact-first" type="text" required autoComplete="given-name" value={form.firstName} onChange={set("firstName")} className={input} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("lastName")} *</label>
-          <input type="text" required value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} className={inputClass} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("email")} *</label>
-          <input type="email" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className={inputClass} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("phone")}</label>
-          <input type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className={inputClass} />
+          <label htmlFor="contact-last" className={label}>{t("lastName")} *</label>
+          <input id="contact-last" type="text" required autoComplete="family-name" value={form.lastName} onChange={set("lastName")} className={input} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("company")}</label>
-          <input type="text" value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} className={inputClass} />
+          <label htmlFor="contact-email" className={label}>{t("email")} *</label>
+          <input id="contact-email" type="email" required autoComplete="email" value={form.email} onChange={set("email")} className={input} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("service")}</label>
-          <select value={form.service} onChange={e => setForm(f => ({ ...f, service: e.target.value }))} className={inputClass}>
+          <label htmlFor="contact-phone" className={label}>{t("phone")}</label>
+          <input id="contact-phone" type="tel" autoComplete="tel" value={form.phone} onChange={set("phone")} className={input} />
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="contact-company" className={label}>{t("company")}</label>
+          <input id="contact-company" type="text" autoComplete="organization" value={form.company} onChange={set("company")} className={input} />
+        </div>
+        <div>
+          <label htmlFor="contact-service" className={label}>{t("service")}</label>
+          <select id="contact-service" value={form.service} onChange={set("service")} className={input}>
             <option value="">{t("selectService")}</option>
-            {services.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+            {services.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("budget")}</label>
-        <select value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))} className={inputClass}>
+        <label htmlFor="contact-budget" className={label}>{t("budget")}</label>
+        <select id="contact-budget" value={form.budget} onChange={set("budget")} className={input}>
           <option value="">{t("selectBudget")}</option>
-          {budgets.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}
+          {budgets.map((b) => (
+            <option key={b.value} value={b.value}>
+              {b.label}
+            </option>
+          ))}
         </select>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("message")} *</label>
+        <label htmlFor="contact-message" className={label}>{t("message")} *</label>
         <textarea
+          id="contact-message"
           required
           rows={5}
           value={form.message}
-          onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-          className={cn(inputClass, "resize-none")}
+          onChange={set("message")}
+          className={cn(input, "resize-none")}
           placeholder={locale === "fr" ? "Décrivez votre projet ou votre demande..." : "Describe your project or request..."}
         />
       </div>
 
       {status === "error" && (
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-700 text-sm">
+        <div role="alert" className="flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle size={16} />
           {t("error")}
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="w-full py-4 bg-sky text-white font-bold rounded-xl hover:bg-sky-dark transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-      >
-        {status === "loading" ? (
-          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-        ) : (
-          <Send size={18} />
-        )}
+      <button type="submit" disabled={status === "loading"} className={cn(btnPrimary, "w-full")}>
+        {status === "loading" ? <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" /> : <Send size={18} />}
         {status === "loading" ? t("sending") : t("submit")}
       </button>
     </form>

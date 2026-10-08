@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Link } from "@/i18n/navigation";
-import { ChevronRight } from "lucide-react";
+import PageHero from "@/components/site/PageHero";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -54,28 +53,15 @@ export default async function CookiesPage({ params }: Props) {
   ];
 
   return (
-    <main>
-      <nav className="bg-white border-b border-gray-100 py-3">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <ol className="flex items-center gap-2 text-sm text-gray-500">
-            <li><Link href="/" className="hover:text-sky transition-colors">{isEn ? "Home" : "Accueil"}</Link></li>
-            <ChevronRight size={14} className="text-gray-300" />
-            <li className="text-navy font-medium">{isEn ? "Cookie Policy" : "Politique Cookies"}</li>
-          </ol>
-        </div>
-      </nav>
+    <>
+      <PageHero
+        breadcrumb={[{ label: isEn ? "Home" : "Accueil", href: "/" }, { label: isEn ? "Cookie Policy" : "Politique Cookies" }]}
+        title={isEn ? "Cookie Policy" : "Politique Cookies"}
+        lead={isEn ? "Last updated: January 1, 2025" : "Dernière mise à jour : 01/01/2025"}
+      />
 
-      <section className="bg-gradient-to-br from-navy to-sky/20 py-16">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-4">
-            {isEn ? "Cookie Policy" : "Politique Cookies"}
-          </h1>
-          <p className="text-gray-300">{isEn ? "Last updated: January 1, 2025" : "Dernière mise à jour : 01/01/2025"}</p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-4xl">
+      <section className="bg-white py-12 sm:py-16 lg:py-20">
+        <div className="container mx-auto max-w-3xl px-5">
           <div className="prose-kelenix space-y-10">
             <div>
               <h2>{isEn ? "1. What is a cookie?" : "1. Qu'est-ce qu'un cookie ?"}</h2>
@@ -98,7 +84,7 @@ export default async function CookiesPage({ params }: Props) {
 
           <div className="mt-8 space-y-4">
             {cookieTypes.map((ct) => (
-              <div key={ct.nameFr} className="bg-neutral-light rounded-2xl p-6 border border-gray-100">
+              <div key={ct.nameFr} className="rounded-3xl border border-line bg-mist/70 p-6">
                 <h3 className="font-heading font-bold text-navy text-lg mb-2">
                   {isEn ? ct.nameEn : ct.nameFr}
                 </h3>
@@ -160,6 +146,6 @@ export default async function CookiesPage({ params }: Props) {
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }

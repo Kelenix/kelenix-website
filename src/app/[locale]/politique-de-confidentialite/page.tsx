@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import PageHero from "@/components/site/PageHero";
 import { Link } from "@/i18n/navigation";
-import { ChevronRight } from "lucide-react";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -19,28 +19,15 @@ export default async function PrivacyPolicyPage({ params }: Props) {
   const isEn = locale === "en";
 
   return (
-    <main>
-      <nav className="bg-white border-b border-gray-100 py-3">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <ol className="flex items-center gap-2 text-sm text-gray-500">
-            <li><Link href="/" className="hover:text-sky transition-colors">{isEn ? "Home" : "Accueil"}</Link></li>
-            <ChevronRight size={14} className="text-gray-300" />
-            <li className="text-navy font-medium">{isEn ? "Privacy Policy" : "Politique de Confidentialité"}</li>
-          </ol>
-        </div>
-      </nav>
+    <>
+      <PageHero
+        breadcrumb={[{ label: isEn ? "Home" : "Accueil", href: "/" }, { label: isEn ? "Privacy Policy" : "Politique de Confidentialité" }]}
+        title={isEn ? "Privacy Policy" : "Politique de Confidentialité"}
+        lead={isEn ? "Last updated: January 1, 2025" : "Dernière mise à jour : 01/01/2025"}
+      />
 
-      <section className="bg-gradient-to-br from-navy to-sky/20 py-16">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-4">
-            {isEn ? "Privacy Policy" : "Politique de Confidentialité"}
-          </h1>
-          <p className="text-gray-300">{isEn ? "Last updated: January 1, 2025" : "Dernière mise à jour : 01/01/2025"}</p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-4xl">
+      <section className="bg-white py-12 sm:py-16 lg:py-20">
+        <div className="container mx-auto max-w-3xl px-5">
           <div className="prose-kelenix space-y-10">
             <div>
               <h2>{isEn ? "1. Introduction" : "1. Introduction"}</h2>
@@ -142,6 +129,6 @@ export default async function PrivacyPolicyPage({ params }: Props) {
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }

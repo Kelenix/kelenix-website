@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Send, CheckCircle, Loader2 } from "lucide-react";
+import { Send, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { btnPrimary, input, label } from "@/components/site/styles";
 
 export default function CareersForm({ locale }: { locale: string }) {
   const t = useTranslations("careers");
@@ -48,14 +50,12 @@ export default function CareersForm({ locale }: { locale: string }) {
 
   if (success) {
     return (
-      <div className="text-center py-12">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle size={40} className="text-green-500" />
+      <div className="flex flex-col items-center py-10 text-center">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white">
+          <Check size={30} strokeWidth={3} />
         </div>
-        <h3 className="font-heading text-2xl font-extrabold text-navy mb-3">
-          {isEn ? "Application submitted!" : "Candidature envoyée !"}
-        </h3>
-        <p className="text-gray-500">
+        <h3 className="font-display text-3xl font-medium tracking-[-0.02em] text-navy">{isEn ? "Application submitted!" : "Candidature envoyée !"}</h3>
+        <p className="mt-2 text-muted">
           {isEn
             ? "Thank you! We'll review your application and get back to you soon."
             : "Merci ! Nous examinerons votre candidature et vous répondrons prochainement."}
@@ -65,76 +65,54 @@ export default function CareersForm({ locale }: { locale: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.name")} *</label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="career-name" className={label}>{t("form.name")} *</label>
+          <input id="career-name" type="text" name="name" autoComplete="name" value={form.name} onChange={handleChange} required className={input} />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.email")} *</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="career-email" className={label}>{t("form.email")} *</label>
+          <input id="career-email" type="email" name="email" autoComplete="email" value={form.email} onChange={handleChange} required className={input} />
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.phone")}</label>
-          <input
-            type="tel"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="career-phone" className={label}>{t("form.phone")}</label>
+          <input id="career-phone" type="tel" name="phone" autoComplete="tel" value={form.phone} onChange={handleChange} className={input} />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.position")}</label>
+          <label htmlFor="career-position" className={label}>{t("form.position")}</label>
           <input
+            id="career-position"
             type="text"
             name="position"
             value={form.position}
             onChange={handleChange}
             placeholder={isEn ? "e.g. Full-Stack Developer" : "ex. Développeur Full-Stack"}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
+            className={input}
           />
         </div>
       </div>
       <div>
-        <label className="block text-sm font-semibold text-navy mb-2">{t("form.message")} *</label>
+        <label htmlFor="career-message" className={label}>{t("form.message")} *</label>
         <textarea
+          id="career-message"
           name="message"
           value={form.message}
           onChange={handleChange}
           required
           rows={6}
           placeholder={isEn ? "Tell us about your experience and motivation..." : "Parlez-nous de votre expérience et de votre motivation..."}
-          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all resize-none"
+          className={cn(input, "resize-none")}
         />
       </div>
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">
+        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-sky text-white font-bold rounded-xl hover:bg-navy transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base"
-      >
+      <button type="submit" disabled={loading} className={cn(btnPrimary, "w-full")}>
         {loading ? (
           <>
             <Loader2 size={18} className="animate-spin" />

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { ShieldCheck, ArrowUpRight, Tag, ShoppingBag } from "lucide-react";
+import { ShieldCheck, ArrowUpRight, Tag } from "lucide-react";
 import ProductGrid from "@/components/home/ProductGrid";
-import Aurora from "@/components/motion/Aurora";
+import PageHero from "@/components/site/PageHero";
+import { btnDark, container, section } from "@/components/site/styles";
 import { products, promo, STORE_URL } from "@/data/chariow";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -22,53 +23,28 @@ export default async function BoutiquePage({ params }: Props) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative bg-gradient-hero pt-28 pb-20 overflow-hidden">
-        <Aurora className="opacity-60" />
-        <div className="grid-floor opacity-40" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-4xl text-center">
-          <span className="inline-flex items-center gap-2 glass-pill text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-            <ShoppingBag size={15} />
-            {t("badge")}
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-5 tracking-tight">
-            {t("pageTitle")}{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-sky to-gold">
-              {t("pageHighlight")}
-            </span>
-          </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">{t("pageSubtitle")}</p>
-
-          {/* Promo réelle */}
-          <div className="inline-flex items-center gap-2.5 glass rounded-2xl px-5 py-3">
-            <Tag size={17} className="text-gold" />
-            <span className="text-white text-sm font-semibold">
-              {t("promoLine", { percent: promo.percent, code: promo.code })}
-            </span>
-          </div>
-        </div>
-      </section>
+      <PageHero eyebrow={t("badge")} title={`${t("pageTitle")} ${t("pageHighlight")}`} lead={t("pageSubtitle")}>
+        {/* Promo réelle */}
+        <p className="inline-flex items-center gap-2.5 self-center rounded-full bg-gold/20 px-5 py-2.5 text-sm font-semibold text-navy">
+          <Tag size={16} className="shrink-0" />
+          {t("promoLine", { percent: promo.percent, code: promo.code })}
+        </p>
+      </PageHero>
 
       {/* Catalogue */}
-      <section className="relative py-20 bg-linear-to-b from-white via-neutral-light to-white overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-[34rem] h-[34rem] rounded-full bg-sky/10 blur-3xl pointer-events-none" />
-        <div className="relative container mx-auto px-4 xl:px-8 max-w-7xl">
+      <section className={`bg-mist ${section}`}>
+        <div className={container}>
           <ProductGrid products={products} />
 
           {/* Pied */}
-          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
-            <span className="inline-flex items-center gap-2 text-sm text-gray-500">
-              <ShieldCheck size={16} className="text-emerald-500" />
+          <div className="mt-12 flex flex-col items-center justify-center gap-5 text-center sm:flex-row">
+            <span className="inline-flex items-center gap-2 text-sm text-muted">
+              <ShieldCheck size={16} className="shrink-0 text-emerald-600" />
               {t("secure")}
             </span>
-            <a
-              href={STORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-7 py-3 bg-gold text-navy font-bold rounded-2xl hover:bg-gold-dark transition-all hover:scale-105"
-            >
+            <a href={STORE_URL} target="_blank" rel="noopener noreferrer" className={`w-full sm:w-auto ${btnDark}`}>
               {t("browseStore")}
-              <ArrowUpRight size={17} />
+              <ArrowUpRight size={18} />
             </a>
           </div>
         </div>

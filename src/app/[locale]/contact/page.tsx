@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Mail, Phone, MapPin, Clock, MessageCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import PageHero from "@/components/site/PageHero";
+import { card, container, iconTile, section } from "@/components/site/styles";
 import ContactForm from "./ContactForm";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -45,60 +47,53 @@ export default async function ContactPage({ params }: Props) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-linear-to-br from-navy to-navy-light py-20">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-block bg-sky/10 text-sky text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-            {t("badge")}
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-4">
-            {t("title")}{" "}
-            <span className="text-sky">{t("titleHighlight")}</span>
-          </h1>
-          <p className="text-gray-300 max-w-2xl mx-auto text-lg">{t("subtitle")}</p>
-        </div>
-      </section>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")} />
 
-      {/* Content */}
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            {/* Contact Info */}
-            <div className="space-y-5">
+      <section className={`bg-mist ${section}`}>
+        <div className={`${container} grid gap-6 lg:grid-cols-[1fr_1.7fr] lg:gap-8`}>
+          {/* Coordonnées */}
+          <div className="flex flex-col gap-5">
+            <ul className={`divide-y divide-line px-5 sm:px-6 ${card}`}>
               {infos.map(({ icon: Icon, label, href }) => (
-                <div key={label} className="bg-white rounded-2xl p-5 shadow-card flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-sky/10 flex items-center justify-center flex-shrink-0">
-                    <Icon size={18} className="text-sky" />
-                  </div>
-                  <div>
-                    {href ? (
-                      <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="text-navy font-medium hover:text-sky transition-colors text-sm">
-                        {label}
-                      </a>
-                    ) : (
-                      <p className="text-navy font-medium text-sm">{label}</p>
-                    )}
-                  </div>
-                </div>
+                <li key={label}>
+                  {href ? (
+                    <a
+                      href={href}
+                      target={href.startsWith("http") ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-4 py-4 text-[15px] font-medium text-navy transition-colors hover:text-azure"
+                    >
+                      <span className={iconTile}>
+                        <Icon size={20} />
+                      </span>
+                      <span className="min-w-0 break-words">{label}</span>
+                    </a>
+                  ) : (
+                    <p className="flex items-center gap-4 py-4 text-[15px] font-medium text-navy">
+                      <span className={iconTile}>
+                        <Icon size={20} />
+                      </span>
+                      {label}
+                    </p>
+                  )}
+                </li>
               ))}
+            </ul>
 
-              {/* Map */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-card h-48 relative">
-                <iframe
-                  src="https://www.openstreetmap.org/export/embed.html?bbox=2.2,48.8,2.4,48.9&layer=mapnik"
-                  className="w-full h-full border-0"
-                  loading="lazy"
-                  title="Kelenix location"
-                />
-              </div>
+            {/* Carte (masquée sur téléphone : les coordonnées suffisent) */}
+            <div className={`hidden h-56 overflow-hidden sm:block ${card}`}>
+              <iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=2.2,48.8,2.4,48.9&layer=mapnik"
+                className="h-full w-full border-0"
+                loading="lazy"
+                title="Kelenix location"
+              />
             </div>
+          </div>
 
-            {/* Form */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-card p-8">
-                <ContactForm locale={locale} />
-              </div>
-            </div>
+          {/* Formulaire */}
+          <div className={`p-5 sm:p-8 lg:p-10 ${card}`}>
+            <ContactForm locale={locale} />
           </div>
         </div>
       </section>

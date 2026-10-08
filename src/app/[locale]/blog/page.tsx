@@ -2,6 +2,8 @@ export const dynamic = "force-dynamic";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
+import PageHero from "@/components/site/PageHero";
+import { container, section } from "@/components/site/styles";
 import BlogGrid from "./BlogGrid";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -20,7 +22,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations("blog");
-  const isEn = locale === "en";
 
   const posts = await prisma.blogPost.findMany({
     where: { published: true },
@@ -42,29 +43,14 @@ export default async function BlogPage({ params }: Props) {
   const POSTS_PER_PAGE = 9;
 
   return (
-    <main>
-      <section className="bg-gradient-to-br from-navy via-navy to-sky/20 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.12)_0%,transparent_60%)]" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-6">
-            <span data-loop="pulse" className="w-2 h-2 rounded-full bg-sky" />
-            <span className="text-sky text-sm font-medium">{t("badge")}</span>
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6">
-            {t("title")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky to-gold">
-              {t("titleHighlight")}
-            </span>
-          </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">{t("subtitle")}</p>
-        </div>
-      </section>
+    <>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")} />
 
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
+      <section className={`bg-white ${section}`}>
+        <div className={container}>
           <BlogGrid posts={posts} locale={locale} postsPerPage={POSTS_PER_PAGE} />
         </div>
       </section>
-    </main>
+    </>
   );
 }

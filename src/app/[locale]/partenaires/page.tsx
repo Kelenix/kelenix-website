@@ -9,6 +9,8 @@ import {
   Award,
   ArrowRight,
 } from "lucide-react";
+import PageHero from "@/components/site/PageHero";
+import { btnPrimary, card, container, h2, iconTile, lead, section } from "@/components/site/styles";
 import PartnerForm from "./PartnerForm";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -70,14 +72,14 @@ const benefits = [
 ];
 
 const partnerLogos = [
-  { name: "TechCorp", bg: "bg-blue-50", text: "text-blue-600" },
-  { name: "CloudBase", bg: "bg-purple-50", text: "text-purple-600" },
-  { name: "DataSync", bg: "bg-green-50", text: "text-green-600" },
-  { name: "NexaDigital", bg: "bg-orange-50", text: "text-orange-600" },
-  { name: "SmartAI", bg: "bg-sky/10", text: "text-sky" },
-  { name: "BuildSoft", bg: "bg-red-50", text: "text-red-500" },
-  { name: "AgileTeams", bg: "bg-yellow-50", text: "text-yellow-600" },
-  { name: "DevPulse", bg: "bg-indigo-50", text: "text-indigo-600" },
+  { name: "TechCorp" },
+  { name: "CloudBase" },
+  { name: "DataSync" },
+  { name: "NexaDigital" },
+  { name: "SmartAI" },
+  { name: "BuildSoft" },
+  { name: "AgileTeams" },
+  { name: "DevPulse" },
 ];
 
 const partnerTypes = [
@@ -95,100 +97,71 @@ export default async function PartnersPage({ params }: Props) {
   const isEn = locale === "en";
 
   return (
-    <main>
-      <section className="bg-gradient-to-br from-navy via-navy to-sky/20 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.12)_0%,transparent_60%)]" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-6">
-            <span data-loop="pulse" className="w-2 h-2 rounded-full bg-sky" />
-            <span className="text-sky text-sm font-medium">{t("badge")}</span>
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6">
-            {t("title")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky to-gold">
-              {t("titleHighlight")}
-            </span>
-          </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">{t("subtitle")}</p>
-          <div className="mt-8">
-            <a
-              href="#partner-form"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-navy font-bold rounded-xl hover:bg-yellow-400 transition-colors"
-            >
-              {isEn ? "Become a partner" : "Devenir partenaire"} <ArrowRight size={16} />
-            </a>
-          </div>
-        </div>
-      </section>
+    <>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")}>
+        <a href="#partner-form" className={`group ${btnPrimary}`}>
+          {isEn ? "Become a partner" : "Devenir partenaire"}
+          <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+        </a>
+      </PageHero>
 
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl font-extrabold text-navy mb-4">
-              {t("benefits.title")}
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
+      {/* Avantages */}
+      <section className={`bg-white ${section}`}>
+        <div className={container}>
+          <div className="mb-10 max-w-2xl sm:mb-14">
+            <h2 className={h2}>{t("benefits.title")}</h2>
+            <p className={`mt-4 ${lead}`}>
               {isEn
                 ? "As a Kelenix partner, you benefit from an ecosystem designed to help you grow and deliver more value to your clients."
                 : "En tant que partenaire Kelenix, vous bénéficiez d'un écosystème conçu pour vous aider à croître et à apporter plus de valeur à vos clients."}
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {benefits.map((benefit) => (
-              <div
-                key={benefit.titleFr}
-                className="bg-neutral-light rounded-2xl p-8 border border-gray-100 hover:border-sky/30 transition-colors group"
-              >
-                <div className="w-14 h-14 bg-sky/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-sky/20 transition-colors">
-                  <benefit.icon size={26} className="text-sky" />
+              <div key={benefit.titleFr} className={`flex gap-4 p-5 sm:block sm:p-7 ${card}`}>
+                <span className={`sm:mb-5 ${iconTile}`}>
+                  <benefit.icon size={22} />
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold leading-snug text-navy sm:text-xl">{isEn ? benefit.titleEn : benefit.titleFr}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-muted sm:mt-2">{isEn ? benefit.descEn : benefit.descFr}</p>
                 </div>
-                <h3 className="font-heading font-bold text-navy text-xl mb-3">
-                  {isEn ? benefit.titleEn : benefit.titleFr}
-                </h3>
-                <p className="text-gray-500 leading-relaxed">{isEn ? benefit.descEn : benefit.descFr}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-2xl font-extrabold text-navy mb-4">
-              {isEn ? "Our technology partners" : "Nos partenaires technologiques"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+      {/* Partenaires technologiques */}
+      <section className="border-y border-line bg-mist py-12 sm:py-16">
+        <div className={container}>
+          <h2 className="mb-6 text-center text-sm font-semibold text-muted sm:mb-8">{isEn ? "Our technology partners" : "Nos partenaires technologiques"}</h2>
+          <ul className="flex flex-wrap justify-center gap-2.5 sm:gap-3">
             {partnerLogos.map((logo) => (
-              <div
-                key={logo.name}
-                className={`${logo.bg} rounded-2xl p-4 flex items-center justify-center h-16 border border-gray-100`}
-              >
-                <span className={`font-heading font-extrabold text-sm ${logo.text}`}>{logo.name}</span>
-              </div>
+              <li key={logo.name} className="rounded-full border border-line bg-white px-5 py-2.5 text-[15px] font-semibold text-navy">
+                {logo.name}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      <section id="partner-form" className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-3xl">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl font-extrabold text-navy mb-4">
-              {isEn ? "Submit a partnership request" : "Soumettre une demande de partenariat"}
-            </h2>
-            <p className="text-gray-500">
+      {/* Demande de partenariat */}
+      <section id="partner-form" className={`scroll-mt-20 bg-white ${section}`}>
+        <div className="container mx-auto max-w-3xl px-4 sm:px-5">
+          <div className="mb-8 sm:mb-10">
+            <h2 className={h2}>{isEn ? "Submit a partnership request" : "Soumettre une demande de partenariat"}</h2>
+            <p className={`mt-4 ${lead}`}>
               {isEn
                 ? "Fill in the form below and our partner team will contact you within 48 hours."
                 : "Remplissez le formulaire ci-dessous et notre équipe partenaires vous contactera sous 48h."}
             </p>
           </div>
-          <div className="bg-white rounded-3xl shadow-card p-8 border border-gray-100">
+          <div className={`p-5 sm:p-8 lg:p-10 ${card}`}>
             <PartnerForm locale={locale} partnerTypes={partnerTypes} />
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Send, CheckCircle, Loader2 } from "lucide-react";
+import { Send, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { btnPrimary, input, label } from "@/components/site/styles";
 
 type PartnerType = { valueFr: string; valueEn: string };
 
@@ -59,14 +61,12 @@ export default function PartnerForm({
 
   if (success) {
     return (
-      <div className="text-center py-12">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle size={40} className="text-green-500" />
+      <div className="flex flex-col items-center py-10 text-center">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white">
+          <Check size={30} strokeWidth={3} />
         </div>
-        <h3 className="font-heading text-2xl font-extrabold text-navy mb-3">
-          {isEn ? "Request submitted!" : "Demande envoyée !"}
-        </h3>
-        <p className="text-gray-500">
+        <h3 className="font-display text-3xl font-medium tracking-[-0.02em] text-navy">{isEn ? "Request submitted!" : "Demande envoyée !"}</h3>
+        <p className="mt-2 text-muted">
           {isEn
             ? "Thank you! Our partner team will contact you within 48 hours."
             : "Merci ! Notre équipe partenaires vous contactera sous 48h."}
@@ -76,63 +76,30 @@ export default function PartnerForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.company")} *</label>
-          <input
-            type="text"
-            name="company"
-            value={form.company}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="partner-company" className={label}>{t("form.company")} *</label>
+          <input id="partner-company" type="text" name="company" autoComplete="organization" value={form.company} onChange={handleChange} required className={input} />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.name")} *</label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="partner-name" className={label}>{t("form.name")} *</label>
+          <input id="partner-name" type="text" name="name" autoComplete="name" value={form.name} onChange={handleChange} required className={input} />
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.email")} *</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="partner-email" className={label}>{t("form.email")} *</label>
+          <input id="partner-email" type="email" name="email" autoComplete="email" value={form.email} onChange={handleChange} required className={input} />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">{t("form.phone")}</label>
-          <input
-            type="tel"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all"
-          />
+          <label htmlFor="partner-phone" className={label}>{t("form.phone")}</label>
+          <input id="partner-phone" type="tel" name="phone" autoComplete="tel" value={form.phone} onChange={handleChange} className={input} />
         </div>
       </div>
       <div>
-        <label className="block text-sm font-semibold text-navy mb-2">{t("form.partnerType")} *</label>
-        <select
-          name="partnerType"
-          value={form.partnerType}
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all bg-white"
-        >
+        <label htmlFor="partner-type" className={label}>{t("form.partnerType")} *</label>
+        <select id="partner-type" name="partnerType" value={form.partnerType} onChange={handleChange} required className={input}>
           <option value="">{isEn ? "Select a type..." : "Sélectionner un type..."}</option>
           {partnerTypes.map((pt) => (
             <option key={pt.valueFr} value={isEn ? pt.valueEn : pt.valueFr}>
@@ -142,27 +109,24 @@ export default function PartnerForm({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-semibold text-navy mb-2">{t("form.message")} *</label>
+        <label htmlFor="partner-message" className={label}>{t("form.message")} *</label>
         <textarea
+          id="partner-message"
           name="message"
           value={form.message}
           onChange={handleChange}
           required
           rows={5}
           placeholder={isEn ? "Describe your partnership project..." : "Décrivez votre projet de partenariat..."}
-          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/20 transition-all resize-none"
+          className={cn(input, "resize-none")}
         />
       </div>
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">
+        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-sky text-white font-bold rounded-xl hover:bg-navy transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base"
-      >
+      <button type="submit" disabled={loading} className={cn(btnPrimary, "w-full")}>
         {loading ? (
           <>
             <Loader2 size={18} className="animate-spin" />

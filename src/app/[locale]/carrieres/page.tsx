@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import {
@@ -12,12 +11,13 @@ import {
   ArrowRight,
   MapPin,
   Briefcase,
-  Clock,
   Laptop,
   GraduationCap,
   Shield,
   Coffee,
 } from "lucide-react";
+import PageHero from "@/components/site/PageHero";
+import { btnDark, btnPrimary, card, container, h2, iconTile, lead, section } from "@/components/site/styles";
 import CareersForm from "./CareersForm";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -91,146 +91,109 @@ export default async function CareersPage({ params }: Props) {
   });
 
   return (
-    <main>
-      <section className="bg-gradient-to-br from-navy via-navy to-sky/20 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(47,168,255,0.12)_0%,transparent_60%)]" />
-        <div className="relative z-10 container mx-auto px-4 xl:px-8 max-w-7xl text-center">
-          <span className="inline-flex items-center gap-2 bg-sky/10 border border-sky/30 rounded-full px-4 py-2 mb-6">
-            <span data-loop="pulse" className="w-2 h-2 rounded-full bg-sky" />
-            <span className="text-sky text-sm font-medium">{t("badge")}</span>
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6">
-            {t("title")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky to-gold">
-              {t("titleHighlight")}
-            </span>
-          </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">{t("subtitle")}</p>
-        </div>
-      </section>
+    <>
+      <PageHero eyebrow={t("badge")} title={`${t("title")} ${t("titleHighlight")}`} lead={t("subtitle")}>
+        <a href="#apply" className={`group ${btnPrimary}`}>
+          {isEn ? "Apply" : "Postuler"}
+          <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+        </a>
+      </PageHero>
 
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl font-extrabold text-navy mb-4">
-              {t("culture.title")}
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">{t("culture.description")}</p>
+      {/* Culture */}
+      <section className={`bg-white ${section}`}>
+        <div className={container}>
+          <div className="mb-10 max-w-2xl sm:mb-14">
+            <h2 className={h2}>{t("culture.title")}</h2>
+            <p className={`mt-4 ${lead}`}>{t("culture.description")}</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {culturePoints.map((point) => (
-              <div
-                key={point.titleFr}
-                className="bg-neutral-light rounded-2xl p-7 border border-gray-100 hover:border-sky/30 transition-colors group"
-              >
-                <div className="w-12 h-12 bg-sky/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-sky/20 transition-colors">
-                  <point.icon size={22} className="text-sky" />
+              <div key={point.titleFr} className={`flex gap-4 p-5 sm:block sm:p-7 ${card}`}>
+                <span className={`sm:mb-5 ${iconTile}`}>
+                  <point.icon size={22} />
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold leading-snug text-navy sm:text-xl">{isEn ? point.titleEn : point.titleFr}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-muted sm:mt-2">{isEn ? point.descEn : point.descFr}</p>
                 </div>
-                <h3 className="font-heading font-bold text-navy text-lg mb-3">
-                  {isEn ? point.titleEn : point.titleFr}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{isEn ? point.descEn : point.descFr}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl font-extrabold text-navy mb-4">
-              {t("openPositions")}
-            </h2>
-          </div>
+      {/* Postes ouverts */}
+      <section className={`bg-mist ${section}`}>
+        <div className={container}>
+          <h2 className={`mb-8 sm:mb-12 ${h2}`}>{t("openPositions")}</h2>
           {jobs.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-card">
-              <Briefcase size={48} className="text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">
-                {isEn ? "No open positions at the moment." : "Aucun poste ouvert pour le moment."}
-              </p>
-              <p className="text-gray-400 text-sm mt-2">
-                {isEn
-                  ? "Feel free to send a spontaneous application below."
-                  : "N'hésitez pas à envoyer une candidature spontanée ci-dessous."}
+            <div className={`p-8 text-center sm:p-12 ${card}`}>
+              <Briefcase size={36} className="mx-auto mb-4 text-muted/60" />
+              <p className="text-lg font-semibold text-navy">{isEn ? "No open positions at the moment." : "Aucun poste ouvert pour le moment."}</p>
+              <p className="mt-2 text-[15px] text-muted">
+                {isEn ? "Feel free to send a spontaneous application below." : "N'hésitez pas à envoyer une candidature spontanée ci-dessous."}
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <ul className={`divide-y divide-line overflow-hidden ${card}`}>
               {jobs.map((job: { id: string; titleFr: string; titleEn: string; descFr: string; descEn: string; location: string; contractType: string }) => (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-2xl p-6 shadow-card border border-gray-100 hover:border-sky/20 hover:shadow-card-hover transition-all duration-300"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <li key={job.id} className="p-5 sm:p-8">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <h3 className="font-heading font-bold text-navy text-xl mb-2">
-                        {isEn ? job.titleEn : job.titleFr}
-                      </h3>
-                      <div className="flex flex-wrap gap-3 text-sm text-gray-500">
+                      <h3 className="font-display text-2xl font-medium tracking-[-0.02em] text-navy sm:text-[1.75rem]">{isEn ? job.titleEn : job.titleFr}</h3>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
                         <span className="flex items-center gap-1.5">
-                          <MapPin size={14} className="text-sky" />
+                          <MapPin size={14} className="text-azure" />
                           {job.location}
                         </span>
                         <span className="flex items-center gap-1.5">
-                          <Briefcase size={14} className="text-sky" />
+                          <Briefcase size={14} className="text-azure" />
                           {job.contractType}
                         </span>
                       </div>
                     </div>
-                    <a
-                      href="#apply"
-                      className="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors text-sm"
-                    >
-                      {isEn ? "Apply" : "Postuler"} <ArrowRight size={14} />
+                    <a href="#apply" className={`group shrink-0 px-6 py-3 text-[15px] ${btnDark}`}>
+                      {isEn ? "Apply" : "Postuler"}
+                      <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </a>
                   </div>
-                  <div
-                    className="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3"
-                    dangerouslySetInnerHTML={{ __html: isEn ? job.descEn : job.descFr }}
-                  />
-                </div>
+                  <div className="mt-4 line-clamp-3 max-w-3xl text-[15px] leading-relaxed text-muted" dangerouslySetInnerHTML={{ __html: isEn ? job.descEn : job.descFr }} />
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
       </section>
 
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 xl:px-8 max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl font-extrabold text-navy mb-4">
-              {isEn ? "Employee benefits" : "Avantages employé"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      {/* Avantages */}
+      <section className={`bg-white ${section}`}>
+        <div className={`${container} grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16`}>
+          <h2 className={h2}>{isEn ? "Employee benefits" : "Avantages employé"}</h2>
+          <ul className="grid gap-x-8 sm:grid-cols-2">
             {benefits.map((benefit) => (
-              <div key={benefit.labelFr} className="text-center p-5 bg-neutral-light rounded-2xl border border-gray-100">
-                <div className="w-12 h-12 bg-sky/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <benefit.icon size={20} className="text-sky" />
-                </div>
-                <p className="text-xs font-semibold text-navy leading-tight">
-                  {isEn ? benefit.labelEn : benefit.labelFr}
-                </p>
-              </div>
+              <li key={benefit.labelFr} className="flex items-center gap-4 border-b border-line py-4 text-[15px] font-medium text-navy sm:text-base">
+                <span className={iconTile}>
+                  <benefit.icon size={20} />
+                </span>
+                {isEn ? benefit.labelEn : benefit.labelFr}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      <section id="apply" className="py-20 bg-neutral-light">
-        <div className="container mx-auto px-4 xl:px-8 max-w-3xl">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl font-extrabold text-navy mb-4">
-              {t("spontaneous.title")}
-            </h2>
-            <p className="text-gray-500">{t("spontaneous.description")}</p>
+      {/* Candidature */}
+      <section id="apply" className={`scroll-mt-20 bg-mist ${section}`}>
+        <div className="container mx-auto max-w-3xl px-4 sm:px-5">
+          <div className="mb-8 sm:mb-10">
+            <h2 className={h2}>{t("spontaneous.title")}</h2>
+            <p className={`mt-4 ${lead}`}>{t("spontaneous.description")}</p>
           </div>
-          <div className="bg-white rounded-3xl shadow-card p-8 border border-gray-100">
+          <div className={`p-5 sm:p-8 lg:p-10 ${card}`}>
             <CareersForm locale={locale} />
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }
