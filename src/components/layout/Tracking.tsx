@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import { CONSENT_EVENT, CONSENT_KEY, initGoogle, initMetaPixel, parseConsent, track, trackPageView } from "@/lib/tracking";
+import { CONSENT_EVENT, CONSENT_KEY, clearTrackingCookies, initGoogle, initMetaPixel, parseConsent, track, trackPageView } from "@/lib/tracking";
 
 type Props = {
   /** Identifiants saisis dans Admin → Paramètres (null : outil non utilisé). */
@@ -43,6 +43,12 @@ export default function Tracking({ metaPixelId, googleAnalyticsId, googleAdsId, 
   const adsId = consent?.marketing ? googleAdsId : null;
   const pixelId = consent?.marketing ? metaPixelId : null;
   const googleId = analyticsId ?? adsId;
+
+  // Un script de mesure peut réécrire son cookie pendant le rechargement qui suit un retrait d'accord :
+  // à chaque arrivée, on efface ce qui reste des catégories refusées.
+  useEffect(() => {
+    if (consent) clearTrackingCookies(consent);
+  }, [consent]);
 
   // Files d'attente créées avant le chargement des scripts : aucun événement n'est perdu.
   useEffect(() => {

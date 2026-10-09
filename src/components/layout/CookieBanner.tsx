@@ -61,10 +61,10 @@ export default function CookieBanner() {
     localStorage.setItem(CONSENT_KEY, JSON.stringify(data));
     localStorage.setItem("kelenix_cookies_date", new Date().toISOString());
     setVisible(false);
-    // Choix modifié après coup : on efface les cookies de mesure si un accord est retiré, puis on
+    // Choix modifié après coup : on efface les cookies de mesure des catégories refusées, puis on
     // recharge la page pour repartir avec les seuls scripts autorisés.
     if (previous && (previous.analytics !== data.analytics || previous.marketing !== data.marketing)) {
-      if (!data.analytics || !data.marketing) clearTrackingCookies();
+      clearTrackingCookies(data);
       window.location.reload();
       return;
     }

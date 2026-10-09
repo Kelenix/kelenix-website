@@ -112,12 +112,13 @@ export function track(event: TrackEvent) {
   }
 }
 
-// Retrait de l'accord : on efface les cookies déposés par Google et Meta sur ce site.
-export function clearTrackingCookies() {
+// Efface les cookies de mesure des catégories que le visiteur n'a pas (ou plus) acceptées.
+export function clearTrackingCookies(consent: Consent) {
+  const refused = [!consent.analytics && /^(_ga|_gid|_gat)/, !consent.marketing && /^(_gcl_|_fbp|_fbc)/].filter(Boolean) as RegExp[];
   const names = document.cookie
     .split(";")
     .map((cookie) => cookie.split("=")[0].trim())
-    .filter((name) => /^(_ga|_gid|_gat|_gcl_|_fbp|_fbc)/.test(name));
+    .filter((name) => refused.some((pattern) => pattern.test(name)));
   const host = window.location.hostname;
   const domains = ["", host, `.${host}`, `.${host.split(".").slice(-2).join(".")}`];
   for (const name of names) {

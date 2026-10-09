@@ -18,7 +18,7 @@ export default function WhatsAppButton({ phone }: { phone: string }) {
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "hidden lg:flex fixed bottom-6 right-6 z-40 items-center gap-3",
+        "hidden lg:block fixed bottom-6 right-6 z-40",
         "transition-all duration-300",
         hovered ? "scale-105" : "scale-100"
       )}
@@ -26,12 +26,13 @@ export default function WhatsAppButton({ phone }: { phone: string }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Tooltip */}
+      {/* Infobulle : hors du flux, pour que le lien ne couvre que la bulle et pas la page à sa gauche */}
       <div
         className={cn(
+          "absolute right-full top-1/2 mr-3 -translate-y-1/2 pointer-events-none",
           "bg-white border border-line text-navy text-xs font-medium px-3 py-2 rounded-full shadow-lg whitespace-nowrap",
           "transition-all duration-300",
-          hovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
+          hovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
         )}
       >
         {t("tooltip")}

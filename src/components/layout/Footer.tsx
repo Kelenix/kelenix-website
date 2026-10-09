@@ -227,7 +227,8 @@ export default function Footer({ settings, services = [] }: { settings: FooterSe
 
       {/* Mentions */}
       <div className="border-t border-line">
-        <div className="container mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-[13px] text-muted sm:flex-row xl:px-8">
+        {/* lg:pr-24 : la bulle WhatsApp flotte en bas à droite, les liens ne doivent pas passer dessous */}
+        <div className="container mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-[13px] text-muted sm:flex-row lg:pr-24 xl:px-8 xl:pr-28">
           <p>
             &copy; {currentYear} Kelenix Tech. {t("copyright")}
           </p>
