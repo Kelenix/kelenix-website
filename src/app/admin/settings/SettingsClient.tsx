@@ -52,7 +52,7 @@ const sections: Section[] = [
     fields: [
       { key: "stat_projects", label: "Projets livrés (ex: 150+)", defaultValue: "150+" },
       { key: "stat_clients", label: "Clients satisfaits (ex: 80+)", defaultValue: "80+" },
-      { key: "stat_years", label: "Années d'expérience (ex: 7+)", defaultValue: "7+" },
+      { key: "stat_founded", label: "Année de création (ex: 2024)", defaultValue: "2024" },
       { key: "stat_technologies", label: "Technologies maîtrisées (ex: 15+)", defaultValue: "15+" },
       { key: "stat_satisfaction", label: "Taux de satisfaction (ex: 98%)", defaultValue: "98%" },
       { key: "stat_team", label: "Équipe d'experts (ex: 20+)", defaultValue: "20+" },

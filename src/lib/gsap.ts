@@ -44,19 +44,6 @@ export function playInView(animation: gsap.core.Animation, trigger: Element | nu
   return animation;
 }
 
-// Compte de 0 jusqu'à la valeur de data-count (« 150+ », « 97% », « 4.9/5 ») en gardant le suffixe.
-export function countUp(el: HTMLElement, vars: gsap.TweenVars = {}) {
-  const m = (el.dataset.count ?? "").trim().match(/^(\d+(?:[.,]\d+)?)(.*)$/);
-  if (!m) return null;
-  const decimals = /[.,]/.test(m[1]) ? 1 : 0;
-  const state = { v: 0 };
-  const render = () => {
-    el.textContent = state.v.toFixed(decimals) + m[2];
-  };
-  render();
-  return gsap.to(state, { v: parseFloat(m[1].replace(",", ".")), duration: 1.6, ease: "power2.out", ...vars, onUpdate: render });
-}
-
 const REVEAL_FROM: Record<string, gsap.TweenVars> = {
   up: { y: 40 },
   left: { x: -60 },
@@ -68,7 +55,6 @@ const REVEAL_FROM: Record<string, gsap.TweenVars> = {
 //   data-reveal ("up" par défaut, "left", "right", "scale") : l'élément arrive en fondu ;
 //   data-split : le titre arrive mot par mot (data-nosplit garde un groupe de mots entier) ;
 //   data-lines : le titre se dévoile ligne par ligne, derrière un masque ;
-//   data-count="150+" : le chiffre compte depuis zéro quand il arrive à l'écran ;
 //   data-parallax="-8" : l'élément glisse de ce pourcentage pendant que son parent traverse l'écran.
 // Les transitions CSS de l'élément sont coupées le temps de l'apparition pour ne pas la ralentir.
 export function setupReveals(q: Query) {
@@ -89,10 +75,6 @@ export function setupReveals(q: Query) {
         });
       },
     });
-  });
-
-  q("[data-count]").forEach((el) => {
-    countUp(el, { duration: 1.8, scrollTrigger: { trigger: el, start: "top 92%", once: true } });
   });
 
   q("[data-parallax]").forEach((el) => {

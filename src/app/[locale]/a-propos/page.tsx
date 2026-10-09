@@ -24,13 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Parcours affiché tant qu'aucune étape n'est saisie dans Admin → À propos. L'entreprise a été fondée en 2024.
 const defaultTimeline = [
-  { year: "2019", titleFr: "Fondation", titleEn: "Foundation", descFr: "Kelenix Tech est fondée à Paris par une équipe de développeurs passionnés avec la vision de démocratiser la technologie.", descEn: "Kelenix Tech is founded in Paris by a team of passionate developers with the vision of democratizing technology." },
-  { year: "2020", titleFr: "Premiers projets", titleEn: "First projects", descFr: "Livraison des 20 premiers projets clients incluant applications web et mobiles pour des PME françaises.", descEn: "Delivery of the first 20 client projects including web and mobile applications for French SMEs." },
-  { year: "2021", titleFr: "Expansion", titleEn: "Expansion", descFr: "Croissance de l'équipe à 15 membres, ouverture de nouveaux marchés en Afrique francophone.", descEn: "Team growth to 15 members, opening of new markets in French-speaking Africa." },
-  { year: "2022", titleFr: "Innovation IA", titleEn: "AI Innovation", descFr: "Lancement du département Intelligence Artificielle et livraison des premières solutions ML à grande échelle.", descEn: "Launch of the Artificial Intelligence department and delivery of the first large-scale ML solutions." },
-  { year: "2023", titleFr: "International", titleEn: "International", descFr: "Expansion vers l'Europe et le Moyen-Orient, 80+ clients actifs, certifications AWS et Google Cloud.", descEn: "Expansion into Europe and the Middle East, 80+ active clients, AWS and Google Cloud certifications." },
-  { year: "2024", titleFr: "Leader régional", titleEn: "Regional leader", descFr: "Kelenix Tech s'impose comme leader de la transformation numérique avec 150+ projets livrés et 98% de satisfaction.", descEn: "Kelenix Tech establishes itself as a digital transformation leader with 150+ projects delivered and 98% satisfaction." },
+  { year: "2024", titleFr: "Fondation", titleEn: "Foundation", descFr: "Kelenix Tech est fondée par une équipe de développeurs passionnés, avec une ambition : mettre la technologie au service de la croissance des entreprises.", descEn: "Kelenix Tech is founded by a team of passionate developers with one ambition: putting technology at the service of business growth." },
+  { year: "2025", titleFr: "Premiers projets livrés", titleEn: "First projects delivered", descFr: "Sites web, applications web et mobiles, logiciels sur mesure : nos premières réalisations entrent en production chez nos clients.", descEn: "Websites, web and mobile apps, custom software: our first projects go live for our clients." },
+  { year: "2026", titleFr: "Une offre qui s'élargit", titleEn: "A broader offering", descFr: "L'équipe s'étoffe et l'offre s'étend à l'intelligence artificielle, à la formation et aux produits numériques de la boutique.", descEn: "The team grows and the offering expands to artificial intelligence, training and the digital products of our store." },
 ];
 
 const defaultTeam = [
@@ -41,7 +39,7 @@ const defaultTeam = [
 ];
 
 const defaultWhyPoints = [
-  { icon: "Award", titleFr: "Expertise reconnue", titleEn: "Recognized expertise", descFr: "Plus de 5 ans d'expérience, des certifications internationales et une équipe de développeurs seniors.", descEn: "Over 5 years of experience, international certifications and a team of senior developers." },
+  { icon: "Award", titleFr: "Expertise reconnue", titleEn: "Recognized expertise", descFr: "Une équipe de développeurs seniors, des certifications internationales et la même exigence de qualité sur chaque projet.", descEn: "A team of senior developers, international certifications and the same quality bar on every project." },
   { icon: "Zap", titleFr: "Livraison rapide", titleEn: "Fast delivery", descFr: "Méthodologie agile garantissant des livraisons itératives rapides et conformes à vos objectifs.", descEn: "Agile methodology ensuring fast, iterative deliveries aligned with your objectives." },
   { icon: "Shield", titleFr: "Qualité garantie", titleEn: "Quality guaranteed", descFr: "Code testé, documenté et maintenu selon les meilleures pratiques de l'industrie.", descEn: "Tested, documented and maintained code following industry best practices." },
   { icon: "Globe", titleFr: "Vision internationale", titleEn: "International vision", descFr: "Une équipe multilingue et multiculturelle capable d'accompagner vos projets à l'échelle mondiale.", descEn: "A multilingual and multicultural team capable of supporting your projects on a global scale." },
@@ -72,13 +70,13 @@ export default async function AboutPage({ params }: Props) {
   const timeline = dbTimeline.length > 0 ? dbTimeline : defaultTimeline;
   const teamMembers = dbTeam.length > 0 ? dbTeam : defaultTeam;
   const whyPoints = dbWhyPoints.length > 0 ? dbWhyPoints : defaultWhyPoints;
-  const storyFr = settingsMap["about_story_fr"] || "Partis d'une petite équipe de 3 ingénieurs passionnés, nous sommes devenus une entreprise de plus de 20 personnes, livrant des projets complexes pour des clients sur 3 continents.";
-  const storyEn = settingsMap["about_story_en"] || "From a small team of 3 passionate engineers, we have grown to become a 20+ person company, delivering complex projects for clients across 3 continents.";
+  const storyFr = settingsMap["about_story_fr"] || "Née en 2024, Kelenix accompagne des PME, des startups et de grandes organisations qui veulent tirer parti de la technologie pour croître et innover.";
+  const storyEn = settingsMap["about_story_en"] || "Born in 2024, Kelenix supports SMEs, startups and large organisations that want to leverage technology to grow and innovate.";
 
   const figures = [
     { value: stats.projects, label: isEn ? "Projects delivered" : "Projets livrés" },
     { value: stats.clients, label: isEn ? "Clients" : "Clients" },
-    { value: stats.years, label: isEn ? "Years of experience" : "Années d'expérience" },
+    { value: stats.founded, label: isEn ? "Year founded" : "Année de création" },
     { value: stats.satisfaction, label: "Satisfaction" },
     { value: stats.team, label: isEn ? "Team members" : "Experts dans l'équipe" },
     { value: stats.countries, label: isEn ? "Countries" : "Pays" },

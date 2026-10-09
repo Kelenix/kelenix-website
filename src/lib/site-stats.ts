@@ -5,7 +5,8 @@ import { prisma } from "@/lib/prisma";
 export type SiteStats = {
   projects: string;
   clients: string;
-  years: string;
+  /** Année de création de l'entreprise. */
+  founded: string;
   technologies: string;
   satisfaction: string;
   team: string;
@@ -17,7 +18,7 @@ export type SiteStats = {
 export const STAT_DEFAULTS: SiteStats = {
   projects: "150+",
   clients: "80+",
-  years: "7+",
+  founded: "2024",
   technologies: "15+",
   satisfaction: "98%",
   team: "20+",
@@ -29,7 +30,7 @@ export const STAT_DEFAULTS: SiteStats = {
 export const STAT_KEYS: Record<keyof SiteStats, string> = {
   projects: "stat_projects",
   clients: "stat_clients",
-  years: "stat_years",
+  founded: "stat_founded",
   technologies: "stat_technologies",
   satisfaction: "stat_satisfaction",
   team: "stat_team",

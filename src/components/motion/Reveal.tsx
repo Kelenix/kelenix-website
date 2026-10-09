@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useReveal } from "@/lib/gsap";
 
 // Enveloppe cliente minimale : le contenu reste rendu côté serveur, seules les apparitions
-// au défilement (attributs data-reveal, data-lines, data-count, data-parallax) sont branchées ici.
+// au défilement (attributs data-reveal, data-lines, data-parallax) sont branchées ici.
 export default function Reveal({
   as: Tag = "section",
   className,
