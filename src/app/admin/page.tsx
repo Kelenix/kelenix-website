@@ -2,12 +2,14 @@ export const dynamic = "force-dynamic";
 import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import { MessageStatus } from "@prisma/client";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Mail, FileText, BookOpen, Users, Star, TrendingUp, Briefcase } from "lucide-react";
+import { Mail, FileText, BookOpen, Users, Star, Briefcase, Handshake, Newspaper, ArrowUpRight, Plus, CheckCircle2, type LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import TrendAreaChart from "@/components/admin/charts/TrendAreaChart";
 import CategoryBarChart from "@/components/admin/charts/CategoryBarChart";
 import DonutChart from "@/components/admin/charts/DonutChart";
+import { Avatar, Chip, StatusChip } from "@/components/admin/ui";
+import { card, cardTitle, pageLead, pageTitle } from "@/components/admin/styles";
 
 const SERVICE_LABELS: Record<string, string> = {
   software: "Logiciel sur mesure",
@@ -19,38 +21,52 @@ const SERVICE_LABELS: Record<string, string> = {
   training: "Formation",
 };
 
-const DONUT_COLORS = ["#2FA8FF", "#FFC107", "#8B5CF6", "#10B981", "#F97316", "#EF4444", "#0A8FE8"];
+const DONUT_COLORS = ["#0F6FE6", "#FFC107", "#2FA8FF", "#10B981", "#8B5CF6", "#F97316", "#0B1F3A"];
+
+type Inbox = { icon: LucideIcon; label: string; count: number; href: string };
+type Recent = { id: string; kind: string; tone: "azure" | "gold" | "navy"; name: string; detail: string; status: string; createdAt: Date; href: string };
 
 export default async function AdminDashboardPage() {
-  await requireAuth("MODERATOR");
+  const session = await requireAuth("MODERATOR");
+  const firstName = session.user.name?.trim().split(/\s+/)[0];
 
   // Fenêtre des 6 derniers mois (début du mois).
   const now = new Date();
   const MONTHS_BACK = 6;
   const trendStart = new Date(now.getFullYear(), now.getMonth() - (MONTHS_BACK - 1), 1);
+  const isNew = { status: MessageStatus.NEW };
+  const latest = { take: 6, orderBy: { createdAt: "desc" as const } };
 
   const [
     newMessages,
     newQuotes,
+    newApplications,
+    newPartners,
     totalBlogPosts,
     totalProjects,
     totalTestimonials,
     totalSubscribers,
     recentMessages,
     recentQuotes,
+    recentApplications,
+    recentPartners,
     msgDates,
     quoteDates,
     quotesByService,
     quotesByBudget,
   ] = await Promise.all([
-    prisma.contactMessage.count({ where: { status: MessageStatus.NEW } }),
-    prisma.quoteRequest.count({ where: { status: MessageStatus.NEW } }),
+    prisma.contactMessage.count({ where: isNew }),
+    prisma.quoteRequest.count({ where: isNew }),
+    prisma.jobApplication.count({ where: isNew }),
+    prisma.partnerRequest.count({ where: isNew }),
     prisma.blogPost.count({ where: { published: true } }),
     prisma.project.count({ where: { published: true } }),
     prisma.testimonial.count({ where: { published: true } }),
     prisma.newsletter.count({ where: { active: true } }),
-    prisma.contactMessage.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, firstName: true, lastName: true, email: true, service: true, createdAt: true, status: true } }),
-    prisma.quoteRequest.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, firstName: true, lastName: true, email: true, serviceType: true, budget: true, createdAt: true, status: true } }),
+    prisma.contactMessage.findMany({ ...latest, select: { id: true, firstName: true, lastName: true, service: true, message: true, createdAt: true, status: true } }),
+    prisma.quoteRequest.findMany({ ...latest, select: { id: true, firstName: true, lastName: true, projectName: true, budget: true, createdAt: true, status: true } }),
+    prisma.jobApplication.findMany({ ...latest, select: { id: true, name: true, position: true, createdAt: true, status: true } }),
+    prisma.partnerRequest.findMany({ ...latest, select: { id: true, company: true, name: true, createdAt: true, status: true } }),
     prisma.contactMessage.findMany({ where: { createdAt: { gte: trendStart } }, select: { createdAt: true } }),
     prisma.quoteRequest.findMany({ where: { createdAt: { gte: trendStart } }, select: { createdAt: true } }),
     prisma.quoteRequest.groupBy({ by: ["serviceType"], _count: { _all: true } }),
@@ -74,7 +90,7 @@ export default async function AdminDashboardPage() {
 
   const trendLabels = months.map((m) => m.label);
   const trendSeries = [
-    { name: "Messages", color: "#2FA8FF", data: bucketize(msgDates) },
+    { name: "Messages", color: "#0F6FE6", data: bucketize(msgDates) },
     { name: "Devis", color: "#FFC107", data: bucketize(quoteDates) },
   ];
 
@@ -86,151 +102,170 @@ export default async function AdminDashboardPage() {
     .map((g, i) => ({ label: g.budget, value: g._count._all, color: DONUT_COLORS[i % DONUT_COLORS.length] }))
     .sort((a, b) => b.value - a.value);
 
-  const stats = [
-    { icon: Mail, label: "Nouveaux messages", value: newMessages, href: "/admin/messages", color: "bg-blue-500" },
-    { icon: FileText, label: "Demandes de devis", value: newQuotes, href: "/admin/messages?tab=devis", color: "bg-gold" },
-    { icon: BookOpen, label: "Articles publiés", value: totalBlogPosts, href: "/admin/blog", color: "bg-sky" },
-    { icon: Briefcase, label: "Projets actifs", value: totalProjects, href: "/admin/portfolio", color: "bg-purple-500" },
-    { icon: Star, label: "Témoignages", value: totalTestimonials, href: "/admin/testimonials", color: "bg-yellow-500" },
-    { icon: Users, label: "Abonnés newsletter", value: totalSubscribers, href: "/admin/newsletter", color: "bg-green-500" },
+  // Ce qui attend une réponse, par rubrique.
+  const inbox: Inbox[] = [
+    { icon: Mail, label: "Messages", count: newMessages, href: "/admin/messages" },
+    { icon: FileText, label: "Demandes de devis", count: newQuotes, href: "/admin/messages?tab=devis" },
+    { icon: Users, label: "Candidatures", count: newApplications, href: "/admin/careers?tab=applications" },
+    { icon: Handshake, label: "Partenariats", count: newPartners, href: "/admin/partners" },
+  ];
+  const waiting = inbox.reduce((sum, item) => sum + item.count, 0);
+
+  const content = [
+    { icon: BookOpen, label: "Articles publiés", value: totalBlogPosts, href: "/admin/blog" },
+    { icon: Briefcase, label: "Projets en ligne", value: totalProjects, href: "/admin/portfolio" },
+    { icon: Star, label: "Témoignages", value: totalTestimonials, href: "/admin/testimonials" },
+    { icon: Newspaper, label: "Abonnés newsletter", value: totalSubscribers, href: "/admin/newsletter" },
+  ];
+
+  // Dernières demandes, toutes rubriques confondues ; chaque ligne ouvre directement l'élément.
+  const recent: Recent[] = [
+    ...recentMessages.map((m) => ({ id: m.id, kind: "Message", tone: "azure" as const, name: `${m.firstName} ${m.lastName}`, detail: m.service || m.message, status: m.status, createdAt: m.createdAt, href: `/admin/messages?open=${m.id}` })),
+    ...recentQuotes.map((q) => ({ id: q.id, kind: "Devis", tone: "gold" as const, name: `${q.firstName} ${q.lastName}`, detail: `${q.projectName} · ${q.budget}`, status: q.status, createdAt: q.createdAt, href: `/admin/messages?tab=devis&open=${q.id}` })),
+    ...recentApplications.map((a) => ({ id: a.id, kind: "Candidature", tone: "navy" as const, name: a.name, detail: a.position || "Candidature spontanée", status: a.status, createdAt: a.createdAt, href: `/admin/careers/application/${a.id}` })),
+    ...recentPartners.map((p) => ({ id: p.id, kind: "Partenariat", tone: "navy" as const, name: p.company, detail: p.name, status: p.status, createdAt: p.createdAt, href: `/admin/partners/${p.id}` })),
+  ]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 8);
+
+  const shortcuts = [
+    { href: "/admin/blog/new", label: "Nouvel article" },
+    { href: "/admin/portfolio/new", label: "Nouveau projet" },
+    { href: "/admin/testimonials/new", label: "Nouveau témoignage" },
+    { href: "/admin/careers/new", label: "Nouvelle offre" },
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 lg:ml-64 p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="font-heading text-2xl font-bold text-navy">Tableau de bord</h1>
-            <p className="text-gray-500 text-sm mt-1">Bienvenue sur l&apos;interface d&apos;administration Kelenix</p>
-          </div>
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-6 sm:mb-8">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">{now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p>
+        <h1 className={pageTitle}>{firstName ? `Bonjour ${firstName}` : "Tableau de bord"}</h1>
+        <p className={pageLead}>
+          {waiting > 0
+            ? `${waiting} demande${waiting > 1 ? "s attendent" : " attend"} d'être lue${waiting > 1 ? "s" : ""}.`
+            : "Tout est lu : aucune nouvelle demande pour l'instant."}
+        </p>
+      </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-            {stats.map(({ icon: Icon, label, value, href, color }) => (
-              <Link
-                key={label}
-                href={href}
-                className="bg-white rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-0.5 group"
-              >
-                <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center mb-3`}>
-                  <Icon size={18} className="text-white" />
-                </div>
-                <div className="font-heading font-bold text-2xl text-navy">{value}</div>
-                <div className="text-xs text-gray-500 mt-1 leading-tight">{label}</div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            {/* Trend (span 2) */}
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-card p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="font-heading font-bold text-navy text-base">Activité des 6 derniers mois</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">Messages et demandes de devis reçus par mois</p>
-                </div>
-                <TrendingUp size={18} className="text-sky" />
-              </div>
-              <TrendAreaChart labels={trendLabels} series={trendSeries} />
+      {/* À traiter */}
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
+        {inbox.map(({ icon: Icon, label, count, href }) => (
+          <Link key={label} href={href} className={cn(card, "group relative p-4 transition-colors hover:border-azure/50 sm:p-5", count > 0 && "border-gold/70")}>
+            <div className="flex items-center justify-between">
+              <span className={cn("flex h-10 w-10 items-center justify-center rounded-xl", count > 0 ? "bg-gold/25 text-navy" : "bg-mist text-muted")}>
+                <Icon size={18} />
+              </span>
+              <ArrowUpRight size={16} className="text-muted/60 transition-colors group-hover:text-azure" />
             </div>
-
-            {/* Donut: budget */}
-            <div className="bg-white rounded-2xl shadow-card p-6">
-              <h2 className="font-heading font-bold text-navy text-base mb-1">Devis par budget</h2>
-              <p className="text-xs text-gray-400 mb-4">Répartition des demandes de devis</p>
-              <DonutChart data={budgetData} emptyLabel="Aucune demande de devis" />
+            <div className="mt-4 font-display text-4xl font-medium leading-none tracking-[-0.03em] text-navy">{count}</div>
+            <div className="mt-1.5 text-xs font-medium text-muted sm:text-sm">{label}</div>
+            <div className={cn("mt-2 text-xs font-medium", count > 0 ? "text-navy" : "text-emerald-700")}>
+              {count > 0 ? (
+                "À lire"
+              ) : (
+                <span className="inline-flex items-center gap-1">
+                  <CheckCircle2 size={13} /> À jour
+                </span>
+              )}
             </div>
-          </div>
+          </Link>
+        ))}
+      </div>
 
-          {/* Bar: services */}
-          <div className="bg-white rounded-2xl shadow-card p-6 mb-6">
-            <h2 className="font-heading font-bold text-navy text-base mb-1">Demandes de devis par service</h2>
-            <p className="text-xs text-gray-400 mb-4">Services les plus demandés</p>
-            <CategoryBarChart data={serviceData} emptyLabel="Aucune demande de devis" />
+      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-3 lg:gap-6">
+        {/* Dernières demandes */}
+        <div className={cn(card, "min-w-0 overflow-hidden lg:col-span-2")}>
+          <div className="flex items-center justify-between border-b border-line px-4 py-4 sm:px-5">
+            <h2 className={cardTitle}>Dernières demandes</h2>
+            <Link href="/admin/messages" className="text-sm font-semibold text-azure hover:text-azure-dark">
+              Tout voir
+            </Link>
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Messages */}
-            <div className="bg-white rounded-2xl shadow-card">
-              <div className="flex items-center justify-between p-6 border-b border-gray-50">
-                <h2 className="font-heading font-bold text-navy text-base">Messages récents</h2>
-                <Link href="/admin/messages" className="text-sky text-sm font-medium hover:underline">Voir tout</Link>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {recentMessages.length === 0 ? (
-                  <p className="text-gray-400 text-sm p-6 text-center">Aucun message</p>
-                ) : recentMessages.map(msg => (
-                  <div key={msg.id} className="px-6 py-4 flex items-center justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="font-medium text-navy text-sm truncate">{msg.firstName} {msg.lastName}</p>
-                      <p className="text-xs text-gray-400 truncate">{msg.email}</p>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {msg.status === "NEW" && (
-                        <span className="w-2 h-2 rounded-full bg-sky" />
-                      )}
-                      <span className="text-xs text-gray-400">
-                        {new Date(msg.createdAt).toLocaleDateString("fr-FR")}
+          {recent.length === 0 ? (
+            <p className="px-6 py-12 text-center text-sm text-muted">Aucune demande reçue pour l&apos;instant.</p>
+          ) : (
+            <ul className="divide-y divide-line">
+              {recent.map((item) => {
+                const unread = item.status === "NEW";
+                return (
+                  <li key={`${item.kind}-${item.id}`}>
+                    <Link href={item.href} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-mist/60 sm:px-5">
+                      <Avatar name={item.name} tone={item.tone} unread={unread} />
+                      <span className="min-w-0 flex-1">
+                        <span className={cn("block truncate text-sm text-navy", unread ? "font-semibold" : "font-medium")}>{item.name}</span>
+                        <span className="block truncate text-xs text-muted">
+                          {item.kind} · {item.detail}
+                        </span>
                       </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Quotes */}
-            <div className="bg-white rounded-2xl shadow-card">
-              <div className="flex items-center justify-between p-6 border-b border-gray-50">
-                <h2 className="font-heading font-bold text-navy text-base">Demandes de devis récentes</h2>
-                <Link href="/admin/messages?tab=devis" className="text-sky text-sm font-medium hover:underline">Voir tout</Link>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {recentQuotes.length === 0 ? (
-                  <p className="text-gray-400 text-sm p-6 text-center">Aucune demande</p>
-                ) : recentQuotes.map(q => (
-                  <div key={q.id} className="px-6 py-4 flex items-center justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="font-medium text-navy text-sm truncate">{q.firstName} {q.lastName}</p>
-                      <p className="text-xs text-gray-400">{q.serviceType} · {q.budget}</p>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {q.status === "NEW" && (
-                        <span className="w-2 h-2 rounded-full bg-gold" />
-                      )}
-                      <span className="text-xs text-gray-400">
-                        {new Date(q.createdAt).toLocaleDateString("fr-FR")}
+                      <span className="hidden sm:block">
+                        <StatusChip status={item.status} />
                       </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+                      <span className="shrink-0 text-xs text-muted">{item.createdAt.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        {/* Contenu du site + raccourcis */}
+        <div className="min-w-0 space-y-4 lg:space-y-6">
+          <div className={cn(card, "p-4 sm:p-5")}>
+            <h2 className={cardTitle}>Contenu du site</h2>
+            <ul className="mt-3 divide-y divide-line">
+              {content.map(({ icon: Icon, label, value, href }) => (
+                <li key={label}>
+                  <Link href={href} className="group flex items-center gap-3 py-2.5">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-mist text-azure">
+                      <Icon size={15} />
+                    </span>
+                    <span className="flex-1 text-sm text-muted transition-colors group-hover:text-navy">{label}</span>
+                    <span className="text-sm font-semibold text-navy">{value}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Quick actions */}
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { href: "/admin/blog/new", label: "Nouvel article", icon: BookOpen },
-              { href: "/admin/portfolio/new", label: "Nouveau projet", icon: Briefcase },
-              { href: "/admin/services", label: "Gérer services", icon: TrendingUp },
-              { href: "/admin/testimonials/new", label: "Témoignage", icon: Star },
-            ].map(({ href, label, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="bg-white rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-all text-center group flex flex-col items-center gap-2"
-              >
-                <div className="w-10 h-10 bg-sky/10 rounded-xl flex items-center justify-center group-hover:bg-sky transition-colors">
-                  <Icon size={18} className="text-sky group-hover:text-white transition-colors" />
-                </div>
-                <span className="text-sm font-medium text-navy">{label}</span>
-              </Link>
-            ))}
+          <div className={cn(card, "p-4 sm:p-5")}>
+            <h2 className={cardTitle}>Créer</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {shortcuts.map(({ href, label }) => (
+                <Link key={href} href={href} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-navy transition-colors hover:border-azure hover:text-azure">
+                  <Plus size={13} /> {label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </main>
+      </div>
+
+      {/* Graphiques */}
+      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-3 lg:gap-6">
+        <div className={cn(card, "min-w-0 p-4 sm:p-6 lg:col-span-2")}>
+          <h2 className={cardTitle}>Activité des 6 derniers mois</h2>
+          <p className="mb-4 mt-0.5 text-xs text-muted">Messages et demandes de devis reçus par mois</p>
+          <TrendAreaChart labels={trendLabels} series={trendSeries} />
+        </div>
+
+        <div className={cn(card, "min-w-0 p-4 sm:p-6")}>
+          <h2 className={cardTitle}>Devis par budget</h2>
+          <p className="mb-4 mt-0.5 text-xs text-muted">Répartition des demandes de devis</p>
+          <DonutChart data={budgetData} emptyLabel="Aucune demande de devis" />
+        </div>
+      </div>
+
+      <div className={cn(card, "mt-4 p-4 sm:p-6 lg:mt-6")}>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className={cardTitle}>Services les plus demandés</h2>
+            <p className="mb-4 mt-0.5 text-xs text-muted">Nombre de demandes de devis par service</p>
+          </div>
+          {serviceData.length > 0 && <Chip tone="azure">{serviceData[0].label}</Chip>}
+        </div>
+        <CategoryBarChart data={serviceData} emptyLabel="Aucune demande de devis" />
+      </div>
     </div>
   );
 }

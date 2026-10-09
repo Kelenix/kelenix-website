@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Mail, FileText, ChevronDown, Download } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Mail, FileText, ChevronDown, Download, Phone, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/utils";
+import { COUNTS_EVENT } from "@/components/admin/useAdminNotifications";
+import { STATUS, STATUS_OPTIONS, btnGhost, btnPrimary, card, empty, input, pill } from "@/components/admin/styles";
 
 type Message = {
   id: string;
@@ -29,192 +30,259 @@ type Quote = {
   serviceType: string;
   projectName: string;
   projectDesc: string;
+  projectGoals?: string | null;
   budget: string;
   deadline: string | null;
   status: string;
   createdAt: Date;
 };
 
-const statusColors: Record<string, string> = {
-  NEW: "bg-sky/10 text-sky",
-  READ: "bg-gray-100 text-gray-600",
-  IN_PROGRESS: "bg-yellow-100 text-yellow-700",
-  TREATED: "bg-green-100 text-green-700",
-  ARCHIVED: "bg-red-100 text-red-500",
+type Kind = "message" | "quote";
+
+// Un message et un devis s'affichent de la même façon : on les ramène à une même forme.
+type Row = {
+  id: string;
+  kind: Kind;
+  title: string;
+  subtitle: string;
+  initial: string;
+  email: string;
+  phone: string | null;
+  subject: string;
+  details: [string, string][];
+  blocks: [string | null, string][];
+  status: string;
+  createdAt: Date;
 };
 
-const statusLabels: Record<string, string> = {
-  NEW: "Nouveau",
-  READ: "Lu",
-  IN_PROGRESS: "En cours",
-  TREATED: "Traité",
-  ARCHIVED: "Archivé",
-};
+// Date courte dans les lignes (« 9 oct. ») : la place est comptée sur téléphone.
+const shortDate = (date: Date) => new Date(date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+
+const filled = (pairs: [string, string | null | undefined][]) => pairs.filter((pair): pair is [string, string] => Boolean(pair[1]));
+
+const fromMessage = (m: Message): Row => ({
+  id: m.id,
+  kind: "message",
+  title: `${m.firstName} ${m.lastName}`,
+  subtitle: [m.email, m.company].filter(Boolean).join(" · "),
+  initial: m.firstName[0] ?? "?",
+  email: m.email,
+  phone: m.phone,
+  subject: "Votre message à Kelenix Tech",
+  details: filled([["E-mail", m.email], ["Téléphone", m.phone], ["Entreprise", m.company], ["Service", m.service], ["Budget", m.budget]]),
+  blocks: [[null, m.message]],
+  status: m.status,
+  createdAt: m.createdAt,
+});
+
+const fromQuote = (q: Quote): Row => ({
+  id: q.id,
+  kind: "quote",
+  title: `${q.firstName} ${q.lastName} — ${q.projectName}`,
+  subtitle: `${q.serviceType} · ${q.budget}`,
+  initial: q.firstName[0] ?? "?",
+  email: q.email,
+  phone: q.phone,
+  subject: `Votre demande de devis — ${q.projectName}`,
+  details: filled([["E-mail", q.email], ["Téléphone", q.phone], ["Entreprise", q.company], ["Service", q.serviceType], ["Budget", q.budget], ["Délai", q.deadline]]),
+  blocks: filled([["Description du projet", q.projectDesc], ["Objectifs", q.projectGoals]]),
+  status: q.status,
+  createdAt: q.createdAt,
+});
+
+// Enregistre le nouvel état, puis prévient le menu pour que ses pastilles se mettent à jour.
+const saveStatus = (row: Row, status: string) =>
+  fetch(`/api/admin/messages/${row.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: row.kind, status }),
+  })
+    .then(() => window.dispatchEvent(new Event(COUNTS_EVENT)))
+    .catch(() => {});
 
 export default function MessagesClient({
   messages,
   quotes,
-  activeTab: initialTab,
+  activeTab,
+  openId,
 }: {
   messages: Message[];
   quotes: Quote[];
   activeTab: string;
+  /** Élément à ouvrir d'entrée (clic sur une notification). */
+  openId?: string;
 }) {
-  const [tab, setTab] = useState(initialTab);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const lists: Record<Kind, Row[]> = { message: messages.map(fromMessage), quote: quotes.map(fromQuote) };
+  const opened = openId ? [...lists.message, ...lists.quote].find((row) => row.id === openId) : undefined;
 
-  const exportCSV = (data: (Message | Quote)[], filename: string) => {
-    const headers = Object.keys(data[0] || {}).join(",");
-    const rows = data.map(row =>
-      Object.values(row).map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(",")
+  const [kind, setKind] = useState<Kind>(opened?.kind ?? (activeTab === "devis" ? "quote" : "message"));
+  const [expanded, setExpanded] = useState<string | null>(opened?.id ?? null);
+  // États changés depuis l'arrivée sur la page : ouvrir un élément « nouveau » le passe à « lu ».
+  const [changes, setChanges] = useState<Record<string, string>>(() => (opened?.status === "NEW" ? { [opened.id]: "READ" } : {}));
+  const statusOf = (row: Row) => changes[row.id] ?? row.status;
+
+  // Arrivée depuis une notification : l'élément est déjà déplié, on l'enregistre comme lu et on l'amène à l'écran.
+  useEffect(() => {
+    if (!opened) return;
+    if (opened.status === "NEW") saveStatus(opened, "READ");
+    document.getElementById(`item-${opened.id}`)?.scrollIntoView({ block: "center" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const changeStatus = (row: Row, status: string) => {
+    setChanges((current) => ({ ...current, [row.id]: status }));
+    saveStatus(row, status);
+  };
+
+  const toggle = (row: Row) => {
+    const opening = expanded !== row.id;
+    setExpanded(opening ? row.id : null);
+    if (opening && statusOf(row) === "NEW") changeStatus(row, "READ");
+  };
+
+  const exportCSV = () => {
+    const data: (Message | Quote)[] = kind === "message" ? messages : quotes;
+    if (data.length === 0) return;
+    const headers = Object.keys(data[0]).join(",");
+    const lines = data.map((row) =>
+      Object.values(row)
+        .map((v) => `"${String(v || "").replace(/"/g, '""')}"`)
+        .join(",")
     );
-    const csv = [headers, ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob([[headers, ...lines].join("\n")], { type: "text/csv" });
     const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
+    a.href = URL.createObjectURL(blob);
+    a.download = kind === "message" ? "messages.csv" : "devis.csv";
     a.click();
   };
 
+  const rows = lists[kind];
+  const unreadRows = rows.filter((row) => statusOf(row) === "NEW");
+
+  // Vide d'un coup les « nouveaux » de l'onglet affiché (utile quand beaucoup se sont accumulés).
+  const markAllRead = () => {
+    setChanges((current) => ({ ...current, ...Object.fromEntries(unreadRows.map((row) => [row.id, "READ"])) }));
+    fetch("/api/admin/messages", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind }) })
+      .then(() => window.dispatchEvent(new Event(COUNTS_EVENT)))
+      .catch(() => {});
+  };
+  const tabs: { kind: Kind; label: string; icon: typeof Mail }[] = [
+    { kind: "message", label: "Messages", icon: Mail },
+    { kind: "quote", label: "Devis", icon: FileText },
+  ];
+
   return (
     <div>
-      {/* Tabs */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex gap-1 bg-white rounded-xl p-1 shadow-card border border-gray-100">
-          <button
-            onClick={() => setTab("messages")}
-            className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all",
-              tab === "messages" ? "bg-sky text-white shadow" : "text-gray-600 hover:text-navy"
-            )}
-          >
-            <Mail size={15} /> Messages ({messages.length})
-          </button>
-          <button
-            onClick={() => setTab("devis")}
-            className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all",
-              tab === "devis" ? "bg-sky text-white shadow" : "text-gray-600 hover:text-navy"
-            )}
-          >
-            <FileText size={15} /> Devis ({quotes.length})
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div role="tablist" className="flex gap-1 rounded-full border border-line bg-white p-1">
+          {tabs.map(({ kind: value, label, icon: Icon }) => {
+            const unread = lists[value].filter((row) => statusOf(row) === "NEW").length;
+            return (
+              <button
+                key={value}
+                role="tab"
+                aria-selected={kind === value}
+                onClick={() => setKind(value)}
+                className={cn(
+                  "flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                  kind === value ? "bg-navy text-white" : "text-muted hover:text-navy"
+                )}
+              >
+                <Icon size={15} />
+                {label}
+                <span className={cn("text-xs font-medium", kind === value ? "text-white/70" : "text-muted")}>{lists[value].length}</span>
+                {unread > 0 && (
+                  <span aria-label={`${unread} non lu${unread > 1 ? "s" : ""}`} className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1.5 text-[11px] font-bold text-navy">
+                    {unread}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {unreadRows.length > 0 && (
+            <button onClick={markAllRead} className={btnGhost}>
+              <CheckCheck size={15} /> Tout marquer comme lu
+            </button>
+          )}
+          <button onClick={exportCSV} disabled={rows.length === 0} className={btnGhost}>
+            <Download size={15} /> Exporter en CSV
           </button>
         </div>
-        <button
-          onClick={() => {
-            if (tab === "messages") exportCSV(messages, "messages.csv");
-            else exportCSV(quotes, "devis.csv");
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-navy text-white rounded-xl text-sm font-medium hover:bg-sky transition-colors"
-        >
-          <Download size={15} /> Exporter CSV
-        </button>
       </div>
 
-      {/* Messages Tab */}
-      {tab === "messages" && (
-        <div className="space-y-3">
-          {messages.length === 0 ? (
-            <div className="bg-white rounded-2xl p-16 text-center text-gray-400">Aucun message</div>
-          ) : messages.map(msg => (
-            <div key={msg.id} className="bg-white rounded-2xl shadow-card overflow-hidden">
-              <div
-                className="flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => setExpanded(expanded === msg.id ? null : msg.id)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 bg-sky/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-sky font-bold text-sm">{msg.firstName[0]}</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-navy text-sm">{msg.firstName} {msg.lastName}</p>
-                    <p className="text-xs text-gray-400">{msg.email} {msg.company ? `· ${msg.company}` : ""}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full", statusColors[msg.status])}>
-                    {statusLabels[msg.status]}
+      {rows.length === 0 ? (
+        <div className={cn(card, empty)}>{kind === "message" ? "Aucun message pour l'instant." : "Aucune demande de devis pour l'instant."}</div>
+      ) : (
+        <ul className="space-y-2.5">
+          {rows.map((row) => {
+            const status = statusOf(row);
+            const open = expanded === row.id;
+            const unread = status === "NEW";
+            return (
+              <li key={row.id} id={`item-${row.id}`} className={cn(card, "overflow-hidden", unread && "border-gold/70")}>
+                <button
+                  type="button"
+                  onClick={() => toggle(row)}
+                  aria-expanded={open}
+                  className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-mist/60 sm:gap-4 sm:px-5"
+                >
+                  <span className={cn("relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold uppercase", row.kind === "quote" ? "bg-gold/20 text-navy" : "bg-azure/10 text-azure")}>
+                    {row.initial}
+                    {unread && <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-white bg-gold" />}
                   </span>
-                  <span className="text-xs text-gray-400">{formatDate(msg.createdAt, "fr")}</span>
-                  <ChevronDown size={16} className={cn("text-gray-400 transition-transform", expanded === msg.id && "rotate-180")} />
-                </div>
-              </div>
-              {expanded === msg.id && (
-                <div className="px-6 pb-5 pt-2 border-t border-gray-50">
-                  <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                    {msg.service && <p><span className="text-gray-400">Service :</span> <span className="text-navy">{msg.service}</span></p>}
-                    {msg.budget && <p><span className="text-gray-400">Budget :</span> <span className="text-navy">{msg.budget}</span></p>}
-                    {msg.phone && <p><span className="text-gray-400">Tél :</span> <span className="text-navy">{msg.phone}</span></p>}
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{msg.message}</p>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <a href={`mailto:${msg.email}`} className="px-4 py-2 bg-sky text-white rounded-xl text-xs font-medium hover:bg-sky-dark transition-colors">
-                      Répondre
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+                  <span className="min-w-0 flex-1">
+                    <span className={cn("block truncate text-sm text-navy", unread ? "font-semibold" : "font-medium")}>{row.title}</span>
+                    <span className="block truncate text-xs text-muted">{row.subtitle}</span>
+                  </span>
+                  <span className={cn(pill, STATUS[status]?.tone, "hidden shrink-0 sm:inline-flex")}>{STATUS[status]?.label}</span>
+                  <span className="shrink-0 text-xs text-muted">{shortDate(row.createdAt)}</span>
+                  <ChevronDown size={16} className={cn("shrink-0 text-muted transition-transform", open && "rotate-180")} />
+                </button>
 
-      {/* Quotes Tab */}
-      {tab === "devis" && (
-        <div className="space-y-3">
-          {quotes.length === 0 ? (
-            <div className="bg-white rounded-2xl p-16 text-center text-gray-400">Aucune demande de devis</div>
-          ) : quotes.map(q => (
-            <div key={q.id} className="bg-white rounded-2xl shadow-card overflow-hidden">
-              <div
-                className="flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => setExpanded(expanded === q.id ? null : q.id)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-gold font-bold text-sm">{q.firstName[0]}</span>
+                {open && (
+                  <div className="border-t border-line px-4 pb-5 pt-4 sm:px-5">
+                    <dl className="grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+                      {row.details.map(([label, value]) => (
+                        <div key={label} className="flex gap-2">
+                          <dt className="shrink-0 text-muted">{label}</dt>
+                          <dd className="min-w-0 break-words font-medium text-navy">{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    {row.blocks.map(([label, text]) => (
+                      <div key={label ?? "message"} className="mt-4 rounded-xl bg-mist p-4">
+                        {label && <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</p>}
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-navy/90">{text}</p>
+                      </div>
+                    ))}
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <a href={`mailto:${row.email}?subject=${encodeURIComponent(row.subject)}`} className={btnPrimary}>
+                        <Mail size={15} /> {row.kind === "quote" ? "Envoyer le devis" : "Répondre"}
+                      </a>
+                      {row.phone && (
+                        <a href={`tel:${row.phone}`} className={btnGhost}>
+                          <Phone size={15} /> Appeler
+                        </a>
+                      )}
+                      <label className="ml-auto flex items-center gap-2 text-xs font-medium text-muted">
+                        État
+                        <select value={status} onChange={(e) => changeStatus(row, e.target.value)} className={cn(input, "w-auto py-2")}>
+                          {STATUS_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-navy text-sm">{q.firstName} {q.lastName} — {q.projectName}</p>
-                    <p className="text-xs text-gray-400">{q.serviceType} · {q.budget}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full", statusColors[q.status])}>
-                    {statusLabels[q.status]}
-                  </span>
-                  <span className="text-xs text-gray-400">{formatDate(q.createdAt, "fr")}</span>
-                  <ChevronDown size={16} className={cn("text-gray-400 transition-transform", expanded === q.id && "rotate-180")} />
-                </div>
-              </div>
-              {expanded === q.id && (
-                <div className="px-6 pb-5 pt-2 border-t border-gray-50">
-                  <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                    <p><span className="text-gray-400">Email :</span> <span className="text-navy">{q.email}</span></p>
-                    {q.phone && <p><span className="text-gray-400">Tél :</span> <span className="text-navy">{q.phone}</span></p>}
-                    {q.company && <p><span className="text-gray-400">Entreprise :</span> <span className="text-navy">{q.company}</span></p>}
-                    {q.deadline && <p><span className="text-gray-400">Délai :</span> <span className="text-navy">{q.deadline}</span></p>}
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-4 mb-3">
-                    <p className="text-xs font-medium text-gray-500 mb-1">Description du projet</p>
-                    <p className="text-sm text-gray-700 leading-relaxed">{q.projectDesc}</p>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <a href={`mailto:${q.email}`} className="px-4 py-2 bg-gold text-navy rounded-xl text-xs font-bold hover:bg-gold-dark transition-colors">
-                      Envoyer le devis
-                    </a>
-                    <a href={`mailto:${q.email}`} className="px-4 py-2 bg-sky text-white rounded-xl text-xs font-medium hover:bg-sky-dark transition-colors">
-                      Contacter
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );

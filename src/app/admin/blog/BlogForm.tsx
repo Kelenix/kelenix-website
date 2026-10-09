@@ -36,7 +36,7 @@ const categories = ["DEVELOPMENT", "AI", "DIGITAL", "NEWS", "GUIDES"];
 function Toolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
   if (!editor) return null;
   return (
-    <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+    <div className="flex flex-wrap gap-1 p-2 border-b border-line bg-mist rounded-t-lg">
       {[
         { action: () => editor.chain().focus().toggleBold().run(), active: editor.isActive("bold"), icon: Bold, title: "Gras" },
         { action: () => editor.chain().focus().toggleItalic().run(), active: editor.isActive("italic"), icon: Italic, title: "Italique" },
@@ -51,7 +51,7 @@ function Toolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
           type="button"
           onClick={action}
           title={title}
-          className={`p-1.5 rounded text-sm transition-colors ${active ? "bg-sky text-white" : "text-gray-600 hover:bg-gray-200"}`}
+          className={`p-1.5 rounded text-sm transition-colors ${active ? "bg-azure text-white" : "text-muted hover:bg-line"}`}
         >
           <Icon size={15} />
         </button>
@@ -130,16 +130,16 @@ export default function BlogForm({ post }: { post?: BlogData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">{error}</div>}
+      {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Slug *</label>
-          <input name="slug" value={form.slug} onChange={handleChange} onBlur={() => setForm(prev => ({ ...prev, slug: slugify(prev.slug) }))} required placeholder="mon-slug" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Slug *</label>
+          <input name="slug" value={form.slug} onChange={handleChange} onBlur={() => setForm(prev => ({ ...prev, slug: slugify(prev.slug) }))} required placeholder="mon-slug" className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Catégorie *</label>
-          <select name="category" value={form.category} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky bg-white">
+          <label className="mb-1.5 block text-sm font-medium text-navy">Catégorie *</label>
+          <select name="category" value={form.category} onChange={handleChange} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10">
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
@@ -147,41 +147,41 @@ export default function BlogForm({ post }: { post?: BlogData }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Titre FR *</label>
-          <input name="titleFr" value={form.titleFr} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Titre FR *</label>
+          <input name="titleFr" value={form.titleFr} onChange={handleChange} required className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Titre EN *</label>
-          <input name="titleEn" value={form.titleEn} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Titre EN *</label>
+          <input name="titleEn" value={form.titleEn} onChange={handleChange} required className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Extrait FR *</label>
-          <textarea name="excerptFr" value={form.excerptFr} onChange={handleChange} required rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Extrait FR *</label>
+          <textarea name="excerptFr" value={form.excerptFr} onChange={handleChange} required rows={3} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Extrait EN *</label>
-          <textarea name="excerptEn" value={form.excerptEn} onChange={handleChange} required rows={3} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Extrait EN *</label>
+          <textarea name="excerptEn" value={form.excerptEn} onChange={handleChange} required rows={3} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-semibold text-navy mb-3">Contenu</label>
         <div className="flex gap-2 mb-3">
-          <button type="button" onClick={() => setActiveLang("fr")} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeLang === "fr" ? "bg-navy text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          <button type="button" onClick={() => setActiveLang("fr")} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeLang === "fr" ? "bg-navy text-white" : "bg-mist text-muted hover:bg-line"}`}>
             🇫🇷 Français
           </button>
-          <button type="button" onClick={() => setActiveLang("en")} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeLang === "en" ? "bg-navy text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          <button type="button" onClick={() => setActiveLang("en")} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeLang === "en" ? "bg-navy text-white" : "bg-mist text-muted hover:bg-line"}`}>
             🇬🇧 English
           </button>
         </div>
-        <div className={`border border-gray-200 rounded-xl overflow-hidden ${activeLang === "fr" ? "block" : "hidden"}`}>
+        <div className={`border border-line rounded-xl overflow-hidden ${activeLang === "fr" ? "block" : "hidden"}`}>
           <Toolbar editor={editorFr} />
           <EditorContent editor={editorFr} className="min-h-[300px] p-4 prose prose-sm max-w-none focus:outline-none" />
         </div>
-        <div className={`border border-gray-200 rounded-xl overflow-hidden ${activeLang === "en" ? "block" : "hidden"}`}>
+        <div className={`border border-line rounded-xl overflow-hidden ${activeLang === "en" ? "block" : "hidden"}`}>
           <Toolbar editor={editorEn} />
           <EditorContent editor={editorEn} className="min-h-[300px] p-4 prose prose-sm max-w-none focus:outline-none" />
         </div>
@@ -189,44 +189,44 @@ export default function BlogForm({ post }: { post?: BlogData }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Image de couverture</label>
+          <label className="mb-1.5 block text-sm font-medium text-navy">Image de couverture</label>
           <div className="flex gap-2">
-            <input name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="https://... ou télécharger" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky min-w-0" />
-            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Télécharger une image" className="flex items-center gap-1.5 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-60 flex-shrink-0">
+            <input name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="https://... ou télécharger" className="flex-1 px-4 py-2.5 border border-line rounded-xl text-sm focus:outline-none focus:border-azure min-w-0" />
+            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Télécharger une image" className="flex items-center gap-1.5 px-3 py-2.5 border border-line rounded-xl text-sm text-muted hover:bg-mist disabled:opacity-60 flex-shrink-0">
               {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
             </button>
             {form.coverImage && (
-              <button type="button" onClick={() => setForm(prev => ({ ...prev, coverImage: "" }))} title="Supprimer l'image" className="flex items-center px-2 py-2.5 border border-gray-200 rounded-xl text-sm text-red-400 hover:bg-red-50 flex-shrink-0">
+              <button type="button" onClick={() => setForm(prev => ({ ...prev, coverImage: "" }))} title="Supprimer l'image" className="flex items-center px-2 py-2.5 border border-line rounded-xl text-sm text-red-400 hover:bg-red-50 flex-shrink-0">
                 <X size={14} />
               </button>
             )}
           </div>
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
           {form.coverImage && (
-            <img src={form.coverImage} alt="Aperçu" className="mt-2 h-16 w-full object-cover rounded-lg border border-gray-100" />
+            <img src={form.coverImage} alt="Aperçu" className="mt-2 h-16 w-full object-cover rounded-lg border border-line" />
           )}
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Auteur *</label>
-          <input name="authorName" value={form.authorName} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Auteur *</label>
+          <input name="authorName" value={form.authorName} onChange={handleChange} required className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Tags (séparés par virgules)</label>
-          <input name="tags" value={form.tags} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Tags (séparés par virgules)</label>
+          <input name="tags" value={form.tags} onChange={handleChange} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <input type="checkbox" id="published" name="published" checked={form.published} onChange={handleChange} className="w-4 h-4 rounded border-gray-300 text-sky focus:ring-sky" />
+        <input type="checkbox" id="published" name="published" checked={form.published} onChange={handleChange} className="h-4 w-4 rounded border-line accent-azure" />
         <label htmlFor="published" className="text-sm font-medium text-navy">Publier immédiatement</label>
       </div>
 
       <div className="flex gap-4">
-        <button type="submit" disabled={loading} className="flex items-center gap-2 px-6 py-3 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60">
+        <button type="submit" disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {post?.id ? "Mettre à jour" : "Créer l'article"}
         </button>
-        <button type="button" onClick={() => router.push("/admin/blog")} className="px-6 py-3 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors">
+        <button type="button" onClick={() => router.push("/admin/blog")} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white px-5 py-2.5 text-navy hover:bg-mist">
           Annuler
         </button>
       </div>

@@ -33,12 +33,12 @@ export async function POST(request: Request) {
       message: parsed.message,
     };
 
-    await prisma.jobApplication.create({ data: appData });
+    const created = await prisma.jobApplication.create({ data: appData, select: { id: true } });
     after(() =>
       notifyAdmins({
         title: `Nouvelle candidature — ${appData.name}`,
         body: appData.position || "Candidature spontanée",
-        url: "/admin/careers?tab=applications",
+        url: `/admin/careers/application/${created.id}`,
       })
     );
     await sendApplicationNotification(appData);

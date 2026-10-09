@@ -90,17 +90,17 @@ export default function SettingsClient({ settings }: { settings: Settings }) {
     setTimeout(() => setStatus("idle"), 3000);
   };
 
-  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/10 transition-all";
+  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-line text-sm text-navy focus:outline-none focus:border-azure focus:ring-2 focus:ring-azure/10 transition-all";
 
   return (
     <div className="space-y-6">
       {sections.map(section => (
-        <div key={section.title} className="bg-white rounded-2xl shadow-card p-6">
+        <div key={section.title} className="bg-white rounded-2xl border border-line p-6">
           <h2 className="font-heading font-bold text-navy text-lg mb-5">{section.title}</h2>
           <div className="space-y-4">
             {section.fields.map(({ key, label, inputType, textarea }) => (
               <div key={key}>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+                <label className="mb-1.5 block text-sm font-medium text-navy">{label}</label>
                 {textarea ? (
                   <textarea
                     value={form[key] || ""}
@@ -126,7 +126,7 @@ export default function SettingsClient({ settings }: { settings: Settings }) {
         <button
           onClick={handleSave}
           disabled={status === "saving"}
-          className="flex items-center gap-2 px-6 py-3 bg-sky text-white rounded-xl font-semibold hover:bg-sky-dark transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-azure text-white rounded-xl font-semibold hover:bg-azure-dark transition-colors disabled:opacity-50"
         >
           {status === "saving" ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

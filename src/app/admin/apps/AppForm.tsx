@@ -27,47 +27,47 @@ export default function AppForm({ app }: { app?: App }) {
     router.refresh();
   };
 
-  const field = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-sky focus:ring-2 focus:ring-sky/10";
+  const field = "w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10";
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card p-8 max-w-lg space-y-5">
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-line bg-white p-5 sm:p-8 max-w-lg space-y-5">
       {error && <p className="text-red-500 text-sm bg-red-50 px-4 py-3 rounded-xl">{error}</p>}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">Nom de l'app</label>
+        <label className="mb-1.5 block text-sm font-medium text-navy">Nom de l&apos;app</label>
         <input className={field} value={form.name} onChange={e => set("name", e.target.value)} required maxLength={50} />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Initiale (1-2 car.)</label>
+          <label className="mb-1.5 block text-sm font-medium text-navy">Initiale (1-2 car.)</label>
           <input className={field} value={form.initial} onChange={e => set("initial", e.target.value)} required maxLength={2} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Couleur</label>
+          <label className="mb-1.5 block text-sm font-medium text-navy">Couleur</label>
           <div className="flex gap-2">
             <input type="color" value={form.color} onChange={e => set("color", e.target.value)}
-              className="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
+              className="w-12 h-10 rounded-lg border border-line cursor-pointer p-0.5" />
             <input className={field} value={form.color} onChange={e => set("color", e.target.value)} pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">Catégorie</label>
+        <label className="mb-1.5 block text-sm font-medium text-navy">Catégorie</label>
         <input className={field} value={form.category} onChange={e => set("category", e.target.value)} required maxLength={50} placeholder="ex: Santé, E-commerce…" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Ordre</label>
+          <label className="mb-1.5 block text-sm font-medium text-navy">Ordre</label>
           <input type="number" className={field} value={form.order} onChange={e => set("order", e.target.value)} min={0} max={9} />
         </div>
         <div className="flex items-end pb-0.5">
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={form.published} onChange={e => set("published", e.target.checked)}
-              className="w-4 h-4 accent-sky" />
-            <span className="text-sm font-medium text-gray-700">Publié</span>
+              className="w-4 h-4 accent-azure" />
+            <span className="text-sm font-medium text-navy">Publié</span>
           </label>
         </div>
       </div>
@@ -79,17 +79,17 @@ export default function AppForm({ app }: { app?: App }) {
         </div>
         <div>
           <p className="text-white text-sm font-semibold">{form.name || "Nom de l'app"}</p>
-          <p className="text-gray-400 text-xs">{form.category || "Catégorie"}</p>
+          <p className="text-muted text-xs">{form.category || "Catégorie"}</p>
         </div>
       </div>
 
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={saving}
-          className="flex-1 py-3 bg-sky text-white font-bold rounded-xl hover:bg-sky-dark transition-colors disabled:opacity-60">
+          className="flex-1 py-3 bg-azure text-white font-bold rounded-xl hover:bg-azure-dark transition-colors disabled:opacity-60">
           {saving ? "Enregistrement…" : app?.id ? "Mettre à jour" : "Ajouter"}
         </button>
         <button type="button" onClick={() => router.back()}
-          className="px-6 py-3 bg-gray-100 text-gray-600 font-medium rounded-xl hover:bg-gray-200 transition-colors">
+          className="px-6 py-3 bg-mist text-muted font-medium rounded-xl hover:bg-line transition-colors">
           Annuler
         </button>
       </div>

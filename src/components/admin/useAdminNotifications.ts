@@ -32,9 +32,36 @@ const json = { "Content-Type": "application/json" };
 const saveSubscription = (subscription: PushSubscription) =>
   fetch("/api/admin/push", { method: "POST", headers: json, body: JSON.stringify(subscription) });
 
-// Pastilles « nouveaux » du menu : rechargées chaque minute, au retour sur l'onglet,
-// et dès qu'une notification push arrive.
-export function useAdminCounts() {
+// Émis dans la page dès qu'un élément change d'état (ouvert, traité…) : les pastilles se rechargent aussitôt.
+export const COUNTS_EVENT = "kelenix-admin-counts";
+
+// Rubrique de l'admin visée par une adresse : « /admin/messages?tab=devis » → « /admin/messages ».
+const sectionOf = (url: string) => new URL(url, window.location.origin).pathname.split("/").slice(0, 3).join("/");
+
+// Une fois la rubrique ouverte, ses notifications n'ont plus de raison de rester affichées sur l'appareil.
+async function closeDeliveredNotifications(pathname: string) {
+  try {
+    const registration = await navigator.serviceWorker?.getRegistration(SW_SCOPE);
+    const delivered = (await registration?.getNotifications()) ?? [];
+    const current = sectionOf(pathname);
+    for (const notification of delivered) {
+      const target = sectionOf((notification.data as { url?: string } | null)?.url || "/admin");
+      if (target === "/admin" || target === current) notification.close();
+    }
+  } catch {
+    // Navigateur sans service worker ou sans accès aux notifications : rien à fermer.
+  }
+}
+
+// Chiffre sur l'icône de l'admin installé sur le téléphone ou l'ordinateur.
+function setAppBadge(total: number) {
+  const nav = navigator as Navigator & { setAppBadge?: (n: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
+  (total > 0 ? nav.setAppBadge?.(total) : nav.clearAppBadge?.())?.catch(() => {});
+}
+
+// Pastilles « nouveaux » du menu : rechargées chaque minute, à chaque changement de page, au retour
+// sur l'onglet, dès qu'une notification push arrive et dès qu'un élément est ouvert.
+export function useAdminCounts(pathname: string) {
   const [counts, setCounts] = useState<AdminCounts | null>(null);
 
   useEffect(() => {
@@ -42,28 +69,35 @@ export function useAdminCounts() {
     const load = () =>
       fetch("/api/admin/notifications", { cache: "no-store" })
         .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (!cancelled && data) setCounts(data);
+        .then((data: AdminCounts | null) => {
+          if (cancelled || !data) return;
+          setCounts(data);
+          setAppBadge(data.messages + data.quotes + data.applications + data.partners);
         })
         .catch(() => {});
 
     load();
+    closeDeliveredNotifications(pathname);
     const timer = setInterval(load, 60_000);
     const onVisible = () => {
-      if (document.visibilityState === "visible") load();
+      if (document.visibilityState !== "visible") return;
+      load();
+      closeDeliveredNotifications(pathname);
     };
     const onPush = (event: MessageEvent) => {
       if (event.data?.type === "kelenix-push") load();
     };
     document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener(COUNTS_EVENT, load);
     navigator.serviceWorker?.addEventListener("message", onPush);
     return () => {
       cancelled = true;
       clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener(COUNTS_EVENT, load);
       navigator.serviceWorker?.removeEventListener("message", onPush);
     };
-  }, []);
+  }, [pathname]);
 
   return counts;
 }

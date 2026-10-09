@@ -67,54 +67,54 @@ export default function FaqForm({ faq }: { faq?: FaqData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">{error}</div>}
+      {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Catégorie *</label>
-          <select name="category" value={form.category} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky bg-white">
+          <label className="mb-1.5 block text-sm font-medium text-navy">Catégorie *</label>
+          <select name="category" value={form.category} onChange={handleChange} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10">
             {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Ordre</label>
-          <input type="number" name="order" value={form.order} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Ordre</label>
+          <input type="number" name="order" value={form.order} onChange={handleChange} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Question FR *</label>
-          <textarea name="questionFr" value={form.questionFr} onChange={handleChange} required rows={2} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Question FR *</label>
+          <textarea name="questionFr" value={form.questionFr} onChange={handleChange} required rows={2} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Question EN *</label>
-          <textarea name="questionEn" value={form.questionEn} onChange={handleChange} required rows={2} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Question EN *</label>
+          <textarea name="questionEn" value={form.questionEn} onChange={handleChange} required rows={2} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Réponse FR *</label>
-          <textarea name="answerFr" value={form.answerFr} onChange={handleChange} required rows={5} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Réponse FR *</label>
+          <textarea name="answerFr" value={form.answerFr} onChange={handleChange} required rows={5} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Réponse EN *</label>
-          <textarea name="answerEn" value={form.answerEn} onChange={handleChange} required rows={5} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Réponse EN *</label>
+          <textarea name="answerEn" value={form.answerEn} onChange={handleChange} required rows={5} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <input type="checkbox" id="published" name="published" checked={form.published} onChange={handleChange} className="w-4 h-4 rounded border-gray-300 text-sky focus:ring-sky" />
+        <input type="checkbox" id="published" name="published" checked={form.published} onChange={handleChange} className="h-4 w-4 rounded border-line accent-azure" />
         <label htmlFor="published" className="text-sm font-medium text-navy">Publié</label>
       </div>
 
       <div className="flex gap-4">
-        <button type="submit" disabled={loading} className="flex items-center gap-2 px-6 py-3 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60">
+        <button type="submit" disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {faq?.id ? "Mettre à jour" : "Créer la question"}
         </button>
-        <button type="button" onClick={() => router.push("/admin/faq")} className="px-6 py-3 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors">
+        <button type="button" onClick={() => router.push("/admin/faq")} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white px-5 py-2.5 text-navy hover:bg-mist">
           Annuler
         </button>
       </div>

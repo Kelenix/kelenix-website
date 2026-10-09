@@ -39,12 +39,12 @@ export async function POST(request: Request) {
       company: parsed.company ?? "",
     };
 
-    await prisma.quoteRequest.create({ data: saved });
+    const created = await prisma.quoteRequest.create({ data: saved, select: { id: true } });
     after(() =>
       notifyAdmins({
         title: `Nouvelle demande de devis — ${saved.firstName} ${saved.lastName}`,
         body: `${saved.projectName} · ${saved.budget}`,
-        url: "/admin/messages?tab=devis",
+        url: `/admin/messages?tab=devis&open=${created.id}`,
       })
     );
     await sendQuoteNotification(saved);

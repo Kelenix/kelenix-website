@@ -62,54 +62,54 @@ export default function JobPostingForm({ job }: { job?: JobData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">{error}</div>}
+      {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Titre FR *</label>
-          <input name="titleFr" value={form.titleFr} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Titre FR *</label>
+          <input name="titleFr" value={form.titleFr} onChange={handleChange} required className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Titre EN *</label>
-          <input name="titleEn" value={form.titleEn} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Titre EN *</label>
+          <input name="titleEn" value={form.titleEn} onChange={handleChange} required className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Description FR *</label>
-          <textarea name="descFr" value={form.descFr} onChange={handleChange} required rows={6} placeholder="Responsabilités, profil recherché..." className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Description FR *</label>
+          <textarea name="descFr" value={form.descFr} onChange={handleChange} required rows={6} placeholder="Responsabilités, profil recherché..." className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Description EN *</label>
-          <textarea name="descEn" value={form.descEn} onChange={handleChange} required rows={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Description EN *</label>
+          <textarea name="descEn" value={form.descEn} onChange={handleChange} required rows={6} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Lieu *</label>
-          <input name="location" value={form.location} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+          <label className="mb-1.5 block text-sm font-medium text-navy">Lieu *</label>
+          <input name="location" value={form.location} onChange={handleChange} required className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy mb-2">Type de contrat *</label>
-          <select name="contractType" value={form.contractType} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky bg-white">
+          <label className="mb-1.5 block text-sm font-medium text-navy">Type de contrat *</label>
+          <select name="contractType" value={form.contractType} onChange={handleChange} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10">
             {contractTypes.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <input type="checkbox" id="published" name="published" checked={form.published} onChange={handleChange} className="w-4 h-4 rounded border-gray-300 text-sky focus:ring-sky" />
+        <input type="checkbox" id="published" name="published" checked={form.published} onChange={handleChange} className="h-4 w-4 rounded border-line accent-azure" />
         <label htmlFor="published" className="text-sm font-medium text-navy">Publier cette offre</label>
       </div>
 
       <div className="flex gap-4">
-        <button type="submit" disabled={loading} className="flex items-center gap-2 px-6 py-3 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60">
+        <button type="submit" disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {job?.id ? "Mettre à jour" : "Créer l'offre"}
         </button>
-        <button type="button" onClick={() => router.push("/admin/careers")} className="px-6 py-3 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors">
+        <button type="button" onClick={() => router.push("/admin/careers")} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white px-5 py-2.5 text-navy hover:bg-mist">
           Annuler
         </button>
       </div>

@@ -21,7 +21,7 @@ export default function DonutChart({ data, emptyLabel = "Aucune donnée" }: Prop
   const total = data.reduce((s, d) => s + d.value, 0);
 
   if (total === 0) {
-    return <p className="text-gray-400 text-sm py-8 text-center">{emptyLabel}</p>;
+    return <p className="text-muted text-sm py-8 text-center">{emptyLabel}</p>;
   }
 
   const fracs = data.map((d) => d.value / total);
@@ -39,7 +39,7 @@ export default function DonutChart({ data, emptyLabel = "Aucune donnée" }: Prop
     <div className="flex flex-col sm:flex-row items-center gap-6">
       <div className="relative flex-shrink-0" style={{ width: SIZE, height: SIZE }}>
         <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="w-full h-full -rotate-90">
-          <circle cx={SIZE / 2} cy={SIZE / 2} r={R} fill="none" stroke="#f1f5f9" strokeWidth={STROKE} />
+          <circle cx={SIZE / 2} cy={SIZE / 2} r={R} fill="none" stroke="#F3F7FC" strokeWidth={STROKE} />
           {arcs.map((a, i) => (
             <circle
               key={i}
@@ -59,8 +59,8 @@ export default function DonutChart({ data, emptyLabel = "Aucune donnée" }: Prop
           ))}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="font-heading font-extrabold text-2xl text-navy">{centerValue}</span>
-          <span className="text-[11px] text-gray-400 max-w-[90px] text-center leading-tight truncate">{centerLabel}</span>
+          <span className="font-display text-3xl font-medium leading-none tracking-[-0.02em] text-navy">{centerValue}</span>
+          <span className="text-[11px] text-muted max-w-[90px] text-center leading-tight truncate">{centerLabel}</span>
         </div>
       </div>
 
@@ -69,13 +69,13 @@ export default function DonutChart({ data, emptyLabel = "Aucune donnée" }: Prop
         {arcs.map((a, i) => (
           <div
             key={i}
-            className={`flex items-center justify-between gap-3 rounded-lg px-2 py-1 transition-colors ${hover === i ? "bg-gray-50" : ""}`}
+            className={`flex items-center justify-between gap-3 rounded-lg px-2 py-1 transition-colors ${hover === i ? "bg-mist" : ""}`}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(null)}
           >
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: a.color }} />
-              <span className="text-xs text-gray-600 truncate">{a.label}</span>
+              <span className="text-xs text-muted truncate">{a.label}</span>
             </div>
             <span className="text-xs font-semibold text-navy flex-shrink-0">
               {a.value} · {Math.round(a.frac * 100)}%

@@ -53,9 +53,9 @@ const latencyTone = (ms: number): Tone => (ms < 100 ? "ok" : ms < 500 ? "warn" :
 
 function Card({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl shadow-card p-5">
+    <div className="bg-white rounded-2xl border border-line p-5">
       <div className="flex items-center gap-2 mb-4">
-        <Icon size={16} className="text-sky" />
+        <Icon size={16} className="text-azure" />
         <h2 className="font-heading font-bold text-navy text-sm">{title}</h2>
       </div>
       {children}
@@ -68,10 +68,10 @@ function Gauge({ label, pct, detail }: { label: string; pct: number; detail: str
   return (
     <div className="mb-3 last:mb-0">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs text-gray-500">{label}</span>
+        <span className="text-xs text-muted">{label}</span>
         <span className="text-xs font-semibold text-navy">{detail}</span>
       </div>
-      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+      <div className="h-2 rounded-full bg-mist overflow-hidden">
         <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, pct)}%`, backgroundColor: barColor[tone] }} />
       </div>
     </div>
@@ -81,7 +81,7 @@ function Gauge({ label, pct, detail }: { label: string; pct: number; detail: str
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between py-1.5 text-sm">
-      <span className="text-gray-500">{label}</span>
+      <span className="text-muted">{label}</span>
       <span className="font-medium text-navy text-right">{value}</span>
     </div>
   );
@@ -122,11 +122,11 @@ export default function StatusClient() {
   }, [fetchData, auto]);
 
   if (loading) {
-    return <div className="flex items-center gap-2 text-gray-400 text-sm py-20 justify-center"><RefreshCw size={16} className="animate-spin" /> Chargement de l&apos;état du système…</div>;
+    return <div className="flex items-center gap-2 text-muted text-sm py-20 justify-center"><RefreshCw size={16} className="animate-spin" /> Chargement de l&apos;état du système…</div>;
   }
 
   if (!data) {
-    return <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">Impossible de charger l&apos;état : {error}</div>;
+    return <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">Impossible de charger l&apos;état : {error}</div>;
   }
 
   const { db, counts, system, process: proc, disk, pm2, deploy } = data;
@@ -152,14 +152,14 @@ export default function StatusClient() {
           <span className="font-semibold text-sm">{overallText}</span>
         </div>
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
-            <input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} className="w-4 h-4 rounded border-gray-300 text-sky focus:ring-sky" />
+          <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
+            <input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} className="h-4 w-4 rounded border-line accent-azure" />
             Auto (10s)
           </label>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-muted">
             {lastUpdated ? `Maj ${lastUpdated.toLocaleTimeString("fr-FR")}` : ""}
           </span>
-          <button onClick={fetchData} className="flex items-center gap-1.5 px-3 py-2 bg-sky text-white rounded-xl text-xs font-semibold hover:bg-sky-dark transition-colors">
+          <button onClick={fetchData} className="flex items-center gap-1.5 px-3 py-2 bg-azure text-white rounded-xl text-xs font-semibold hover:bg-azure-dark transition-colors">
             <RefreshCw size={13} /> Actualiser
           </button>
         </div>
@@ -203,7 +203,7 @@ export default function StatusClient() {
               <Row label="Mémoire" value={fmtBytes(pm2.memory)} />
             </>
           ) : (
-            <p className="text-xs text-gray-400">Infos pm2 indisponibles (process local ou pm2 absent).</p>
+            <p className="text-xs text-muted">Infos pm2 indisponibles (process local ou pm2 absent).</p>
           )}
         </Card>
 
@@ -211,13 +211,13 @@ export default function StatusClient() {
         <Card title="Déploiement" icon={GitCommit}>
           {deploy ? (
             <>
-              <Row label="Commit" value={<code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{deploy.commit}</code>} />
+              <Row label="Commit" value={<code className="text-xs bg-mist px-1.5 py-0.5 rounded">{deploy.commit}</code>} />
               <Row label="Branche" value={deploy.branch} />
               <Row label="Date" value={deploy.date ? new Date(deploy.date).toLocaleString("fr-FR") : "—"} />
-              {deploy.message && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{deploy.message}</p>}
+              {deploy.message && <p className="text-xs text-muted mt-2 line-clamp-2">{deploy.message}</p>}
             </>
           ) : (
-            <p className="text-xs text-gray-400">Infos git indisponibles.</p>
+            <p className="text-xs text-muted">Infos git indisponibles.</p>
           )}
         </Card>
 
@@ -228,21 +228,21 @@ export default function StatusClient() {
               <Gauge label={`Charge (1 min) · ${system.cpuCount} cœurs`} pct={loadRatio * 100} detail={system.loadavg[0].toFixed(2)} />
               <Row label="Charge 5 / 15 min" value={`${system.loadavg[1].toFixed(2)} / ${system.loadavg[2].toFixed(2)}`} />
             </>
-          ) : <p className="text-xs text-gray-400">Indisponible</p>}
+          ) : <p className="text-xs text-muted">Indisponible</p>}
         </Card>
 
         {/* Mémoire serveur */}
         <Card title="Serveur — Mémoire" icon={MemoryStick}>
           {system ? (
             <Gauge label="RAM utilisée" pct={memPct} detail={`${fmtBytes(system.totalMem - system.freeMem)} / ${fmtBytes(system.totalMem)} (${memPct}%)`} />
-          ) : <p className="text-xs text-gray-400">Indisponible</p>}
+          ) : <p className="text-xs text-muted">Indisponible</p>}
         </Card>
 
         {/* Disque */}
         <Card title="Serveur — Disque" icon={HardDrive}>
           {disk ? (
             <Gauge label="Espace utilisé" pct={disk.usePct} detail={`${fmtKb(disk.usedKb)} / ${fmtKb(disk.totalKb)} (${disk.usePct}%)`} />
-          ) : <p className="text-xs text-gray-400">Indisponible (dev local).</p>}
+          ) : <p className="text-xs text-muted">Indisponible (dev local).</p>}
         </Card>
 
         {/* Système */}
@@ -253,7 +253,7 @@ export default function StatusClient() {
               <Row label="OS" value={<span className="text-xs">{system.platform}</span>} />
               <Row label="Uptime serveur" value={fmtDuration(system.osUptimeSec)} />
             </>
-          ) : <p className="text-xs text-gray-400">Indisponible</p>}
+          ) : <p className="text-xs text-muted">Indisponible</p>}
         </Card>
 
         {/* Process Node */}
@@ -276,7 +276,7 @@ export default function StatusClient() {
               <Row label="Articles / Témoignages" value={`${counts.blogPosts} / ${counts.testimonials}`} />
               <Row label="FAQ" value={counts.faqs} />
             </>
-          ) : <p className="text-xs text-gray-400">Indisponible (base injoignable).</p>}
+          ) : <p className="text-xs text-muted">Indisponible (base injoignable).</p>}
         </Card>
       </div>
     </div>

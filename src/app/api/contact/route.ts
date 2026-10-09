@@ -28,9 +28,9 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = schema.parse(body);
 
-    await prisma.contactMessage.create({ data });
+    const created = await prisma.contactMessage.create({ data, select: { id: true } });
     after(() =>
-      notifyAdmins({ title: `Nouveau message — ${data.firstName} ${data.lastName}`, body: excerpt(data.message), url: "/admin/messages" })
+      notifyAdmins({ title: `Nouveau message — ${data.firstName} ${data.lastName}`, body: excerpt(data.message), url: `/admin/messages?open=${created.id}` })
     );
     await sendContactNotification(data);
 

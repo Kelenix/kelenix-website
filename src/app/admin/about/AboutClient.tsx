@@ -73,17 +73,17 @@ function GeneralTab({ data }: { data: Fields }) {
   return (
     <div className="space-y-6">
       {generalSections.map(section => (
-        <div key={section.title} className="bg-white rounded-2xl shadow-card p-8">
-          <h2 className="font-heading text-lg font-bold text-navy mb-6 pb-3 border-b border-gray-100">{section.title}</h2>
+        <div key={section.title} className="rounded-2xl border border-line bg-white p-5 sm:p-8">
+          <h2 className="mb-5 text-base font-semibold text-navy pb-3 border-b border-line">{section.title}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             {section.fields.map(field => (
               <div key={field.key}>
-                <label className="block text-sm font-semibold text-navy mb-2">{field.label}</label>
+                <label className="mb-1.5 block text-sm font-medium text-navy">{field.label}</label>
                 <textarea
                   value={form[field.key] || ""}
                   onChange={e => setForm(prev => ({ ...prev, [field.key]: e.target.value }))}
                   rows={field.rows}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none"
+                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none"
                 />
               </div>
             ))}
@@ -91,7 +91,7 @@ function GeneralTab({ data }: { data: Fields }) {
           <button
             onClick={() => handleSave(section.fields.map(f => f.key), section.title)}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60 text-sm"
+            className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : savedSection === section.title ? <Check size={15} /> : <Save size={15} />}
             {savedSection === section.title ? "Sauvegardé" : "Sauvegarder"}
@@ -158,14 +158,14 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
   return (
     <div className="space-y-4">
       {!showForm && (
-        <button onClick={() => { setEditing("new"); setForm(emptyMember()); }} className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors text-sm">
+        <button onClick={() => { setEditing("new"); setForm(emptyMember()); }} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
           <Plus size={15} /> Ajouter un membre
         </button>
       )}
 
       {showForm && (
-        <div className="bg-white rounded-2xl shadow-card p-8">
-          <h2 className="font-heading text-lg font-bold text-navy mb-6">{isNew ? "Nouveau membre" : "Modifier le membre"}</h2>
+        <div className="rounded-2xl border border-line bg-white p-5 sm:p-8">
+          <h2 className="mb-5 text-base font-semibold text-navy">{isNew ? "Nouveau membre" : "Modifier le membre"}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <Field label="Nom" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
             <Field label="Rôle (FR)" value={form.roleFr} onChange={v => setForm(p => ({ ...p, roleFr: v }))} />
@@ -177,15 +177,15 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
             <TextareaField label="Bio (EN)" value={form.bioEn} onChange={v => setForm(p => ({ ...p, bioEn: v }))} rows={3} />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-navy mb-2">Photo (URL ou upload)</label>
+            <label className="mb-1.5 block text-sm font-medium text-navy">Photo (URL ou upload)</label>
             <div className="flex gap-2">
-              <input value={form.avatar ?? ""} onChange={e => setForm(p => ({ ...p, avatar: e.target.value }))} placeholder="https://..." className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
-              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="flex items-center gap-1.5 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-60">
+              <input value={form.avatar ?? ""} onChange={e => setForm(p => ({ ...p, avatar: e.target.value }))} placeholder="https://..." className="flex-1 px-4 py-2.5 border border-line rounded-xl text-sm focus:outline-none focus:border-azure" />
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="flex items-center gap-1.5 px-3 py-2.5 border border-line rounded-xl text-sm text-muted hover:bg-mist disabled:opacity-60">
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
               </button>
             </div>
             <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
-            {form.avatar && <img src={form.avatar} alt="Avatar" className="mt-2 h-16 w-16 rounded-full object-cover border border-gray-200" />}
+            {form.avatar && <img src={form.avatar} alt="Avatar" className="mt-2 h-16 w-16 rounded-full object-cover border border-line" />}
           </div>
           <div className="grid grid-cols-2 gap-4 mb-6">
             <Field label="Ordre" value={String(form.order)} onChange={v => setForm(p => ({ ...p, order: Number(v) }))} type="number" />
@@ -195,22 +195,22 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={save} disabled={loading} className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60 text-sm">
+            <button onClick={save} disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />} Sauvegarder
             </button>
-            <button onClick={() => { setEditing(null); setForm(emptyMember()); }} className="px-5 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors text-sm flex items-center gap-2">
+            <button onClick={() => { setEditing(null); setForm(emptyMember()); }} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white px-5 py-2.5 text-navy hover:bg-mist">
               <X size={15} /> Annuler
             </button>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-line bg-white">
         {members.length === 0 ? (
-          <p className="text-gray-400 text-sm p-8 text-center">Aucun membre. Ajoutez-en un ci-dessus.</p>
+          <p className="text-muted text-sm p-8 text-center">Aucun membre. Ajoutez-en un ci-dessus.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-mist border-b border-line">
               <tr>
                 <th className="px-6 py-3 text-left font-semibold text-navy">Membre</th>
                 <th className="px-6 py-3 text-left font-semibold text-navy hidden sm:table-cell">Rôle</th>
@@ -218,16 +218,16 @@ function TeamTab({ initialMembers }: { initialMembers: TeamMember[] }) {
                 <th className="px-6 py-3 text-right font-semibold text-navy">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-line">
               {members.map(m => (
-                <tr key={m.id} className="hover:bg-gray-50">
+                <tr key={m.id} className="hover:bg-mist">
                   <td className="px-6 py-4 font-medium text-navy">{m.name}</td>
-                  <td className="px-6 py-4 text-gray-500 hidden sm:table-cell">{m.roleFr}</td>
-                  <td className="px-6 py-4 text-center text-gray-500">{m.order}</td>
+                  <td className="px-6 py-4 text-muted hidden sm:table-cell">{m.roleFr}</td>
+                  <td className="px-6 py-4 text-center text-muted">{m.order}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => startEdit(m)} className="p-2 text-gray-400 hover:text-sky rounded-lg hover:bg-sky/10 transition-colors"><Pencil size={15} /></button>
-                      <button onClick={() => setDeleteId(m.id)} className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
+                      <button onClick={() => startEdit(m)} className="p-2 text-muted hover:text-azure rounded-lg hover:bg-azure/10 transition-colors"><Pencil size={15} /></button>
+                      <button onClick={() => setDeleteId(m.id)} className="p-2 text-muted hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
                     </div>
                   </td>
                 </tr>
@@ -286,14 +286,14 @@ function TimelineTab({ initialItems }: { initialItems: TimelineItem[] }) {
   return (
     <div className="space-y-4">
       {editing === null && (
-        <button onClick={() => { setEditing("new"); setForm(emptyTimeline()); }} className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors text-sm">
+        <button onClick={() => { setEditing("new"); setForm(emptyTimeline()); }} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
           <Plus size={15} /> Ajouter une étape
         </button>
       )}
 
       {editing !== null && (
-        <div className="bg-white rounded-2xl shadow-card p-8">
-          <h2 className="font-heading text-lg font-bold text-navy mb-6">{editing === "new" ? "Nouvelle étape" : "Modifier l'étape"}</h2>
+        <div className="rounded-2xl border border-line bg-white p-5 sm:p-8">
+          <h2 className="mb-5 text-base font-semibold text-navy">{editing === "new" ? "Nouvelle étape" : "Modifier l'étape"}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <Field label="Année" value={form.year} onChange={v => setForm(p => ({ ...p, year: v }))} />
             <Field label="Titre (FR)" value={form.titleFr} onChange={v => setForm(p => ({ ...p, titleFr: v }))} />
@@ -307,22 +307,22 @@ function TimelineTab({ initialItems }: { initialItems: TimelineItem[] }) {
             <Field label="Ordre" value={String(form.order)} onChange={v => setForm(p => ({ ...p, order: Number(v) }))} type="number" />
           </div>
           <div className="flex gap-3">
-            <button onClick={save} disabled={loading} className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60 text-sm">
+            <button onClick={save} disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />} Sauvegarder
             </button>
-            <button onClick={() => { setEditing(null); setForm(emptyTimeline()); }} className="px-5 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors text-sm flex items-center gap-2">
+            <button onClick={() => { setEditing(null); setForm(emptyTimeline()); }} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white px-5 py-2.5 text-navy hover:bg-mist">
               <X size={15} /> Annuler
             </button>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-line bg-white">
         {items.length === 0 ? (
-          <p className="text-gray-400 text-sm p-8 text-center">Aucune étape. Ajoutez-en une ci-dessus.</p>
+          <p className="text-muted text-sm p-8 text-center">Aucune étape. Ajoutez-en une ci-dessus.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-mist border-b border-line">
               <tr>
                 <th className="px-6 py-3 text-left font-semibold text-navy">Année</th>
                 <th className="px-6 py-3 text-left font-semibold text-navy">Titre FR</th>
@@ -330,16 +330,16 @@ function TimelineTab({ initialItems }: { initialItems: TimelineItem[] }) {
                 <th className="px-6 py-3 text-right font-semibold text-navy">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-line">
               {items.map(item => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-bold text-sky">{item.year}</td>
+                <tr key={item.id} className="hover:bg-mist">
+                  <td className="px-6 py-4 font-bold text-azure">{item.year}</td>
                   <td className="px-6 py-4 text-navy">{item.titleFr}</td>
-                  <td className="px-6 py-4 text-center text-gray-500">{item.order}</td>
+                  <td className="px-6 py-4 text-center text-muted">{item.order}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => startEdit(item)} className="p-2 text-gray-400 hover:text-sky rounded-lg hover:bg-sky/10 transition-colors"><Pencil size={15} /></button>
-                      <button onClick={() => setDeleteId(item.id)} className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
+                      <button onClick={() => startEdit(item)} className="p-2 text-muted hover:text-azure rounded-lg hover:bg-azure/10 transition-colors"><Pencil size={15} /></button>
+                      <button onClick={() => setDeleteId(item.id)} className="p-2 text-muted hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
                     </div>
                   </td>
                 </tr>
@@ -398,17 +398,17 @@ function WhyTab({ initialPoints }: { initialPoints: WhyPoint[] }) {
   return (
     <div className="space-y-4">
       {editing === null && (
-        <button onClick={() => { setEditing("new"); setForm(emptyWhyPoint()); }} className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors text-sm">
+        <button onClick={() => { setEditing("new"); setForm(emptyWhyPoint()); }} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
           <Plus size={15} /> Ajouter un argument
         </button>
       )}
 
       {editing !== null && (
-        <div className="bg-white rounded-2xl shadow-card p-8">
-          <h2 className="font-heading text-lg font-bold text-navy mb-6">{editing === "new" ? "Nouvel argument" : "Modifier l'argument"}</h2>
+        <div className="rounded-2xl border border-line bg-white p-5 sm:p-8">
+          <h2 className="mb-5 text-base font-semibold text-navy">{editing === "new" ? "Nouvel argument" : "Modifier l'argument"}</h2>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-navy mb-2">Icône</label>
-            <select value={form.icon} onChange={e => setForm(p => ({ ...p, icon: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky bg-white">
+            <label className="mb-1.5 block text-sm font-medium text-navy">Icône</label>
+            <select value={form.icon} onChange={e => setForm(p => ({ ...p, icon: e.target.value }))} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10">
               {ICON_OPTIONS.map(i => <option key={i} value={i}>{i}</option>)}
             </select>
           </div>
@@ -426,22 +426,22 @@ function WhyTab({ initialPoints }: { initialPoints: WhyPoint[] }) {
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={save} disabled={loading} className="flex items-center gap-2 px-5 py-2.5 bg-sky text-white font-semibold rounded-xl hover:bg-navy transition-colors disabled:opacity-60 text-sm">
+            <button onClick={save} disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-azure px-5 py-2.5 text-white hover:bg-azure-dark">
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />} Sauvegarder
             </button>
-            <button onClick={() => { setEditing(null); setForm(emptyWhyPoint()); }} className="px-5 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors text-sm flex items-center gap-2">
+            <button onClick={() => { setEditing(null); setForm(emptyWhyPoint()); }} className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white px-5 py-2.5 text-navy hover:bg-mist">
               <X size={15} /> Annuler
             </button>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-line bg-white">
         {points.length === 0 ? (
-          <p className="text-gray-400 text-sm p-8 text-center">Aucun argument. Ajoutez-en un ci-dessus.</p>
+          <p className="text-muted text-sm p-8 text-center">Aucun argument. Ajoutez-en un ci-dessus.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-mist border-b border-line">
               <tr>
                 <th className="px-6 py-3 text-left font-semibold text-navy">Icône</th>
                 <th className="px-6 py-3 text-left font-semibold text-navy">Titre FR</th>
@@ -449,16 +449,16 @@ function WhyTab({ initialPoints }: { initialPoints: WhyPoint[] }) {
                 <th className="px-6 py-3 text-right font-semibold text-navy">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-line">
               {points.map(p => (
-                <tr key={p.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-gray-500 font-mono text-xs">{p.icon}</td>
+                <tr key={p.id} className="hover:bg-mist">
+                  <td className="px-6 py-4 text-muted font-mono text-xs">{p.icon}</td>
                   <td className="px-6 py-4 font-medium text-navy">{p.titleFr}</td>
-                  <td className="px-6 py-4 text-center text-gray-500">{p.order}</td>
+                  <td className="px-6 py-4 text-center text-muted">{p.order}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => startEdit(p)} className="p-2 text-gray-400 hover:text-sky rounded-lg hover:bg-sky/10 transition-colors"><Pencil size={15} /></button>
-                      <button onClick={() => setDeleteId(p.id)} className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
+                      <button onClick={() => startEdit(p)} className="p-2 text-muted hover:text-azure rounded-lg hover:bg-azure/10 transition-colors"><Pencil size={15} /></button>
+                      <button onClick={() => setDeleteId(p.id)} className="p-2 text-muted hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
                     </div>
                   </td>
                 </tr>
@@ -483,16 +483,16 @@ function WhyTab({ initialPoints }: { initialPoints: WhyPoint[] }) {
 function Field({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-navy mb-2">{label}</label>
-      <input type={type} value={value} onChange={e => onChange(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky" />
+      <label className="mb-1.5 block text-sm font-medium text-navy">{label}</label>
+      <input type={type} value={value} onChange={e => onChange(e.target.value)} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10" />
     </div>
   );
 }
 function TextareaField({ label, value, onChange, rows = 3 }: { label: string; value: string; onChange: (v: string) => void; rows?: number }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-navy mb-2">{label}</label>
-      <textarea value={value} onChange={e => onChange(e.target.value)} rows={rows} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-sky resize-none" />
+      <label className="mb-1.5 block text-sm font-medium text-navy">{label}</label>
+      <textarea value={value} onChange={e => onChange(e.target.value)} rows={rows} className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none" />
     </div>
   );
 }
@@ -516,12 +516,12 @@ export default function AboutClient({
 
   return (
     <div>
-      <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-xl w-fit">
+      <div className="no-scrollbar mb-6 flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-white p-1">
         {TABS.map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === t ? "bg-white text-navy shadow-sm" : "text-gray-500 hover:text-navy"}`}
+            className={`shrink-0 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors ${tab === t ? "bg-navy text-white" : "text-muted hover:text-navy"}`}
           >
             {t}
           </button>

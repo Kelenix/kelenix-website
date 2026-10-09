@@ -37,18 +37,18 @@ export default function TrendAreaChart({ labels, series }: Props) {
   };
 
   return (
-    <div className="w-full">
+    <div className="no-scrollbar w-full overflow-x-auto">
       {/* Légende */}
       <div className="flex items-center gap-5 mb-2">
         {series.map((s) => (
           <div key={s.name} className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full" style={{ backgroundColor: s.color }} />
-            <span className="text-xs font-medium text-gray-600">{s.name}</span>
+            <span className="text-xs font-medium text-muted">{s.name}</span>
           </div>
         ))}
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img">
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full min-w-[440px]" role="img">
         <defs>
           {series.map((s, si) => (
             <linearGradient key={si} id={`area-grad-${si}`} x1="0" y1="0" x2="0" y2="1">
@@ -64,8 +64,8 @@ export default function TrendAreaChart({ labels, series }: Props) {
           const yy = PAD.t + (plotH / gridLines) * i;
           return (
             <g key={i}>
-              <line x1={PAD.l} y1={yy} x2={W - PAD.r} y2={yy} stroke="#eef2f6" strokeWidth={1} />
-              <text x={PAD.l - 6} y={yy + 3} textAnchor="end" fontSize={9} fill="#9aa5b1">
+              <line x1={PAD.l} y1={yy} x2={W - PAD.r} y2={yy} stroke="#E2E9F2" strokeWidth={1} />
+              <text x={PAD.l - 6} y={yy + 4} textAnchor="end" fontSize={11} fill="#55657D">
                 {Math.round(val)}
               </text>
             </g>
@@ -74,7 +74,7 @@ export default function TrendAreaChart({ labels, series }: Props) {
 
         {/* Labels X */}
         {labels.map((lab, i) => (
-          <text key={i} x={x(i)} y={H - 8} textAnchor="middle" fontSize={9} fill="#9aa5b1">
+          <text key={i} x={x(i)} y={H - 8} textAnchor="middle" fontSize={11} fill="#55657D">
             {lab}
           </text>
         ))}

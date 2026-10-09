@@ -35,12 +35,12 @@ export async function POST(request: Request) {
       message: parsed.message,
     };
 
-    await prisma.partnerRequest.create({ data: partnerData });
+    const created = await prisma.partnerRequest.create({ data: partnerData, select: { id: true } });
     after(() =>
       notifyAdmins({
         title: `Nouvelle demande de partenariat — ${partnerData.company}`,
         body: [partnerData.name, partnerData.partnerType].filter(Boolean).join(" · "),
-        url: "/admin/partners",
+        url: `/admin/partners/${created.id}`,
       })
     );
     await sendPartnerNotification(partnerData);
