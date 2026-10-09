@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-7xl">
       <div className="mb-6 sm:mb-8">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">{now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className={pageTitle}>{firstName ? `Bonjour ${firstName}` : "Tableau de bord"}</h1>
@@ -172,9 +172,9 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-3 lg:gap-6">
+      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-5 lg:gap-6">
         {/* Dernières demandes */}
-        <div className={cn(card, "min-w-0 overflow-hidden lg:col-span-2")}>
+        <div className={cn(card, "min-w-0 overflow-hidden lg:col-span-3")}>
           <div className="flex items-center justify-between border-b border-line px-4 py-4 sm:px-5">
             <h2 className={cardTitle}>Dernières demandes</h2>
             <Link href="/admin/messages" className="text-sm font-semibold text-azure hover:text-azure-dark">
@@ -210,7 +210,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Contenu du site + raccourcis */}
-        <div className="min-w-0 space-y-4 lg:space-y-6">
+        <div className="min-w-0 space-y-4 lg:col-span-2 lg:space-y-6">
           <div className={cn(card, "p-4 sm:p-5")}>
             <h2 className={cardTitle}>Contenu du site</h2>
             <ul className="mt-3 divide-y divide-line">
@@ -242,14 +242,14 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Graphiques */}
-      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-3 lg:gap-6">
-        <div className={cn(card, "min-w-0 p-4 sm:p-6 lg:col-span-2")}>
+      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-5 lg:gap-6">
+        <div className={cn(card, "min-w-0 p-4 sm:p-6 lg:col-span-3")}>
           <h2 className={cardTitle}>Activité des 6 derniers mois</h2>
           <p className="mb-4 mt-0.5 text-xs text-muted">Messages et demandes de devis reçus par mois</p>
           <TrendAreaChart labels={trendLabels} series={trendSeries} />
         </div>
 
-        <div className={cn(card, "min-w-0 p-4 sm:p-6")}>
+        <div className={cn(card, "min-w-0 p-4 sm:p-6 lg:col-span-2")}>
           <h2 className={cardTitle}>Devis par budget</h2>
           <p className="mb-4 mt-0.5 text-xs text-muted">Répartition des demandes de devis</p>
           <DonutChart data={budgetData} emptyLabel="Aucune demande de devis" />
