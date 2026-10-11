@@ -91,6 +91,7 @@ export default function Header() {
     { href: "/boutique", label: t("shop") },
     { href: "/a-propos", label: t("about") },
     { href: "/blog", label: t("blog") },
+    { href: "/reservation", label: t("reservation") },
     { href: "/contact", label: t("contact") },
   ];
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);

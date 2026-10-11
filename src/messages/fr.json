@@ -17,7 +17,17 @@
     "quoteShort": "Devis",
     "main": "Navigation principale",
     "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+    "closeMenu": "Fermer le menu",
+    "reservation": "Réservation"
+  },
+  "reservation": {
+    "badge": "Réservation en ligne",
+    "title": "Réservez votre",
+    "titleHighlight": "rendez-vous",
+    "subtitle": "Choisissez un créneau en quelques clics. Paiement sécurisé et confirmation immédiate.",
+    "instant": "Confirmation immédiate",
+    "secure": "Paiement sécurisé",
+    "quick": "En quelques clics"
   },
   "shop": {
     "badge": "Boutique — Snap",

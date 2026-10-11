@@ -17,7 +17,17 @@
     "quoteShort": "Quote",
     "main": "Main navigation",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "reservation": "Booking"
+  },
+  "reservation": {
+    "badge": "Online booking",
+    "title": "Book your",
+    "titleHighlight": "appointment",
+    "subtitle": "Pick a time slot in just a few clicks. Secure payment and instant confirmation.",
+    "instant": "Instant confirmation",
+    "secure": "Secure payment",
+    "quick": "In just a few clicks"
   },
   "shop": {
     "badge": "Store — Snap",
