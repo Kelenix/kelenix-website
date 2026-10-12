@@ -26,7 +26,7 @@ export default function ContactForm({ locale }: { locale: string }) {
   ];
 
   const budgets = [
-    { value: "< 1000€", label: "< 1 000€" },
+    { value: "300-1000€", label: "300€ - 1 000€" },
     { value: "1000-5000€", label: "1 000€ - 5 000€" },
     { value: "5000-10000€", label: "5 000€ - 10 000€" },
     { value: "10000-50000€", label: "10 000€ - 50 000€" },

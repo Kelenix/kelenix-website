@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { track } from "@/lib/tracking";
 import { QUOTE_LIMITS } from "@/lib/quote-limits";
+import { QUOTE_BUDGETS } from "@/lib/quote-options";
 import { btnDark, btnGhost, btnPrimary, input, label } from "@/components/site/styles";
 
 type FormData = {
@@ -53,13 +54,9 @@ export default function QuoteForm({ locale }: { locale: string }) {
     { value: "other", label: fr ? "Autre" : "Other", desc: fr ? "Parlons-en" : "Let's talk", Icon: Sparkles },
   ];
 
-  const budgets = [
-    { value: "< 1 000€", Icon: Sprout },
-    { value: "1 000€ – 5 000€", Icon: Banknote },
-    { value: "5 000€ – 10 000€", Icon: Wallet },
-    { value: "10 000€ – 50 000€", Icon: Gem },
-    { value: "> 50 000€", Icon: Rocket },
-  ];
+  // Mêmes fourchettes que celles proposées par l'assistant du site, de la plus petite à la plus grande.
+  const budgetIcons = [Sprout, Banknote, Wallet, Gem, Rocket];
+  const budgets = QUOTE_BUDGETS.map((value, i) => ({ value, Icon: budgetIcons[i] }));
   const deadlines = [
     { value: fr ? "Urgent (< 1 mois)" : "Urgent (< 1 month)", Icon: Zap },
     { value: fr ? "1 – 3 mois" : "1 – 3 months", Icon: Calendar },

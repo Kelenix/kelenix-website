@@ -11,7 +11,8 @@ export const QUOTE_SERVICES = [
   { value: "other", fr: "Autre", en: "Other" },
 ] as const;
 
-export const QUOTE_BUDGETS = ["< 1 000€", "1 000€ – 5 000€", "5 000€ – 10 000€", "10 000€ – 50 000€", "> 50 000€"] as const;
+// Fourchettes de budget, de la plus petite à la plus grande : la première commence à 300 €.
+export const QUOTE_BUDGETS = ["300€ – 1 000€", "1 000€ – 5 000€", "5 000€ – 10 000€", "10 000€ – 50 000€", "> 50 000€"] as const;
 
 export const QUOTE_DEADLINES = {
   fr: ["Urgent (< 1 mois)", "1 – 3 mois", "3 – 6 mois", "6 – 12 mois", "Pas de contrainte"],
