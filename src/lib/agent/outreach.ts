@@ -119,7 +119,7 @@ Exactitude :
 - N'annonce rien qui n'existe pas encore : ni maquette déjà prête, ni étude déjà faite, ni exemple chez un concurrent.
 - Ne nomme pas les membres de l'équipe cités sur le site (écris « votre équipe », « vos chargés de clientèle ») : seul le contact à qui tu écris est appelé par son nom.
 
-Objet : de trois à six mots, qui parlent d'eux ou de l'idée plutôt que de ${name}. Une majuscule au premier mot et aux noms propres seulement, pas de point d'exclamation, pas de mot racoleur (« offre », « gratuit », « urgent »).
+Objet : de quatre à neuf mots. Le destinataire doit comprendre, avant même d'ouvrir, qu'un prestataire lui propose une idée, et sur quel sujet. Il ne doit jamais pouvoir le prendre pour la demande d'un client : « Réservation de la salle de réunion », « Commande de plateaux-repas » ou « Demande de devis » laissent croire que quelqu'un veut réserver, commander ou acheter, et le destinataire se sent trompé en ouvrant. Formule l'objet comme une proposition tournée vers eux, en variant la tournure selon le cas, par exemple « Une idée pour vos réservations de salle », « Proposition : un formulaire pour vos devis de séminaire », « Simplifier les commandes de vos clients entreprises ». Une majuscule au premier mot et aux noms propres seulement, pas de point d'exclamation, pas de mot racoleur (« offre », « gratuit », « urgent »).
 
 Ne mets ni formule de politesse finale ni signature : elles sont ajoutées automatiquement.
 
