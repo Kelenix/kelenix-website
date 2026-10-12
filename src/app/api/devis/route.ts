@@ -5,13 +5,14 @@ import { prisma } from "@/lib/prisma";
 import { sendQuoteNotification } from "@/lib/email";
 import { handleApiError } from "@/lib/api-error";
 import { rateLimit } from "@/lib/rate-limit";
+import { QUOTE_LIMITS } from "@/lib/quote-limits";
 import { z } from "zod";
 
 const schema = z.object({
   serviceType: z.string().min(1).max(100),
   projectName: z.string().min(1).max(200),
-  projectDesc: z.string().min(10).max(5000),
-  projectGoals: z.string().max(2000).optional(),
+  projectDesc: z.string().min(QUOTE_LIMITS.descMin).max(QUOTE_LIMITS.descMax),
+  projectGoals: z.string().max(QUOTE_LIMITS.goalsMax).optional(),
   budget: z.string().max(100),
   deadline: z.string().max(100).optional(),
   firstName: z.string().min(1).max(100),

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { track } from "@/lib/tracking";
+import { QUOTE_LIMITS } from "@/lib/quote-limits";
 import { btnDark, btnGhost, btnPrimary, input, label } from "@/components/site/styles";
 
 type FormData = {
@@ -70,10 +71,19 @@ export default function QuoteForm({ locale }: { locale: string }) {
   const nextStep = () => setStep(s => Math.min(s + 1, TOTAL_STEPS));
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
+  // Le minimum se compte sans les espaces de bord, le maximum sur le texte brut (comme l'API)
+  const descLen = data.projectDesc.trim().length;
+  const descTooShort = descLen < QUOTE_LIMITS.descMin;
+  const descTooLong = data.projectDesc.length > QUOTE_LIMITS.descMax;
+  const goalsTooLong = data.projectGoals.length > QUOTE_LIMITS.goalsMax;
+  const chars = fr ? "caractères" : "characters";
+  const maxCounter = (length: number, max: number) =>
+    `${length.toLocaleString(locale)} / ${max.toLocaleString(locale)} ${chars} maximum`;
+
   // Validation par étape : empêche d'avancer/envoyer avec des données invalides
   const canProceed = () => {
     if (step === 1) return data.serviceType !== "";
-    if (step === 2) return data.projectName.trim() !== "" && data.projectDesc.trim().length >= 10;
+    if (step === 2) return data.projectName.trim() !== "" && !descTooShort && !descTooLong && !goalsTooLong;
     if (step === 3) return data.budget !== "";
     return true;
   };
@@ -83,20 +93,28 @@ export default function QuoteForm({ locale }: { locale: string }) {
       ? {
           serviceType: "type de service",
           projectName: "nom du projet",
-          projectDesc: "description du projet (min. 10 caractères)",
+          projectDesc: "description du projet",
+          projectGoals: "objectifs principaux",
           budget: "budget",
+          deadline: "délai",
           firstName: "prénom",
           lastName: "nom",
           email: "email",
+          phone: "téléphone",
+          company: "entreprise",
         }
       : {
           serviceType: "service type",
           projectName: "project name",
-          projectDesc: "project description (min. 10 characters)",
+          projectDesc: "project description",
+          projectGoals: "main objectives",
           budget: "budget",
+          deadline: "deadline",
           firstName: "first name",
           lastName: "last name",
           email: "email",
+          phone: "phone",
+          company: "company",
         };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,9 +158,14 @@ export default function QuoteForm({ locale }: { locale: string }) {
             const fields = [
               ...new Set(
                 j.details
-                  .map((d: { path?: string[] }) => {
+                  .map((d: { path?: string[]; code?: string; minimum?: number; maximum?: number }) => {
                     const key = d?.path?.[0];
-                    return key ? fieldLabels[key] ?? key : null;
+                    if (!key) return null;
+                    const name = fieldLabels[key] ?? key;
+                    // Précise la limite réellement dépassée (trop long ≠ trop court)
+                    if (d.code === "too_big") return `${name} (max. ${d.maximum} ${chars})`;
+                    if (d.code === "too_small" && (d.minimum ?? 0) > 1) return `${name} (min. ${d.minimum} ${chars})`;
+                    return name;
                   })
                   .filter(Boolean)
               ),
@@ -245,15 +268,20 @@ export default function QuoteForm({ locale }: { locale: string }) {
           <div>
             <label htmlFor="quote-desc" className={label}>{t("projectDesc")} *</label>
             <textarea id="quote-desc" required rows={4} value={data.projectDesc} onChange={(e) => update("projectDesc", e.target.value)} className={cn(input, "resize-none")} />
-            <p className={cn("mt-1.5 text-[13px]", data.projectDesc.trim().length > 0 && data.projectDesc.trim().length < 10 ? "text-red-600" : "text-muted")}>
-              {locale === "fr"
-                ? `${data.projectDesc.trim().length} / 10 caractères minimum`
-                : `${data.projectDesc.trim().length} / 10 characters minimum`}
+            <p className={cn("mt-1.5 text-[13px]", (descLen > 0 && descTooShort) || descTooLong ? "text-red-600" : "text-muted")}>
+              {descTooShort
+                ? `${descLen} / ${QUOTE_LIMITS.descMin} ${chars} minimum`
+                : maxCounter(data.projectDesc.length, QUOTE_LIMITS.descMax)}
             </p>
           </div>
           <div>
             <label htmlFor="quote-goals" className={label}>{t("projectGoals")}</label>
             <textarea id="quote-goals" rows={3} value={data.projectGoals} onChange={(e) => update("projectGoals", e.target.value)} className={cn(input, "resize-none")} />
+            {data.projectGoals.length > 0 && (
+              <p className={cn("mt-1.5 text-[13px]", goalsTooLong ? "text-red-600" : "text-muted")}>
+                {maxCounter(data.projectGoals.length, QUOTE_LIMITS.goalsMax)}
+              </p>
+            )}
           </div>
         </div>
       )}
