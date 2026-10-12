@@ -11,7 +11,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://kelenix.com";
 // (services, FAQ, chiffres, coordonnées) : l'assistant suit le site sans texte à maintenir ici.
 export const kelenix: Tenant = {
   id: "kelenix",
-  model: process.env.AGENT_MODEL || "claude-opus-5-5",
+  // Haiku 5.5 : rapide et économique, choisi par Lionel. AGENT_MODEL permet d'en essayer un autre.
+  model: process.env.AGENT_MODEL || "claude-haiku-5-5",
 
   leadOptions: (locale) => ({
     categories: QUOTE_SERVICES.map((service) => ({ value: service.value, label: service[locale] })),
