@@ -21,7 +21,7 @@ export default async function AdminFaqPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader title="FAQ" lead={`${faqs.length} question${faqs.length > 1 ? "s" : ""} sur la page publique /faq`}>
         <AddLink href="/admin/faq/new">Nouvelle question</AddLink>
       </PageHeader>

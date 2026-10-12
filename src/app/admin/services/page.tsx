@@ -13,7 +13,7 @@ export default async function AdminServicesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader title="Services" lead={`${services.length} service${services.length > 1 ? "s" : ""}, dans l'ordre d'affichage du site`}>
         <AddLink href="/admin/services/new">Nouveau service</AddLink>
       </PageHeader>

@@ -11,7 +11,7 @@ export default async function AdminPartnersPage() {
   const newCount = requests.filter((r) => r.status === "NEW").length;
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader
         title="Partenaires"
         lead={`${requests.length} demande${requests.length > 1 ? "s" : ""} de partenariat${newCount > 0 ? `, dont ${newCount} à lire` : ""}`}

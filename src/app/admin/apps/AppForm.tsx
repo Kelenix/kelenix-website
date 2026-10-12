@@ -30,7 +30,7 @@ export default function AppForm({ app }: { app?: App }) {
   const field = "w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10";
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-line bg-white p-5 sm:p-8 max-w-lg space-y-5">
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-line bg-white p-5 sm:p-8 max-w-2xl space-y-5">
       {error && <p className="text-red-500 text-sm bg-red-50 px-4 py-3 rounded-xl">{error}</p>}
 
       <div>

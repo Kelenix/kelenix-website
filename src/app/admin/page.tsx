@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-7xl">
+    <div>
       <div className="mb-6 sm:mb-8">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">{now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className={pageTitle}>{firstName ? `Bonjour ${firstName}` : "Tableau de bord"}</h1>

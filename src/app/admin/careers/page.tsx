@@ -18,7 +18,7 @@ export default async function AdminCareersPage({ searchParams }: { searchParams:
   const openJobs = jobs.filter((job) => job.published).length;
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader
         title="Carrières"
         lead={

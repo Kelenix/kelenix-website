@@ -13,7 +13,7 @@ export default async function AdminBlogPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader title="Blog" lead={`${posts.length} article${posts.length > 1 ? "s" : ""}`}>
         <AddLink href="/admin/blog/new">Nouvel article</AddLink>
       </PageHeader>

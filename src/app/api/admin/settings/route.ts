@@ -10,7 +10,8 @@ export async function PUT(request: Request) {
   }
   try {
     const body = await request.json();
-    const updates = Object.entries(body as Record<string, string>);
+    // Le numéro WhatsApp sert à construire un lien wa.me, qui n'accepte que des chiffres.
+    const updates = Object.entries(body as Record<string, string>).map(([key, value]) => [key, key === "company_whatsapp" ? value.replace(/\D/g, "") : value] as const);
 
     await Promise.all(
       updates.map(([key, value]) =>

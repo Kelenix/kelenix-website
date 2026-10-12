@@ -13,7 +13,7 @@ export default async function AdminTestimonialsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader title="Témoignages" lead={`${testimonials.length} témoignage${testimonials.length > 1 ? "s" : ""}`}>
         <AddLink href="/admin/testimonials/new">Nouveau témoignage</AddLink>
       </PageHeader>

@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react";
 export default async function NewTestimonialPage() {
   await requireAuth("MODERATOR");
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       <div className="mb-8">
         <Link href="/admin/testimonials" className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-navy">
           <ChevronLeft size={16} /> Retour aux témoignages

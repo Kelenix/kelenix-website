@@ -10,7 +10,7 @@ export default async function AdminAppsPage() {
   const apps = await prisma.mobileApp.findMany({ orderBy: { order: "asc" } });
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader title="Applications mobiles" lead={`${apps.length} sur 10 applications`}>
         {apps.length < 10 && <AddLink href="/admin/apps/new">Nouvelle app</AddLink>}
       </PageHeader>

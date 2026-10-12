@@ -158,7 +158,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
   const count = (status: string) => prospects.filter((p) => p.status === status).length;
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader
         title="Prospection"
         lead={`${prospects.length} entreprise${prospects.length > 1 ? "s" : ""} · ${count("READY")} brouillon${count("READY") > 1 ? "s" : ""} à relire · ${count("SENT")} envoyé${count("SENT") > 1 ? "s" : ""}`}

@@ -18,7 +18,7 @@ export default async function AdminAboutPage() {
   const data = Object.fromEntries(settings.map(s => [s.key, s.value]));
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div>
       <div className="mb-8">
         <h1 className="font-display text-[1.85rem] font-medium leading-[1.1] tracking-[-0.025em] text-navy sm:text-[2.25rem]">Page À propos</h1>
         <p className="mt-1.5 text-sm text-muted">Gérez le contenu de la page À propos</p>

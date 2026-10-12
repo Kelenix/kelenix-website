@@ -21,40 +21,43 @@ export default async function PartnerDetailPage({ params }: Props) {
   const isNew = req.status === "NEW";
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       {/* Ouvrir la fiche vaut lecture : la demande n'est plus « nouvelle ». */}
       {isNew && <MarkAsRead url={api} />}
       <PageHeader title={req.company} lead="Demande de partenariat" back={{ href: "/admin/partners", label: "Partenaires" }} />
 
-      <div className={`${card} space-y-6 p-5 sm:p-7`}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className={cardTitle}>Informations</h2>
-          <StatusSelect url={api} current={isNew ? "READ" : req.status} />
-        </div>
+      {/* Grand écran : les informations à gauche, le message à droite. */}
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <div className={`${card} space-y-6 p-5 sm:p-7`}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className={cardTitle}>Informations</h2>
+            <StatusSelect url={api} current={isNew ? "READ" : req.status} />
+          </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Fact icon={Building2} label="Entreprise">{req.company}</Fact>
-          <Fact icon={User} label="Contact">{req.name}</Fact>
-          <Fact icon={Mail} label="E-mail">{req.email}</Fact>
-          <Fact icon={Phone} label="Téléphone">{req.phone || "—"}</Fact>
-          <Fact icon={Tag} label="Type de partenariat">{req.partnerType || "—"}</Fact>
-          <Fact icon={Calendar} label="Reçue le">{formatDate(req.createdAt, "fr")}</Fact>
-        </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Fact icon={Building2} label="Entreprise">{req.company}</Fact>
+            <Fact icon={User} label="Contact">{req.name}</Fact>
+            <Fact icon={Mail} label="E-mail">{req.email}</Fact>
+            <Fact icon={Phone} label="Téléphone">{req.phone || "—"}</Fact>
+            <Fact icon={Tag} label="Type de partenariat">{req.partnerType || "—"}</Fact>
+            <Fact icon={Calendar} label="Reçue le">{formatDate(req.createdAt, "fr")}</Fact>
+          </div>
 
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-navy">Message</h3>
-          <div className="whitespace-pre-wrap rounded-xl bg-mist p-4 text-sm leading-relaxed text-navy/90">{req.message}</div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <a href={`mailto:${req.email}?subject=${encodeURIComponent("Votre demande de partenariat — Kelenix Tech")}`} className={btnPrimary}>
-            <Mail size={15} /> Répondre
-          </a>
-          {req.phone && (
-            <a href={`tel:${req.phone}`} className={btnGhost}>
-              <Phone size={15} /> Appeler
+          <div className="flex flex-wrap gap-2">
+            <a href={`mailto:${req.email}?subject=${encodeURIComponent("Votre demande de partenariat — Kelenix Tech")}`} className={btnPrimary}>
+              <Mail size={15} /> Répondre
             </a>
-          )}
+            {req.phone && (
+              <a href={`tel:${req.phone}`} className={btnGhost}>
+                <Phone size={15} /> Appeler
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div className={`${card} p-5 sm:p-7`}>
+          <h2 className={`${cardTitle} mb-4`}>Message</h2>
+          <div className="whitespace-pre-wrap rounded-xl bg-mist p-4 text-sm leading-relaxed text-navy/90">{req.message}</div>
         </div>
       </div>
     </div>

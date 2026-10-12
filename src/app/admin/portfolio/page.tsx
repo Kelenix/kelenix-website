@@ -13,7 +13,7 @@ export default async function AdminPortfolioPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader title="Portfolio" lead={`${projects.length} projet${projects.length > 1 ? "s" : ""}`}>
         <AddLink href="/admin/portfolio/new">Nouveau projet</AddLink>
       </PageHeader>

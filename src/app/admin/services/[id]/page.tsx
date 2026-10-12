@@ -15,7 +15,7 @@ export default async function EditServicePage({ params }: Props) {
   if (!service) notFound();
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div>
       <div className="mb-8">
         <Link href="/admin/services" className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-navy">
           <ChevronLeft size={16} /> Retour aux services

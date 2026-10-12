@@ -16,7 +16,7 @@ export default async function AdminMessagesPage({ searchParams }: Props) {
   ]);
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader title="Messages et devis" lead="Ouvrir un message le marque comme lu. Changez son état une fois la réponse envoyée." />
       {/* « open » vient d'un clic sur une notification : l'élément est déplié d'entrée. */}
       <MessagesClient key={`${tab}-${open}`} messages={messages} quotes={quotes} activeTab={tab === "devis" ? "devis" : "messages"} openId={open} />

@@ -21,39 +21,42 @@ export default async function ApplicationDetailPage({ params }: Props) {
   const isNew = app.status === "NEW";
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       {/* Ouvrir la fiche vaut lecture : la candidature n'est plus « nouvelle ». */}
       {isNew && <MarkAsRead url={api} />}
       <PageHeader title={app.name} lead={app.position || "Candidature spontanée"} back={{ href: "/admin/careers?tab=applications", label: "Candidatures" }} />
 
-      <div className={`${card} space-y-6 p-5 sm:p-7`}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className={cardTitle}>Informations du candidat</h2>
-          <StatusSelect url={api} current={isNew ? "READ" : app.status} />
-        </div>
+      {/* Grand écran : les informations à gauche, le message à droite. */}
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <div className={`${card} space-y-6 p-5 sm:p-7`}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className={cardTitle}>Informations du candidat</h2>
+            <StatusSelect url={api} current={isNew ? "READ" : app.status} />
+          </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Fact icon={User} label="Nom">{app.name}</Fact>
-          <Fact icon={Mail} label="E-mail">{app.email}</Fact>
-          <Fact icon={Phone} label="Téléphone">{app.phone || "—"}</Fact>
-          <Fact icon={Briefcase} label="Poste visé">{app.position || "Candidature spontanée"}</Fact>
-          <Fact icon={Calendar} label="Reçue le">{formatDate(app.createdAt, "fr")}</Fact>
-        </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Fact icon={User} label="Nom">{app.name}</Fact>
+            <Fact icon={Mail} label="E-mail">{app.email}</Fact>
+            <Fact icon={Phone} label="Téléphone">{app.phone || "—"}</Fact>
+            <Fact icon={Briefcase} label="Poste visé">{app.position || "Candidature spontanée"}</Fact>
+            <Fact icon={Calendar} label="Reçue le">{formatDate(app.createdAt, "fr")}</Fact>
+          </div>
 
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-navy">Message de motivation</h3>
-          <div className="whitespace-pre-wrap rounded-xl bg-mist p-4 text-sm leading-relaxed text-navy/90">{app.message}</div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <a href={`mailto:${app.email}?subject=${encodeURIComponent("Votre candidature chez Kelenix Tech")}`} className={btnPrimary}>
-            <Mail size={15} /> Répondre
-          </a>
-          {app.phone && (
-            <a href={`tel:${app.phone}`} className={btnGhost}>
-              <Phone size={15} /> Appeler
+          <div className="flex flex-wrap gap-2">
+            <a href={`mailto:${app.email}?subject=${encodeURIComponent("Votre candidature chez Kelenix Tech")}`} className={btnPrimary}>
+              <Mail size={15} /> Répondre
             </a>
-          )}
+            {app.phone && (
+              <a href={`tel:${app.phone}`} className={btnGhost}>
+                <Phone size={15} /> Appeler
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div className={`${card} p-5 sm:p-7`}>
+          <h2 className={`${cardTitle} mb-4`}>Message de motivation</h2>
+          <div className="whitespace-pre-wrap rounded-xl bg-mist p-4 text-sm leading-relaxed text-navy/90">{app.message}</div>
         </div>
       </div>
     </div>

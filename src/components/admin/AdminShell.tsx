@@ -251,7 +251,10 @@ function Shell({ pathname, children }: { pathname: string; children: React.React
         </Link>
       </header>
 
-      <main className="overflow-x-clip px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-14 lg:pt-10">{children}</main>
+      {/* Largeur commune à toutes les pages : elles remplissent l'écran, sans s'étirer à l'infini sur un très grand moniteur. */}
+      <main className="overflow-x-clip px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-14 lg:pt-10">
+        <div className="mx-auto max-w-[90rem]">{children}</div>
+      </main>
 
       {/* Téléphone : barre du bas */}
       <nav aria-label="Navigation principale" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">

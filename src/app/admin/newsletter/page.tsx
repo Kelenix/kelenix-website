@@ -19,7 +19,7 @@ export default async function AdminNewsletterPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <PageHeader title="Newsletter" lead={`${active} abonné${active > 1 ? "s" : ""} actif${active > 1 ? "s" : ""}`} />
 
       <div className="mb-5 grid grid-cols-3 gap-2.5 sm:gap-4">

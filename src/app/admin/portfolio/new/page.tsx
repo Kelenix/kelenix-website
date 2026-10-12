@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react";
 export default async function NewProjectPage() {
   await requireAuth("MODERATOR");
   return (
-    <div className="max-w-4xl mx-auto">
+    <div>
       <div className="mb-8">
         <Link href="/admin/portfolio" className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-navy">
           <ChevronLeft size={16} /> Retour au portfolio
