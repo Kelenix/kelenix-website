@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { anthropic, filteredWebTools } from "./client";
+import { normalizePhone } from "./normalize";
 import type { CompanyKnowledge } from "./types";
 
 // Agent sortant : pour une entreprise à prospecter, il lit son site et prépare un e-mail personnalisé.
@@ -26,6 +27,7 @@ export type OutreachDraft = {
   summary: string;
   angle: string;
   emailFound: string | null;
+  phoneFound: string | null;
   subject: string;
   body: string;
 };
@@ -53,10 +55,11 @@ const OUTPUT_SCHEMA = {
     summary: { type: "string", description: "En français, deux à quatre phrases pour l'équipe : ce que fait l'entreprise, pour qui, et ce que tu as lu d'utile." },
     angle: { type: "string", description: "En français, une ou deux phrases : la raison précise de la contacter, et le fait lu sur son site qui la justifie." },
     email_found: { type: "string", description: "Adresse e-mail de contact lue sur le site, ou chaîne vide." },
+    phone_found: { type: "string", description: "Numéro de téléphone lu sur le site, tel qu'il y est écrit, ou chaîne vide." },
     subject: { type: "string", description: "Objet de l'e-mail, dans la langue demandée." },
     body: { type: "string", description: "Corps de l'e-mail dans la langue demandée, de la formule d'appel à la question finale, sans formule de politesse ni signature." },
   },
-  required: ["site_read", "summary", "angle", "email_found", "subject", "body"],
+  required: ["site_read", "summary", "angle", "email_found", "phone_found", "subject", "body"],
   additionalProperties: false,
 };
 
@@ -65,6 +68,7 @@ const output = z.object({
   summary: z.string().trim().min(1),
   angle: z.string().trim().min(1),
   email_found: z.string().trim(),
+  phone_found: z.string().trim(),
   subject: z.string().trim().min(1).max(200),
   body: z.string().trim().min(20),
 });
@@ -158,6 +162,7 @@ export async function prepareOutreach(input: { model: string; company: CompanyKn
     summary: draft.summary,
     angle: draft.angle,
     emailFound: emailFound.success ? emailFound.data.toLowerCase() : null,
+    phoneFound: normalizePhone(draft.phone_found),
     subject: draft.subject,
     body: `${draft.body}\n\n${closing.regards}\n${sender.name}\n${sender.company} · ${sender.website}\n\n${closing.optOut}`,
   };

@@ -3,12 +3,18 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { agentConfigured } from "@/lib/agent/config";
+import { normalizeCountry } from "@/lib/agent/countries";
 import { findCompanies, type DiscoveryEvent } from "@/lib/agent/discovery";
-import { failureMessage, websiteHost } from "@/lib/agent/prospects";
+import { websiteHost } from "@/lib/agent/normalize";
+import { failureMessage } from "@/lib/agent/prospects";
 import { DEFAULT_TENANT, getTenant } from "@/lib/agent/tenants";
 
 const schema = z.object({
-  target: z.string().trim().min(10).max(1000),
+  target: z.string().trim().min(3).max(1000),
+  country: z.string().nullish(),
+  city: z.string().trim().max(100).nullish(),
+  requireEmail: z.boolean().default(false),
+  requirePhone: z.boolean().default(false),
   count: z.number().int().min(3).max(15),
 });
 
@@ -21,8 +27,10 @@ export async function POST(request: Request) {
   if (!agentConfigured()) return NextResponse.json({ error: "Clé d'API Claude absente sur le serveur (ANTHROPIC_API_KEY)." }, { status: 503 });
 
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Décrivez la cible en une phrase au moins." }, { status: 400 });
-  const { target, count } = parsed.data;
+  if (!parsed.success) return NextResponse.json({ error: "Indiquez le type d'entreprise recherché." }, { status: 400 });
+  const { target, count, requireEmail, requirePhone } = parsed.data;
+  const country = normalizeCountry(parsed.data.country);
+  const city = parsed.data.city || null;
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
@@ -40,7 +48,18 @@ export async function POST(request: Request) {
           prisma.prospect.findMany({ where: { tenant: tenant.id }, select: { website: true } }),
         ]);
         const knownHosts = existing.map((prospect) => websiteHost(prospect.website)).filter((host): host is string => Boolean(host));
-        const discovery = await findCompanies({ model: tenant.model, company, target, count, knownHosts, onSearch: (query) => emit({ type: "search", query }) });
+        const discovery = await findCompanies({
+          model: tenant.model,
+          company,
+          target,
+          country,
+          city,
+          requireEmail,
+          requirePhone,
+          count,
+          knownHosts,
+          onSearch: (query) => emit({ type: "search", query }),
+        });
         emit({ type: "result", ...discovery });
       } catch (error) {
         console.error("[agent] Recherche d'entreprises impossible :", error);

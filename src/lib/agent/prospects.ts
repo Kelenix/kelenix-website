@@ -1,31 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { prepareOutreach, type OutreachLanguage } from "./outreach";
 import { getTenant } from "./tenants";
 
-// Prospects de l'agent sortant : mise au propre de ce que l'équipe saisit, et préparation d'un brouillon.
-
-/** « exemple.fr » → « https://exemple.fr ». null si ce n'est pas une adresse de site publique. */
-export function normalizeWebsite(value: string | null | undefined): string | null {
-  const raw = value?.trim();
-  if (!raw) return null;
-  try {
-    const url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
-    if (!["http:", "https:"].includes(url.protocol) || !url.hostname.includes(".")) return null;
-    return url.toString();
-  } catch {
-    return null;
-  }
-}
-
-export function normalizeEmail(value: string | null | undefined): string | null {
-  const parsed = z.string().trim().toLowerCase().email().safeParse(value ?? "");
-  return parsed.success ? parsed.data : null;
-}
-
-/** Nom de domaine sans « www. », pour repérer deux fois la même entreprise. */
-export const websiteHost = (website: string | null) => (website ? new URL(website).hostname.replace(/^www\./, "") : null);
+// Prospects de l'agent sortant : préparation d'un brouillon et messages d'échec.
 
 // Message montré dans l'admin quand l'agent échoue (préparation d'un brouillon, recherche d'entreprises).
 export function failureMessage(error: unknown) {
@@ -60,7 +38,17 @@ export async function prepareProspect(id: string, senderName: string) {
     });
     await prisma.prospect.update({
       where: { id },
-      data: { status: "READY", summary: draft.summary, angle: draft.angle, emailFound: draft.emailFound, subject: draft.subject, body: draft.body, error: null },
+      data: {
+        status: "READY",
+        summary: draft.summary,
+        angle: draft.angle,
+        emailFound: draft.emailFound,
+        // Le téléphone lu sur le site complète la fiche, sans remplacer un numéro déjà saisi.
+        ...(!prospect.phone && draft.phoneFound && { phone: draft.phoneFound }),
+        subject: draft.subject,
+        body: draft.body,
+        error: null,
+      },
     });
   } catch (error) {
     console.error("[agent] Préparation du prospect impossible :", error);

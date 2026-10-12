@@ -3,8 +3,9 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-error";
+import { normalizeCountry } from "@/lib/agent/countries";
 import { DEFAULT_TENANT } from "@/lib/agent/tenants";
-import { normalizeEmail, normalizeWebsite, websiteHost } from "@/lib/agent/prospects";
+import { normalizeEmail, normalizePhone, normalizeWebsite, websiteHost } from "@/lib/agent/normalize";
 
 const schema = z.object({
   prospects: z
@@ -13,7 +14,10 @@ const schema = z.object({
         company: z.string().trim().min(1).max(200),
         website: z.string().max(300).nullish(),
         email: z.string().max(200).nullish(),
+        phone: z.string().max(40).nullish(),
         contactName: z.string().trim().max(200).nullish(),
+        country: z.string().max(10).nullish(),
+        city: z.string().trim().max(100).nullish(),
         language: z.enum(["fr", "it", "en"]).default("fr"),
         notes: z.string().trim().max(5000).nullish(),
       })
@@ -49,7 +53,10 @@ export async function POST(request: Request) {
         company: input.company,
         website: normalizeWebsite(input.website),
         email: normalizeEmail(input.email),
+        phone: normalizePhone(input.phone),
         contactName: input.contactName || null,
+        country: normalizeCountry(input.country),
+        city: input.city || null,
         language: input.language,
         notes: input.notes || null,
       };

@@ -235,6 +235,10 @@ model Prospect {
   website     String?
   contactName String?
   email       String?
+  phone       String?
+  // Pays (code ISO à deux lettres, « FR », « IT »…) et ville, pour filtrer la liste.
+  country     String?
+  city        String?
   // Langue de l'e-mail : fr, it ou en.
   language    String         @default("fr")
   // Ce que l'équipe sait déjà (contexte, angle souhaité) : donné à l'agent avec le site.

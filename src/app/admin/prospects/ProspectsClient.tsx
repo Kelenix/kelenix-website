@@ -1,45 +1,50 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Copy, ExternalLink, Mail, Plus, RefreshCw, Search, Sparkles, Target, Trash2, Upload } from "lucide-react";
+import { Check, ChevronDown, Copy, ExternalLink, Mail, Phone, Plus, RefreshCw, Search, Sparkles, Target, Trash2, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Discovery, DiscoveryEvent } from "@/lib/agent/discovery";
+import { countryLanguage, countryName, placeLabel } from "@/lib/agent/countries";
 import { Avatar, Empty, PageHeader } from "@/components/admin/ui";
 import { btnGhost, btnPrimary, btnSmall, btnSmallDanger, card, input, label, pill } from "@/components/admin/styles";
+import Discover from "./Discover";
+import { CountrySelect, LANGUAGES, LanguageSelect, STATUS, host, type Language, type Prospect } from "./shared";
 
-type Language = "fr" | "it" | "en";
-
-type Prospect = {
-  id: string;
-  company: string;
-  website: string | null;
-  contactName: string | null;
-  email: string | null;
-  language: string;
-  notes: string | null;
-  status: string;
-  summary: string | null;
-  angle: string | null;
-  emailFound: string | null;
-  subject: string | null;
-  body: string | null;
-  error: string | null;
-};
-
-const LANGUAGES: Record<Language, string> = { fr: "Français", it: "Italien", en: "Anglais" };
-
-const STATUS: Record<string, { label: string; tone: string }> = {
-  NEW: { label: "À préparer", tone: "bg-mist text-muted" },
-  PREPARING: { label: "En préparation…", tone: "bg-azure/10 text-azure" },
-  READY: { label: "Brouillon à relire", tone: "bg-gold/25 text-navy" },
-  FAILED: { label: "Échec", tone: "bg-red-50 text-red-700" },
-  SENT: { label: "Envoyé", tone: "bg-emerald-100 text-emerald-800" },
-  REPLIED: { label: "A répondu", tone: "bg-emerald-100 text-emerald-800" },
-  DECLINED: { label: "Pas intéressé", tone: "bg-slate-100 text-slate-500" },
-  DO_NOT_CONTACT: { label: "Ne plus contacter", tone: "bg-slate-100 text-slate-500" },
-};
 // États que l'on choisit à la main une fois l'e-mail parti.
 const FOLLOW_UP = ["SENT", "REPLIED", "DECLINED", "DO_NOT_CONTACT"];
+
+// Onglets de la liste : où en est chaque entreprise.
+const GROUPS = [
+  { key: "all", label: "Toutes", statuses: null },
+  { key: "todo", label: "À préparer", statuses: ["NEW", "PREPARING", "FAILED"] },
+  { key: "ready", label: "À relire", statuses: ["READY"] },
+  { key: "sent", label: "Envoyés", statuses: ["SENT"] },
+  { key: "replied", label: "Réponses", statuses: ["REPLIED"] },
+  { key: "closed", label: "Clos", statuses: ["DECLINED", "DO_NOT_CONTACT"] },
+] as const;
+type GroupKey = (typeof GROUPS)[number]["key"];
+
+const CONTACT_FILTERS = {
+  "": "Toutes les coordonnées",
+  email: "Avec e-mail",
+  "no-email": "Sans e-mail",
+  phone: "Avec téléphone",
+  "no-phone": "Sans téléphone",
+  none: "Ni e-mail ni téléphone",
+} as const;
+type ContactFilter = keyof typeof CONTACT_FILTERS;
+
+const hasContact: Record<ContactFilter, (p: Prospect) => boolean> = {
+  "": () => true,
+  email: (p) => Boolean(p.email),
+  "no-email": (p) => !p.email,
+  phone: (p) => Boolean(p.phone),
+  "no-phone": (p) => !p.phone,
+  none: (p) => !p.email && !p.phone,
+};
+
+const PHONE_SHAPE = /^[+(\d][\d\s()./-]*$/;
+const isPhone = (cell: string) => PHONE_SHAPE.test(cell) && cell.replace(/\D/g, "").length >= 6;
+const tel = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
 async function api<T>(path: string, method: string, body?: unknown): Promise<T> {
   const response = await fetch(`/api/admin/prospects${path}`, {
@@ -52,9 +57,9 @@ async function api<T>(path: string, method: string, body?: unknown): Promise<T> 
   return json as T;
 }
 
-// Liste collée ou importée : une entreprise par ligne, le nom d'abord. Les autres colonnes sont
-// reconnues à leur forme (une adresse e-mail, un site, sinon le nom du contact), dans n'importe quel ordre.
-function parseList(text: string, language: Language) {
+// Liste collée ou importée : une entreprise par ligne, le nom d'abord. Les autres colonnes sont reconnues
+// à leur forme (une adresse e-mail, un téléphone, un site, sinon le nom du contact), dans n'importe quel ordre.
+function parseList(text: string) {
   const separator = text.includes(";") ? ";" : text.includes("\t") ? "\t" : ",";
   return text
     .split(/\r?\n/)
@@ -62,16 +67,15 @@ function parseList(text: string, language: Language) {
     .filter(([company], i) => company && !(i === 0 && /^(entreprise|nom|soci[ée]t[ée]|company|name)$/i.test(company)))
     .map(([company, ...cells]) => {
       const email = cells.find((cell) => cell.includes("@"));
-      const website = cells.find((cell) => cell !== email && /^\S+\.\S+$/.test(cell));
-      const contactName = cells.find((cell) => cell && cell !== email && cell !== website);
-      return { company, email, website, contactName, language };
+      const phone = cells.find((cell) => cell !== email && isPhone(cell));
+      const website = cells.find((cell) => cell !== email && cell !== phone && /^\S+\.\S+$/.test(cell));
+      const contactName = cells.find((cell) => cell && cell !== email && cell !== phone && cell !== website);
+      return { company, email, phone, website, contactName };
     });
 }
 
-const host = (website: string) => website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
-
-// Agent sortant : on donne des entreprises, l'agent lit leur site et prépare un e-mail personnalisé.
-// Rien ne part d'ici : chaque brouillon se relit, se corrige, puis s'ouvre dans la messagerie de l'utilisateur.
+// Agent sortant : on donne des entreprises (ou on les fait chercher), l'agent lit leur site et prépare un e-mail
+// personnalisé. Rien ne part d'ici : chaque brouillon se relit, se corrige, puis s'ouvre dans la messagerie de l'utilisateur.
 export default function ProspectsClient({ initial, configured }: { initial: Prospect[]; configured: boolean }) {
   const [prospects, setProspects] = useState(initial);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -81,6 +85,13 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
   // Brouillons demandés d'un coup : préparés un par un, pour ne pas saturer l'API.
   const [queue, setQueue] = useState<string[]>([]);
   const starting = useRef(false);
+
+  // Filtres de la liste.
+  const [group, setGroup] = useState<GroupKey>("all");
+  const [query, setQuery] = useState("");
+  // "" : tous les pays ; "none" : pays non précisé ; sinon un code pays.
+  const [country, setCountry] = useState("");
+  const [contact, setContact] = useState<ContactFilter>("");
 
   const replace = (fresh: Prospect) => setProspects((current) => current.map((p) => (p.id === fresh.id ? fresh : p)));
   const edit = (id: string, changes: Partial<Prospect>) => setProspects((current) => current.map((p) => (p.id === id ? { ...p, ...changes } : p)));
@@ -108,7 +119,6 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
   };
 
   const preparing = prospects.filter((p) => p.status === "PREPARING").length;
-  const waiting = prospects.filter((p) => p.status === "NEW");
 
   // Tant qu'un brouillon se prépare, on relit la liste : seuls les prospects qui viennent de finir
   // sont remplacés, pour ne pas écraser un texte en cours de correction.
@@ -158,6 +168,29 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
     api(`/${prospect.id}`, "DELETE").catch(fail);
   };
 
+  // Recherche, pays et coordonnées s'appliquent d'abord ; les onglets comptent ce qu'il reste dans chaque état.
+  const words = query.trim().toLowerCase();
+  const narrowed = prospects.filter(
+    (p) =>
+      (country === "none" ? !p.country : !country || p.country === country) &&
+      hasContact[contact](p) &&
+      (!words || [p.company, p.website, p.email, p.phone, p.contactName, p.city].some((value) => value?.toLowerCase().includes(words)))
+  );
+  const inGroup = (key: GroupKey) => {
+    const statuses: readonly string[] | null = GROUPS.find((g) => g.key === key)!.statuses;
+    return statuses ? narrowed.filter((p) => statuses.includes(p.status)) : narrowed;
+  };
+  const visible = inGroup(group);
+  const waiting = visible.filter((p) => p.status === "NEW");
+  const filtered = group !== "all" || Boolean(words) || Boolean(country) || Boolean(contact);
+  const resetFilters = () => {
+    setGroup("all");
+    setQuery("");
+    setCountry("");
+    setContact("");
+  };
+
+  const usedCountries = [...new Set(prospects.map((p) => p.country).filter((code): code is string => Boolean(code)))].sort((a, b) => countryName(a).localeCompare(countryName(b), "fr"));
   const count = (status: string) => prospects.filter((p) => p.status === status).length;
 
   return (
@@ -211,30 +244,100 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
       {discovering && <Discover onAdd={add} onClose={() => setDiscovering(false)} />}
 
       {prospects.length === 0 ? (
-        <Empty icon={Target}>Aucune entreprise pour l&apos;instant. Ajoutez-en une avec son site web : l&apos;agent le lira et vous préparera un e-mail.</Empty>
+        <Empty icon={Target}>Aucune entreprise pour l&apos;instant. Ajoutez-en une avec son site web, ou laissez l&apos;agent en chercher : il lira leur site et vous préparera un e-mail.</Empty>
       ) : (
-        <ul className="space-y-3">
-          {prospects.map((prospect) => {
-            const open = expanded === prospect.id;
-            const status = STATUS[prospect.status] ?? STATUS.NEW;
-            return (
-              <li key={prospect.id} className={card}>
-                <button type="button" onClick={() => setExpanded(open ? null : prospect.id)} aria-expanded={open} className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left sm:gap-4 sm:px-5">
-                  <Avatar name={prospect.company} tone={prospect.status === "READY" ? "gold" : "azure"} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-navy">{prospect.company}</span>
-                    <span className="mt-0.5 block truncate text-xs text-muted">
-                      {[prospect.website && host(prospect.website), prospect.email ?? "e-mail manquant", LANGUAGES[prospect.language as Language]].filter(Boolean).join(" · ")}
-                    </span>
-                  </span>
-                  <span className={cn(pill, "shrink-0", status.tone)}>{status.label}</span>
-                  <ChevronDown size={16} className={cn("shrink-0 text-muted transition-transform", open && "rotate-180")} />
+        <>
+          <div className="mb-4 space-y-3">
+            <div className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-white p-1">
+              {GROUPS.map(({ key, label: name }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setGroup(key)}
+                  aria-pressed={group === key}
+                  className={cn("flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors", group === key ? "bg-navy text-white" : "text-muted hover:text-navy")}
+                >
+                  {name}
+                  <span className={cn("text-xs font-medium", group === key ? "text-white/70" : "text-muted")}>{inGroup(key).length}</span>
                 </button>
-                {open && <Details prospect={prospect} configured={configured} edit={edit} save={save} prepare={prepare} remove={remove} />}
-              </li>
-            );
-          })}
-        </ul>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative min-w-52 flex-1">
+                <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Chercher un nom, un site, un e-mail, une ville…"
+                  aria-label="Chercher dans la liste"
+                  className={cn(input, "pl-10")}
+                />
+              </div>
+              <select value={country} onChange={(event) => setCountry(event.target.value)} aria-label="Filtrer par pays" className={cn(input, "w-auto")}>
+                <option value="">Tous les pays</option>
+                {usedCountries.map((code) => (
+                  <option key={code} value={code}>
+                    {countryName(code)}
+                  </option>
+                ))}
+                {prospects.some((p) => !p.country) && <option value="none">Pays non précisé</option>}
+              </select>
+              <select value={contact} onChange={(event) => setContact(event.target.value as ContactFilter)} aria-label="Filtrer par coordonnées" className={cn(input, "w-auto")}>
+                {Object.entries(CONTACT_FILTERS).map(([value, name]) => (
+                  <option key={value} value={value}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+              {filtered && (
+                <button type="button" onClick={resetFilters} className={btnSmall}>
+                  <X size={13} /> Effacer les filtres
+                </button>
+              )}
+            </div>
+            {filtered && (
+              <p className="text-xs text-muted">
+                {visible.length} entreprise{visible.length > 1 ? "s" : ""} sur {prospects.length}
+              </p>
+            )}
+          </div>
+
+          {visible.length === 0 ? (
+            <p className={cn(card, "px-6 py-10 text-center text-sm text-muted")}>Aucune entreprise ne correspond à ces filtres.</p>
+          ) : (
+            <ul className="space-y-3">
+              {visible.map((prospect) => {
+                const open = expanded === prospect.id;
+                const status = STATUS[prospect.status] ?? STATUS.NEW;
+                return (
+                  <li key={prospect.id} className={card}>
+                    <button type="button" onClick={() => setExpanded(open ? null : prospect.id)} aria-expanded={open} className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left sm:gap-4 sm:px-5">
+                      <Avatar name={prospect.company} tone={prospect.status === "READY" ? "gold" : "azure"} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold text-navy">{prospect.company}</span>
+                        <span className="mt-0.5 block truncate text-xs text-muted">
+                          {[
+                            placeLabel(prospect.city, prospect.country),
+                            prospect.website && host(prospect.website),
+                            prospect.email ?? "e-mail manquant",
+                            prospect.phone,
+                            LANGUAGES[prospect.language as Language],
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </span>
+                      </span>
+                      <span className={cn(pill, "shrink-0", status.tone)}>{status.label}</span>
+                      <ChevronDown size={16} className={cn("shrink-0 text-muted transition-transform", open && "rotate-180")} />
+                    </button>
+                    {open && <Details prospect={prospect} configured={configured} edit={edit} save={save} prepare={prepare} remove={remove} />}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );
@@ -242,21 +345,30 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
 
 function AddForm({ mode, setMode, onAdd }: { mode: "one" | "many"; setMode: (mode: "one" | "many" | null) => void; onAdd: (rows: unknown[]) => void }) {
   const [language, setLanguage] = useState<Language>("fr");
+  const [country, setCountry] = useState("");
   const [list, setList] = useState("");
-  const rows = mode === "many" ? parseList(list, language) : [];
+  const rows = mode === "many" ? parseList(list).map((row) => ({ ...row, language, country: country || null })) : [];
 
+  // Choisir un pays règle aussi la langue des e-mails ; elle reste modifiable.
+  const chooseCountry = (code: string) => {
+    setCountry(code);
+    if (code) setLanguage(countryLanguage(code));
+  };
+
+  const countryField = (
+    <div>
+      <label htmlFor="prospect-country" className={label}>
+        Pays
+      </label>
+      <CountrySelect id="prospect-country" value={country} onChange={chooseCountry} />
+    </div>
+  );
   const languageField = (
     <div>
       <label htmlFor="prospect-language" className={label}>
         Langue de l&apos;e-mail
       </label>
-      <select id="prospect-language" value={language} onChange={(event) => setLanguage(event.target.value as Language)} className={input}>
-        {Object.entries(LANGUAGES).map(([value, name]) => (
-          <option key={value} value={value}>
-            {name}
-          </option>
-        ))}
-      </select>
+      <LanguageSelect id="prospect-language" value={language} onChange={(value) => setLanguage(value as Language)} />
     </div>
   );
 
@@ -275,7 +387,7 @@ function AddForm({ mode, setMode, onAdd }: { mode: "one" | "many"; setMode: (mod
           onSubmit={(event) => {
             event.preventDefault();
             const data = Object.fromEntries(new FormData(event.currentTarget));
-            onAdd([{ ...data, language }]);
+            onAdd([{ ...data, language, country: country || null }]);
           }}
           className="grid gap-4 sm:grid-cols-2"
         >
@@ -298,11 +410,24 @@ function AddForm({ mode, setMode, onAdd }: { mode: "one" | "many"; setMode: (mod
             <input id="prospect-email" name="email" type="email" maxLength={200} className={input} />
           </div>
           <div>
+            <label htmlFor="prospect-phone" className={label}>
+              Téléphone
+            </label>
+            <input id="prospect-phone" name="phone" type="tel" maxLength={40} className={input} />
+          </div>
+          <div>
             <label htmlFor="prospect-contact" className={label}>
               Nom du contact
             </label>
             <input id="prospect-contact" name="contactName" maxLength={200} className={input} />
           </div>
+          <div>
+            <label htmlFor="prospect-city" className={label}>
+              Ville
+            </label>
+            <input id="prospect-city" name="city" maxLength={100} className={input} />
+          </div>
+          {countryField}
           {languageField}
           <div className="sm:col-span-2">
             <label htmlFor="prospect-notes" className={label}>
@@ -323,19 +448,20 @@ function AddForm({ mode, setMode, onAdd }: { mode: "one" | "many"; setMode: (mod
         <div className="grid gap-4">
           <div>
             <label htmlFor="prospect-list" className={label}>
-              Une entreprise par ligne : nom ; site web ; e-mail ; contact
+              Une entreprise par ligne : nom ; site web ; e-mail ; téléphone ; contact
             </label>
             <textarea
               id="prospect-list"
               rows={6}
               value={list}
               onChange={(event) => setList(event.target.value)}
-              placeholder={"Boulangerie Martin ; boulangerie-martin.fr ; contact@boulangerie-martin.fr\nGarage Rossi ; garagerossi.it"}
+              placeholder={"Boulangerie Martin ; boulangerie-martin.fr ; contact@boulangerie-martin.fr ; 04 72 00 00 00\nGarage Rossi ; garagerossi.it"}
               className={cn(input, "font-mono text-[13px]")}
             />
-            <p className="mt-1.5 text-xs text-muted">Seul le nom est obligatoire. Les colonnes d&apos;un fichier CSV exporté depuis un tableur conviennent aussi.</p>
+            <p className="mt-1.5 text-xs text-muted">Seul le nom est obligatoire, l&apos;ordre des autres colonnes est libre. Un fichier CSV exporté depuis un tableur convient aussi.</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {countryField}
             {languageField}
             <div>
               <span className={label}>Ou depuis un fichier</span>
@@ -354,170 +480,6 @@ function AddForm({ mode, setMode, onAdd }: { mode: "one" | "many"; setMode: (mod
             </button>
           </div>
         </div>
-      )}
-    </div>
-  );
-}
-
-// Recherche d'entreprises : on décrit la cible, l'agent cherche sur le web et propose une liste.
-// Rien n'est ajouté tout seul : on coche celles que l'on veut prospecter.
-function Discover({ onAdd, onClose }: { onAdd: (rows: unknown[]) => void; onClose: () => void }) {
-  const [target, setTarget] = useState("");
-  const [count, setCount] = useState(5);
-  const [language, setLanguage] = useState<Language>("fr");
-  const [busy, setBusy] = useState(false);
-  const [searches, setSearches] = useState<string[]>([]);
-  const [result, setResult] = useState<Discovery | null>(null);
-  const [picked, setPicked] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  const search = async () => {
-    setBusy(true);
-    setError(null);
-    setResult(null);
-    setSearches([]);
-    try {
-      const response = await fetch("/api/admin/prospects/discover", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ target, count }),
-      });
-      if (!response.ok || !response.body) throw new Error((await response.json().catch(() => null))?.error ?? "Une erreur est survenue.");
-      // Une ligne JSON par événement ; une ligne peut arriver en plusieurs morceaux.
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (!line) continue;
-          const event = JSON.parse(line) as DiscoveryEvent;
-          if (event.type === "search") setSearches((current) => [...current, event.query]);
-          else if (event.type === "error") setError(event.message);
-          else if (event.type === "result") {
-            setResult(event);
-            setPicked(event.companies.map((company) => company.website));
-          }
-        }
-      }
-    } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Une erreur est survenue.");
-    }
-    setBusy(false);
-  };
-
-  const toggle = (website: string) => setPicked((current) => (current.includes(website) ? current.filter((w) => w !== website) : [...current, website]));
-  const chosen = result?.companies.filter((company) => picked.includes(company.website)) ?? [];
-
-  return (
-    <div className={cn(card, "mb-5 space-y-4 p-4 sm:p-5")}>
-      <div>
-        <label htmlFor="discover-target" className={label}>
-          Quelles entreprises cherchez-vous ?
-        </label>
-        <textarea
-          id="discover-target"
-          rows={2}
-          maxLength={1000}
-          value={target}
-          onChange={(event) => setTarget(event.target.value)}
-          placeholder="Exemple : traiteurs et restaurants indépendants à Lyon qui livrent les entreprises"
-          className={cn(input, "resize-none")}
-        />
-        <p className="mt-1.5 text-xs text-muted">Précisez l&apos;activité et le lieu. L&apos;agent fait quelques recherches web : comptez 20 à 90 secondes.</p>
-      </div>
-      <div className="flex flex-wrap items-end gap-3">
-        <div>
-          <label htmlFor="discover-count" className={label}>
-            Combien
-          </label>
-          <select id="discover-count" value={count} onChange={(event) => setCount(Number(event.target.value))} className={cn(input, "w-auto")}>
-            {[5, 10, 15].map((n) => (
-              <option key={n} value={n}>
-                {n} entreprises
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="discover-language" className={label}>
-            Langue des e-mails
-          </label>
-          <select id="discover-language" value={language} onChange={(event) => setLanguage(event.target.value as Language)} className={cn(input, "w-auto")}>
-            {Object.entries(LANGUAGES).map(([value, name]) => (
-              <option key={value} value={value}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="button" onClick={search} disabled={busy || target.trim().length < 10} className={btnPrimary}>
-          <Search size={16} /> {busy ? "Recherche en cours…" : "Chercher"}
-        </button>
-        <button type="button" onClick={onClose} className={btnGhost}>
-          Fermer
-        </button>
-      </div>
-
-      {busy && (
-        <ul role="status" className="space-y-1 rounded-xl bg-azure/[0.06] px-4 py-3 text-sm text-navy">
-          <li>L&apos;agent cherche sur le web…</li>
-          {searches.map((query, i) => (
-            <li key={i} className="text-muted">
-              Recherche : {query}
-            </li>
-          ))}
-        </ul>
-      )}
-      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-
-      {result && (
-        <>
-          {result.companies.length === 0 ? (
-            <p className="rounded-xl bg-mist px-4 py-3 text-sm text-navy">Aucune entreprise retenue. Essayez une cible plus précise (activité et ville).</p>
-          ) : (
-            <ul className="divide-y divide-line rounded-xl border border-line">
-              {result.companies.map((company) => (
-                <li key={company.website}>
-                  <label className="flex cursor-pointer items-start gap-3 px-4 py-3">
-                    <input type="checkbox" checked={picked.includes(company.website)} onChange={() => toggle(company.website)} className="mt-1 h-4 w-4 shrink-0 accent-azure" />
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold text-navy">
-                        {company.company}
-                        {company.location && <span className="font-normal text-muted"> · {company.location}</span>}
-                      </span>
-                      <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-azure hover:underline">
-                        {host(company.website)}
-                      </a>
-                      {company.email && <span className="text-xs text-muted"> · {company.email}</span>}
-                      <span className="mt-1 block text-sm leading-relaxed text-navy/80">{company.reason}</span>
-                    </span>
-                  </label>
-                </li>
-              ))}
-            </ul>
-          )}
-          {(result.note || result.dropped > 0) && (
-            <p className="text-xs leading-relaxed text-muted">
-              {result.note}
-              {result.dropped > 0 && ` ${result.dropped} proposition${result.dropped > 1 ? "s" : ""} écartée${result.dropped > 1 ? "s" : ""} (site introuvable dans les résultats, annuaire ou déjà dans la liste).`}
-            </p>
-          )}
-          {result.companies.length > 0 && (
-            <button
-              type="button"
-              disabled={chosen.length === 0}
-              onClick={() => onAdd(chosen.map((company) => ({ company: company.company, website: company.website, email: company.email, language, notes: company.reason })))}
-              className={btnPrimary}
-            >
-              <Plus size={16} /> Ajouter {chosen.length > 0 ? `les ${chosen.length} cochée${chosen.length > 1 ? "s" : ""}` : ""}
-            </button>
-          )}
-        </>
       )}
     </div>
   );
@@ -543,8 +505,11 @@ function Details({
   const hasDraft = prospect.body !== null;
   const blocked = status === "DO_NOT_CONTACT";
 
-  // Un champ de la fiche s'enregistre quand on le quitte, s'il a changé.
-  const field = (name: "website" | "email" | "contactName" | "notes") => ({
+  // Un champ de la fiche s'enregistre quand on le quitte, s'il a changé. Sa clé le recrée quand
+  // le serveur a mis la valeur au propre (un site complété en « https://… », par exemple).
+  const fieldKey = (name: "website" | "email" | "phone" | "contactName" | "city" | "notes") => `${name}-${prospect[name]}`;
+  const field = (name: "website" | "email" | "phone" | "contactName" | "city" | "notes") => ({
+    id: `${name}-${id}`,
     defaultValue: prospect[name] ?? "",
     onBlur: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (event.target.value !== (prospect[name] ?? "")) save(id, { [name]: event.target.value });
@@ -573,13 +538,19 @@ function Details({
           <label htmlFor={`website-${id}`} className={label}>
             Site web
           </label>
-          <input id={`website-${id}`} key={`website-${prospect.website}`} {...field("website")} className={input} />
+          <input key={fieldKey("website")} {...field("website")} className={input} />
+        </div>
+        <div>
+          <label htmlFor={`contactName-${id}`} className={label}>
+            Nom du contact
+          </label>
+          <input key={fieldKey("contactName")} {...field("contactName")} className={input} />
         </div>
         <div>
           <label htmlFor={`email-${id}`} className={label}>
             E-mail
           </label>
-          <input id={`email-${id}`} key={`email-${prospect.email}`} type="email" {...field("email")} className={input} />
+          <input type="email" key={fieldKey("email")} {...field("email")} className={input} />
           {/* Proposée quand l'e-mail manque, ou quand celui de la fiche n'est pas celui affiché sur le site. */}
           {prospect.emailFound && prospect.emailFound !== prospect.email && (
             <p className="mt-1.5 text-xs text-muted">
@@ -591,28 +562,34 @@ function Details({
           )}
         </div>
         <div>
-          <label htmlFor={`contact-${id}`} className={label}>
-            Nom du contact
+          <label htmlFor={`phone-${id}`} className={label}>
+            Téléphone
           </label>
-          <input id={`contact-${id}`} {...field("contactName")} className={input} />
+          <input type="tel" key={fieldKey("phone")} {...field("phone")} className={input} />
+        </div>
+        <div>
+          <label htmlFor={`country-${id}`} className={label}>
+            Pays
+          </label>
+          <CountrySelect id={`country-${id}`} value={prospect.country ?? ""} onChange={(value) => save(id, { country: value || null })} />
+        </div>
+        <div>
+          <label htmlFor={`city-${id}`} className={label}>
+            Ville
+          </label>
+          <input key={fieldKey("city")} {...field("city")} className={input} />
         </div>
         <div>
           <label htmlFor={`language-${id}`} className={label}>
             Langue de l&apos;e-mail
           </label>
-          <select id={`language-${id}`} value={prospect.language} onChange={(event) => save(id, { language: event.target.value })} className={input}>
-            {Object.entries(LANGUAGES).map(([value, name]) => (
-              <option key={value} value={value}>
-                {name}
-              </option>
-            ))}
-          </select>
+          <LanguageSelect id={`language-${id}`} value={prospect.language} onChange={(value) => save(id, { language: value })} />
         </div>
         <div className="sm:col-span-2">
           <label htmlFor={`notes-${id}`} className={label}>
             Ce que vous savez déjà
           </label>
-          <textarea id={`notes-${id}`} rows={2} {...field("notes")} placeholder="Contexte, besoin supposé, angle souhaité : l'agent en tient compte." className={cn(input, "resize-none")} />
+          <textarea rows={2} key={fieldKey("notes")} {...field("notes")} placeholder="Contexte, besoin supposé, angle souhaité : l'agent en tient compte." className={cn(input, "resize-none")} />
         </div>
       </div>
 
@@ -671,6 +648,11 @@ function Details({
               </button>
             )}
           </>
+        )}
+        {prospect.phone && !blocked && (
+          <a href={tel(prospect.phone)} className={btnGhost}>
+            <Phone size={16} /> Appeler
+          </a>
         )}
         {configured && !blocked && status !== "PREPARING" && (
           <button type="button" onClick={() => prepare(id)} className={hasDraft ? btnSmall : btnPrimary}>
