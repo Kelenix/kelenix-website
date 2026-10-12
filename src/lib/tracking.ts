@@ -78,7 +78,7 @@ export function trackPageView(path: string) {
 
 /** Actions des visiteurs utiles à la publicité (conversions). */
 export type TrackEvent =
-  | { name: "lead"; source: "devis" | "contact" | "partenaire" }
+  | { name: "lead"; source: "devis" | "assistant" | "contact" | "partenaire" }
   | { name: "newsletter" }
   | { name: "candidature" }
   | { name: "whatsapp" }
@@ -90,8 +90,8 @@ export function track(event: TrackEvent) {
   switch (event.name) {
     case "lead":
       gtag?.("event", "generate_lead", { lead_source: event.source });
-      // Une demande de devis est un prospect ; un message ou une demande de partenariat, une prise de contact.
-      fbq?.("track", event.source === "devis" ? "Lead" : "Contact", { content_name: event.source });
+      // Une demande de devis (formulaire ou assistant) est un prospect ; un message ou une demande de partenariat, une prise de contact.
+      fbq?.("track", event.source === "devis" || event.source === "assistant" ? "Lead" : "Contact", { content_name: event.source });
       break;
     case "newsletter":
       gtag?.("event", "sign_up", { method: "newsletter" });

@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { quoteServiceLabel } from "@/lib/quote-options";
 
 // Instanciation paresseuse : ne pas créer le client au build (clé absente → erreur).
 let resendClient: Resend | null = null;
@@ -223,20 +224,10 @@ export async function sendContactNotification(data: {
 
 // ─── Devis (quote request) ────────────────────────────────────────────────────
 
-// Mêmes intitulés que les tuiles du formulaire de devis.
-const SERVICE_LABELS: Record<string, string> = {
-  software: "Développement Logiciel",
-  web: "Site Web",
-  webapp: "Application Web",
-  mobile: "App Mobile",
-  ai: "Intelligence Artificielle",
-  consulting: "Consulting IT",
-  training: "Formation",
-  other: "Autre",
-};
-
 export async function sendQuoteNotification(data: {
   id?: string;
+  /** "assistant" quand la demande a été recueillie par l'assistant IA du site. */
+  source?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -249,8 +240,9 @@ export async function sendQuoteNotification(data: {
   budget: string;
   deadline?: string | null;
 }) {
-  const name = `${data.firstName} ${data.lastName}`;
-  const service = SERVICE_LABELS[data.serviceType] ?? data.serviceType;
+  // Le nom de famille peut manquer quand la demande vient de l'assistant.
+  const name = `${data.firstName} ${data.lastName}`.trim();
+  const service = quoteServiceLabel(data.serviceType);
   await Promise.all([
     send({
       to: ADMIN,
@@ -267,7 +259,7 @@ export async function sendQuoteNotification(data: {
           texts: [["Description du projet", data.projectDesc], ["Objectifs", data.projectGoals]],
         }),
         {
-          eyebrow: "Nouvelle demande de devis",
+          eyebrow: data.source === "assistant" ? "Nouvelle demande de devis · via l'assistant IA" : "Nouvelle demande de devis",
           subtitle: [name, data.company].filter(Boolean).join(" · "),
           preheader: `${name} · ${service} · ${data.budget}`,
         }

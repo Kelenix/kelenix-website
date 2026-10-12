@@ -622,5 +622,31 @@
       "cta1": "Get a free quote",
       "cta2": "Contact us"
     }
+  },
+  "assistant": {
+    "launcher": "Any questions?",
+    "open": "Open the assistant",
+    "close": "Close the assistant",
+    "restart": "New conversation",
+    "title": "Kelenix Assistant",
+    "subtitle": "AI assistant · replies in seconds",
+    "greeting": "Hello! I'm the Kelenix Tech assistant. Tell me about your project or ask me a question.",
+    "suggestions": {
+      "project": "I have a project to discuss",
+      "services": "What do you offer?",
+      "process": "How does a project work?"
+    },
+    "placeholder": "Type your message…",
+    "send": "Send",
+    "typing": "The assistant is typing…",
+    "notice": "You are chatting with an AI. Your messages are stored to handle your request.",
+    "privacy": "Privacy",
+    "errors": {
+      "unavailable": "The assistant is temporarily unavailable. Try again in a moment, or write to us from the Contact page.",
+      "busy": "Too many messages in a row. Please wait a minute and try again.",
+      "refused": "I can't answer this message. Please rephrase it, or contact the team directly.",
+      "limit": "This conversation has reached its limit. Start a new one or contact the team.",
+      "expired": "The conversation was reset. Could you send your message again?"
+    }
   }
 }

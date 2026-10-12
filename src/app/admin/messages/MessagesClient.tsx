@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Mail, FileText, ChevronDown, Download, Phone, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { quoteServiceLabel } from "@/lib/quote-options";
 import { COUNTS_EVENT } from "@/components/admin/useAdminNotifications";
 import { STATUS, STATUS_OPTIONS, btnGhost, btnPrimary, card, empty, input, pill } from "@/components/admin/styles";
 
@@ -33,6 +34,7 @@ type Quote = {
   projectGoals?: string | null;
   budget: string;
   deadline: string | null;
+  source?: string;
   status: string;
   createdAt: Date;
 };
@@ -84,7 +86,7 @@ const fromQuote = (q: Quote): Row => ({
   email: q.email,
   phone: q.phone,
   subject: `Votre demande de devis — ${q.projectName}`,
-  details: filled([["E-mail", q.email], ["Téléphone", q.phone], ["Entreprise", q.company], ["Service", q.serviceType], ["Budget", q.budget], ["Délai", q.deadline]]),
+  details: filled([["E-mail", q.email], ["Téléphone", q.phone], ["Entreprise", q.company], ["Service", quoteServiceLabel(q.serviceType)], ["Budget", q.budget], ["Délai", q.deadline], ["Origine", q.source === "assistant" ? "Assistant IA" : null]]),
   blocks: filled([["Description du projet", q.projectDesc], ["Objectifs", q.projectGoals]]),
   status: q.status,
   createdAt: q.createdAt,

@@ -195,11 +195,35 @@ model QuoteRequest {
   email        String
   phone        String?
   company      String?
+  // "form" : formulaire de devis. "assistant" : demande recueillie par l'assistant IA.
+  source       String        @default("form")
   status       MessageStatus @default(NEW)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
   @@map("quote_requests")
+}
+
+// Conversation d'un visiteur avec l'assistant IA du site.
+// `tenant` désigne l'entreprise servie : l'assistant est conçu pour en servir plusieurs.
+model AgentConversation {
+  // Identifiant aléatoire fourni par le serveur : le connaître suffit à reprendre la conversation.
+  id        String   @id
+  tenant    String
+  locale    String
+  // Consignes figées à l'ouverture : l'API exige un début de conversation identique d'un tour à l'autre.
+  system    String   @db.Text
+  // Historique complet au format de l'API (tours du visiteur et de l'assistant).
+  messages  Json
+  turns     Int      @default(0)
+  // Demande de devis créée par l'assistant pendant cette conversation.
+  quoteId   String?
+  page      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenant, createdAt])
+  @@map("agent_conversations")
 }
 
 enum MessageStatus {

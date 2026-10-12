@@ -13,6 +13,8 @@ import MotionRoot from "@/components/motion/MotionRoot";
 import AutoReveal from "@/components/motion/AutoReveal";
 import MobileQuoteBar from "@/components/layout/MobileQuoteBar";
 import Tracking from "@/components/layout/Tracking";
+import AssistantWidget from "@/components/assistant/AssistantWidget";
+import { agentConfigured } from "@/lib/agent/config";
 import { STORE_URL } from "@/data/chariow";
 import { fontVariables } from "@/app/fonts";
 import "@/app/globals.css";
@@ -144,6 +146,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <WhatsAppButton phone={footerSettings.whatsapp} />
           <ScrollToTop />
           <MobileQuoteBar whatsapp={footerSettings.whatsapp} />
+          {agentConfigured() && <AssistantWidget />}
           <CookieBanner />
           <Tracking {...tracking} storeUrl={STORE_URL} />
         </NextIntlClientProvider>

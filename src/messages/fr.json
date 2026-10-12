@@ -622,5 +622,31 @@
       "cta1": "Demander un devis gratuit",
       "cta2": "Nous contacter"
     }
+  },
+  "assistant": {
+    "launcher": "Une question ?",
+    "open": "Ouvrir l'assistant",
+    "close": "Fermer l'assistant",
+    "restart": "Nouvelle conversation",
+    "title": "Assistant Kelenix",
+    "subtitle": "Assistant IA · répond en quelques secondes",
+    "greeting": "Bonjour ! Je suis l'assistant de Kelenix Tech. Parlez-moi de votre projet ou posez-moi une question.",
+    "suggestions": {
+      "project": "J'ai un projet à vous présenter",
+      "services": "Que proposez-vous ?",
+      "process": "Comment se passe un projet ?"
+    },
+    "placeholder": "Écrivez votre message…",
+    "send": "Envoyer",
+    "typing": "L'assistant écrit…",
+    "notice": "Vous échangez avec une IA. Vos messages sont enregistrés pour traiter votre demande.",
+    "privacy": "Confidentialité",
+    "errors": {
+      "unavailable": "L'assistant est momentanément indisponible. Réessayez dans un instant, ou écrivez-nous depuis la page Contact.",
+      "busy": "Trop de messages à la suite. Patientez une minute puis réessayez.",
+      "refused": "Je ne peux pas répondre à ce message. Reformulez-le, ou contactez directement l'équipe.",
+      "limit": "Cette conversation est arrivée à sa limite. Démarrez-en une nouvelle ou contactez l'équipe.",
+      "expired": "La conversation a été réinitialisée. Pouvez-vous renvoyer votre message ?"
+    }
   }
 }

@@ -16,6 +16,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
     "@auth/prisma-adapter": "^2.11.2",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.1",
