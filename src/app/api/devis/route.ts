@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         url: `/admin/messages?tab=devis&open=${created.id}`,
       })
     );
-    await sendQuoteNotification(saved);
+    await sendQuoteNotification({ ...saved, id: created.id });
 
     return NextResponse.json({ success: true });
   } catch (error) {
