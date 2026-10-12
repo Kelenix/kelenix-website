@@ -5,6 +5,7 @@ import { Check, ChevronDown, Copy, ExternalLink, Mail, Phone, Plus, RefreshCw, S
 import { cn } from "@/lib/utils";
 import { countryLanguage, countryName, placeLabel } from "@/lib/agent/countries";
 import { Avatar, Empty, PageHeader } from "@/components/admin/ui";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { btnGhost, btnPrimary, btnSmall, btnSmallDanger, card, input, label, pill } from "@/components/admin/styles";
 import Discover from "./Discover";
 import { CountrySelect, LANGUAGES, LanguageSelect, STATUS, host, type Language, type Prospect } from "./shared";
@@ -82,6 +83,8 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
   const [adding, setAdding] = useState<"one" | "many" | null>(null);
   const [discovering, setDiscovering] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  // Entreprise dont la suppression attend une confirmation.
+  const [removing, setRemoving] = useState<Prospect | null>(null);
   // Brouillons demandés d'un coup : préparés un par un, pour ne pas saturer l'API.
   const [queue, setQueue] = useState<string[]>([]);
   const starting = useRef(false);
@@ -162,10 +165,11 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
     }
   };
 
-  const remove = (prospect: Prospect) => {
-    if (!window.confirm(`Supprimer ${prospect.company} de la prospection ?`)) return;
-    setProspects((current) => current.filter((p) => p.id !== prospect.id));
-    api(`/${prospect.id}`, "DELETE").catch(fail);
+  const remove = () => {
+    if (!removing) return;
+    setProspects((current) => current.filter((p) => p.id !== removing.id));
+    api(`/${removing.id}`, "DELETE").catch(fail);
+    setRemoving(null);
   };
 
   // Recherche, pays et coordonnées s'appliquent d'abord ; les onglets comptent ce qu'il reste dans chaque état.
@@ -331,7 +335,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
                       <span className={cn(pill, "shrink-0", status.tone)}>{status.label}</span>
                       <ChevronDown size={16} className={cn("shrink-0 text-muted transition-transform", open && "rotate-180")} />
                     </button>
-                    {open && <Details prospect={prospect} configured={configured} edit={edit} save={save} prepare={prepare} remove={remove} />}
+                    {open && <Details prospect={prospect} configured={configured} edit={edit} save={save} prepare={prepare} remove={setRemoving} />}
                   </li>
                 );
               })}
@@ -339,6 +343,17 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
           )}
         </>
       )}
+
+      <ConfirmDialog
+        open={removing !== null}
+        title="Supprimer cette entreprise"
+        message={
+          `Voulez-vous vraiment supprimer "${removing?.company}" de la prospection ? Cette action est irréversible.` +
+          (removing?.status === "DO_NOT_CONTACT" ? " Sa fiche ne vous protégera plus contre une nouvelle prise de contact." : "")
+        }
+        onConfirm={remove}
+        onCancel={() => setRemoving(null)}
+      />
     </div>
   );
 }
