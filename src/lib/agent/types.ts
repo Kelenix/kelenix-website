@@ -43,6 +43,8 @@ export type Tenant = {
   id: string;
   /** Modèle Claude utilisé pour cette entreprise. */
   model: string;
+  /** Adresse du site, reprise dans la signature des e-mails de prospection. */
+  website: string;
   leadOptions(locale: Locale): LeadOptions;
   loadKnowledge(locale: Locale): Promise<CompanyKnowledge>;
   /** Enregistre la demande, ou met à jour celle déjà créée dans la conversation. Renvoie son identifiant. */

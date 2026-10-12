@@ -13,6 +13,7 @@ export const kelenix: Tenant = {
   id: "kelenix",
   // Haiku 5.5 : rapide et économique, choisi par Lionel. AGENT_MODEL permet d'en essayer un autre.
   model: process.env.AGENT_MODEL || "claude-haiku-5-5",
+  website: BASE_URL,
 
   leadOptions: (locale) => ({
     categories: QUOTE_SERVICES.map((service) => ({ value: service.value, label: service[locale] })),

@@ -226,6 +226,48 @@ model AgentConversation {
   @@map("agent_conversations")
 }
 
+// Entreprise à prospecter, et l'e-mail que l'agent sortant a préparé pour elle.
+// Rien ne part tout seul : un membre de l'équipe relit le brouillon et l'envoie depuis sa messagerie.
+model Prospect {
+  id          String         @id @default(cuid())
+  tenant      String
+  company     String
+  website     String?
+  contactName String?
+  email       String?
+  // Langue de l'e-mail : fr, it ou en.
+  language    String         @default("fr")
+  // Ce que l'équipe sait déjà (contexte, angle souhaité) : donné à l'agent avec le site.
+  notes       String?        @db.Text
+  status      ProspectStatus @default(NEW)
+  // Produit par l'agent : ce qu'il a compris de l'entreprise, la raison de la contacter, le brouillon.
+  summary     String?        @db.Text
+  angle       String?        @db.Text
+  // Adresse de contact lue sur le site, proposée quand `email` est vide.
+  emailFound  String?
+  subject     String?
+  body        String?        @db.Text
+  // Raison du dernier échec de préparation.
+  error       String?        @db.Text
+  sentAt      DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([tenant, createdAt])
+  @@map("prospects")
+}
+
+enum ProspectStatus {
+  NEW
+  PREPARING
+  READY
+  FAILED
+  SENT
+  REPLIED
+  DECLINED
+  DO_NOT_CONTACT
+}
+
 enum MessageStatus {
   NEW
   READ

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Code, Briefcase, BookOpen, Star, Mail, Newspaper, Settings, LogOut, Menu, X,
-  Users, Handshake, Info, Smartphone, HelpCircle, Activity, Bell, BellOff, BellRing, ExternalLink,
+  Users, Handshake, Info, Smartphone, HelpCircle, Activity, Bell, BellOff, BellRing, ExternalLink, Target,
   type LucideIcon,
 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
@@ -34,6 +34,7 @@ const partners: Item = { href: "/admin/partners", label: "Partenaires", icon: Ha
 const groups: { title?: string; items: Item[] }[] = [
   { items: [dashboard] },
   { title: "Demandes", items: [messages, careers, partners, { href: "/admin/newsletter", label: "Newsletter", icon: Newspaper }] },
+  { title: "Prospection", items: [{ href: "/admin/prospects", label: "Prospects", icon: Target }] },
   {
     title: "Contenu du site",
     items: [

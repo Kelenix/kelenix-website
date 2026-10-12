@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { anthropic } from "./client";
 import { AGENT_LIMITS } from "./config";
 import { LEAD_TOOL, leadTool, parseLead } from "./lead";
 import { buildSystemPrompt } from "./prompt";
@@ -10,10 +11,6 @@ import { AgentError, type AgentEvent, type Locale, type Tenant } from "./types";
 
 type Message = Anthropic.Beta.BetaMessageParam;
 type Block = Anthropic.Beta.BetaContentBlock;
-
-// Instanciation paresseuse : la clé (ANTHROPIC_API_KEY) est lue dans l'environnement au premier appel.
-let client: Anthropic | null = null;
-const anthropic = () => (client ??= new Anthropic({ timeout: 60_000 }));
 
 // Réponse + réflexion du modèle (la réflexion compte dans la limite même si son texte n'est pas renvoyé).
 const MAX_TOKENS = 8000;
