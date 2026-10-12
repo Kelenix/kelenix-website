@@ -136,6 +136,58 @@ function PushPanel({ push }: { push: Push }) {
   );
 }
 
+// Version courte des explications, pour la barre du haut ; le texte complet est dans l'infobulle.
+const pushShort: Record<string, string> = {
+  install: "Notifications : installer l'app",
+  unsupported: "Notifications non gérées ici",
+  unconfigured: "Notifications non configurées",
+  denied: "Notifications bloquées",
+};
+
+// Les mêmes réglages sur une seule ligne, pour la barre du haut sur ordinateur.
+function PushBar({ push }: { push: Push }) {
+  const link = "cursor-pointer text-xs font-semibold transition-colors disabled:opacity-60";
+  return (
+    <div className="flex items-center gap-3">
+      {push.feedback && (
+        <p role="status" className="max-w-64 truncate text-xs text-muted" title={push.feedback}>
+          {push.feedback}
+        </p>
+      )}
+      {push.state === "off" && (
+        <button
+          onClick={push.enable}
+          disabled={push.busy}
+          className="flex cursor-pointer items-center gap-2 rounded-full bg-azure px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-azure-dark disabled:opacity-60"
+        >
+          <Bell size={15} />
+          Activer les notifications
+        </button>
+      )}
+      {push.state === "on" && (
+        <div className="flex items-center gap-3 rounded-full bg-mist px-3.5 py-2">
+          <p className="flex items-center gap-2 text-sm font-medium text-navy">
+            <BellRing size={15} className="text-emerald-600" />
+            Notifications activées
+          </p>
+          <button onClick={push.test} disabled={push.busy} className={cn(link, "text-azure hover:text-azure-dark")}>
+            Tester
+          </button>
+          <button onClick={push.disable} disabled={push.busy} className={cn(link, "text-muted hover:text-navy")}>
+            Désactiver
+          </button>
+        </div>
+      )}
+      {pushShort[push.state] && (
+        <p title={pushHelp[push.state]} className="flex items-center gap-2 rounded-full bg-mist px-3.5 py-2 text-xs font-medium text-muted">
+          <BellOff size={14} className="shrink-0" />
+          {pushShort[push.state]}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function Shell({ pathname, children }: { pathname: string; children: React.ReactNode }) {
   const counts = useAdminCounts(pathname);
   const push = usePushNotifications();
@@ -234,12 +286,14 @@ function Shell({ pathname, children }: { pathname: string; children: React.React
             </div>
           ))}
         </nav>
-
-        <div className="space-y-3 border-t border-line p-3">
-          <PushPanel push={push} />
-          {account}
-        </div>
       </aside>
+
+      {/* Ordinateur : notifications et compte, en haut à droite de chaque page */}
+      <div className="sticky top-0 z-20 hidden h-[72px] items-center justify-end gap-4 border-b border-line bg-white/90 px-10 backdrop-blur lg:flex">
+        <PushBar push={push} />
+        <span aria-hidden="true" className="h-7 w-px bg-line" />
+        {account}
+      </div>
 
       {/* Téléphone : barre du haut */}
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-white/90 px-4 backdrop-blur lg:hidden">
