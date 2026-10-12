@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { User, Mail, Phone, Briefcase, Calendar } from "lucide-react";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+import DeleteButton from "@/components/admin/DeleteButton";
 import MarkAsRead from "@/components/admin/MarkAsRead";
 import StatusSelect from "@/components/admin/StatusSelect";
 import { Fact, PageHeader } from "@/components/admin/ui";
@@ -51,6 +52,9 @@ export default async function ApplicationDetailPage({ params }: Props) {
                 <Phone size={15} /> Appeler
               </a>
             )}
+            <span className="ml-auto flex items-center gap-2">
+              <DeleteButton url={api} title="Supprimer cette candidature" name={app.name} redirectTo="/admin/careers?tab=applications" />
+            </span>
           </div>
         </div>
 

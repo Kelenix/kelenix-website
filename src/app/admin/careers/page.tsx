@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Briefcase, Users } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import DeleteButton from "@/components/admin/DeleteButton";
+import PurgeButton from "@/components/admin/PurgeButton";
 import { AddLink, Avatar, Chip, EditLink, Empty, List, PageHeader, Published, Row, StatusChip, Tabs } from "@/components/admin/ui";
 
 export default async function AdminCareersPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
@@ -16,6 +17,7 @@ export default async function AdminCareersPage({ searchParams }: { searchParams:
     prisma.jobApplication.findMany({ orderBy: { createdAt: "desc" } }),
   ]);
   const openJobs = jobs.filter((job) => job.published).length;
+  const archived = applications.filter((app) => app.status === "ARCHIVED").length;
 
   return (
     <div>
@@ -28,6 +30,14 @@ export default async function AdminCareersPage({ searchParams }: { searchParams:
         }
       >
         {!showApplications && <AddLink href="/admin/careers/new">Nouvelle offre</AddLink>}
+        {showApplications && (
+          <PurgeButton
+            url="/api/admin/careers/application"
+            count={archived}
+            label="Supprimer les archivées"
+            message={archived > 1 ? `Les ${archived} candidatures archivées seront supprimées.` : "La candidature archivée sera supprimée."}
+          />
+        )}
       </PageHeader>
 
       <Tabs
@@ -85,6 +95,7 @@ export default async function AdminCareersPage({ searchParams }: { searchParams:
                 title={app.name}
                 subtitle={`${app.position || "Candidature spontanée"} · ${formatDate(app.createdAt, "fr")}`}
                 chips={<StatusChip status={app.status} />}
+                actions={<DeleteButton url={`/api/admin/careers/application/${app.id}`} title="Supprimer cette candidature" name={app.name} />}
               />
             ))}
           </List>

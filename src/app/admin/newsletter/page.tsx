@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/admin/ui";
 import { card } from "@/components/admin/styles";
+import PurgeButton from "@/components/admin/PurgeButton";
 import NewsletterClient from "./NewsletterClient";
 
 export default async function AdminNewsletterPage() {
@@ -11,6 +12,7 @@ export default async function AdminNewsletterPage() {
     orderBy: { subscribedAt: "desc" },
   });
   const active = subscribers.filter((s) => s.active).length;
+  const inactive = subscribers.length - active;
 
   const stats = [
     { label: "Inscrits au total", value: subscribers.length, tone: "text-navy" },
@@ -20,7 +22,14 @@ export default async function AdminNewsletterPage() {
 
   return (
     <div>
-      <PageHeader title="Newsletter" lead={`${active} abonné${active > 1 ? "s" : ""} actif${active > 1 ? "s" : ""}`} />
+      <PageHeader title="Newsletter" lead={`${active} abonné${active > 1 ? "s" : ""} actif${active > 1 ? "s" : ""}`}>
+        <PurgeButton
+          url="/api/admin/newsletter"
+          count={inactive}
+          label="Supprimer les désabonnés"
+          message={inactive > 1 ? `Les ${inactive} adresses désabonnées seront supprimées.` : "L'adresse désabonnée sera supprimée."}
+        />
+      </PageHeader>
 
       <div className="mb-5 grid grid-cols-3 gap-2.5 sm:gap-4">
         {stats.map(({ label, value, tone }) => (

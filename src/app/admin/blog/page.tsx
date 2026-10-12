@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/require-auth";
 import { prisma } from "@/lib/prisma";
 import { BookOpen } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import DeleteButton from "@/components/admin/DeleteButton";
 import { AddLink, Chip, EditLink, Empty, List, PageHeader, Published, Row } from "@/components/admin/ui";
 
 export default async function AdminBlogPage() {
@@ -34,7 +35,12 @@ export default async function AdminBlogPage() {
                   <Published on={post.published} />
                 </>
               }
-              actions={<EditLink href={`/admin/blog/${post.id}`} />}
+              actions={
+                <>
+                  <EditLink href={`/admin/blog/${post.id}`} />
+                  <DeleteButton url={`/api/admin/blog/${post.id}`} title="Supprimer cet article" name={post.titleFr} />
+                </>
+              }
             />
           ))}
         </List>

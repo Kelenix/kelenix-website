@@ -5,6 +5,8 @@ import { Mail, FileText, ChevronDown, Download, Phone, CheckCheck } from "lucide
 import { cn } from "@/lib/utils";
 import { quoteServiceLabel } from "@/lib/quote-options";
 import { COUNTS_EVENT } from "@/components/admin/useAdminNotifications";
+import DeleteButton from "@/components/admin/DeleteButton";
+import PurgeButton from "@/components/admin/PurgeButton";
 import { STATUS, STATUS_OPTIONS, btnGhost, btnPrimary, card, empty, input, pill } from "@/components/admin/styles";
 
 type Message = {
@@ -160,6 +162,7 @@ export default function MessagesClient({
 
   const rows = lists[kind];
   const unreadRows = rows.filter((row) => statusOf(row) === "NEW");
+  const archived = rows.filter((row) => statusOf(row) === "ARCHIVED").length;
 
   // Vide d'un coup les « nouveaux » de l'onglet affiché (utile quand beaucoup se sont accumulés).
   const markAllRead = () => {
@@ -211,6 +214,12 @@ export default function MessagesClient({
           <button onClick={exportCSV} disabled={rows.length === 0} className={btnGhost}>
             <Download size={15} /> Exporter en CSV
           </button>
+          <PurgeButton
+            url={`/api/admin/messages?kind=${kind}`}
+            count={archived}
+            label="Supprimer les archivés"
+            message={`${archived} ${kind === "quote" ? "devis" : archived > 1 ? "messages" : "message"} archivé${archived > 1 ? "s seront supprimés" : " sera supprimé"}.`}
+          />
         </div>
       </div>
 
@@ -278,6 +287,11 @@ export default function MessagesClient({
                           ))}
                         </select>
                       </label>
+                      <DeleteButton
+                        url={`/api/admin/messages/${row.id}?kind=${row.kind}`}
+                        title={row.kind === "quote" ? "Supprimer cette demande de devis" : "Supprimer ce message"}
+                        name={row.title}
+                      />
                     </div>
                   </div>
                 )}

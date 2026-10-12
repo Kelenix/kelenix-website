@@ -28,3 +28,26 @@ export async function PUT(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+// Supprime définitivement un message de contact (?kind=message) ou une demande de devis (?kind=quote).
+export async function DELETE(request: Request, { params }: Props) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+  try {
+    const { id } = await params;
+    const kind = new URL(request.url).searchParams.get("kind");
+    if (kind === "quote") {
+      // La conversation de l'assistant qui a produit ce devis part avec lui.
+      await prisma.$transaction([prisma.agentConversation.deleteMany({ where: { quoteId: id } }), prisma.quoteRequest.deleteMany({ where: { id } })]);
+    } else if (kind === "message") {
+      await prisma.contactMessage.deleteMany({ where: { id } });
+    } else {
+      return NextResponse.json({ error: "Type inconnu" }, { status: 400 });
+    }
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

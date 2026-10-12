@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Download, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import DeleteButton from "@/components/admin/DeleteButton";
 import { btnGhost, card, input } from "@/components/admin/styles";
 
 type Subscriber = { id: string; email: string; active: boolean; subscribedAt: Date };
@@ -51,7 +52,10 @@ export default function NewsletterClient({ subscribers }: { subscribers: Subscri
                 <span className={cn("h-2 w-2 shrink-0 rounded-full", s.active ? "bg-emerald-500" : "bg-line")} title={s.active ? "Actif" : "Désabonné"} />
                 <span className="truncate text-sm text-navy">{s.email}</span>
               </div>
-              <span className="shrink-0 text-xs text-muted">{new Date(s.subscribedAt).toLocaleDateString("fr-FR")}</span>
+              <div className="flex shrink-0 items-center gap-3">
+                <span className="text-xs text-muted">{new Date(s.subscribedAt).toLocaleDateString("fr-FR")}</span>
+                <DeleteButton url={`/api/admin/newsletter/${s.id}`} title="Supprimer cet abonné" name={s.email} />
+              </div>
             </li>
           ))}
         </ul>

@@ -21,3 +21,18 @@ export async function PUT(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+// Supprime définitivement une candidature.
+export async function DELETE(_request: Request, { params }: Props) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+  try {
+    const { id } = await params;
+    await prisma.jobApplication.deleteMany({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
