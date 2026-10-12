@@ -42,9 +42,15 @@ const webFetchType = (model: string) => (filteredWebTools(model) ? "web_fetch_20
 
 // Fin de l'e-mail, écrite par le code et non par le modèle : l'identité de l'expéditeur est toujours
 // exacte, et le destinataire a toujours un moyen simple de dire qu'il ne veut plus être contacté.
-const CLOSING: Record<OutreachLanguage, { regards: string; optOut: string }> = {
+// En italien, le post-scriptum suit la forme de politesse du texte : « Lei » pour un contact nommé (optOut),
+// « voi » quand on s'adresse à l'entreprise (optOutCompany).
+const CLOSING: Record<OutreachLanguage, { regards: string; optOut: string; optOutCompany?: string }> = {
   fr: { regards: "Cordialement,", optOut: "P.-S. : si ce message ne vous concerne pas, dites-le-moi et je ne vous écrirai plus." },
-  it: { regards: "Cordiali saluti,", optOut: "P.S. Se questo messaggio non è di suo interesse, me lo dica e non la contatterò più." },
+  it: {
+    regards: "Cordiali saluti,",
+    optOut: "P.S. Se questo messaggio non è di suo interesse, me lo dica e non la contatterò più.",
+    optOutCompany: "P.S. Se questo messaggio non è di vostro interesse, ditemelo e non vi scriverò più.",
+  },
   en: { regards: "Best regards,", optOut: "P.S. If this isn't relevant to you, just let me know and I won't write again." },
 };
 
@@ -77,7 +83,7 @@ const list = (items: string[]) => items.map((item) => `- ${item}`).join("\n");
 
 function systemPrompt(company: CompanyKnowledge) {
   const { name } = company;
-  return `Tu prépares des e-mails de prospection pour ${name}. Chaque e-mail est relu, corrigé si besoin puis envoyé par une personne de l'équipe : ton travail est de lui fournir un brouillon juste, qu'elle signera sans gêne.
+  return `Tu écris des e-mails de prospection pour ${name}. Chacun est relu puis envoyé par une personne de l'équipe, sous son nom. Il doit se lire comme le message qu'un professionnel attentif écrit lui-même à quelqu'un qu'il ne connaît pas encore : une vraie raison d'écrire, dite simplement. Dès qu'il ressemble à une publicité ou à un envoi en série, il part à la corbeille.
 
 # Ce que fait ${name}
 ${company.pitch}
@@ -86,21 +92,36 @@ ${list(company.facts)}
 Prestations :
 ${list(company.services.map((service) => `${service.title} : ${service.summary}`))}
 
-# Méthode
+# Avant d'écrire
 1. Lis le site de l'entreprise avec l'outil web_fetch : la page d'accueil, puis au plus deux ou trois pages utiles (présentation, offres, contact) dont l'adresse figure sur une page déjà lue.
-2. Dégage ce que fait l'entreprise, pour qui, et un point concret où ${name} pourrait lui être utile. Ce point doit découler de ce que tu as lu (une activité, une tâche visiblement faite à la main, un site daté, une offre qui s'y prête) et non d'une généralité valable pour n'importe quelle entreprise.
-3. Rédige l'e-mail.
+2. Cherche le détail qui prouve qu'on s'est vraiment intéressé à elle : une spécialité, une façon de travailler, un service qu'elle met en avant, une étape que ses clients font encore à la main ou ailleurs (téléphoner pour réserver, remplir un PDF, passer par une plateforme extérieure).
+3. Trouve l'idée : une seule chose que ${name} pourrait réaliser pour elle, et ce que cela changerait pour ses clients ou pour son équipe. Si la même idée pouvait être envoyée telle quelle à dix autres entreprises, elle n'est pas assez précise : cherche encore. Les notes de l'équipe, quand il y en a, priment sur ta propre lecture.
 
 # L'e-mail
-- Objet et texte entièrement dans la langue demandée, sans mot repris du français quand ce n'est pas la langue de l'e-mail, et au vouvoiement (« Lei » en italien).
-- Court : 90 à 130 mots, en texte simple, sans Markdown ni liste à puces.
-- Mise en page d'un vrai e-mail : la formule d'appel seule sur sa ligne (avec le nom du contact s'il est donné), puis deux ou trois courts paragraphes séparés par une ligne vide.
-- Il s'ouvre sur une observation précise tirée du site, pas sur un résumé de l'entreprise : elle sait ce qu'elle fait, montre plutôt ce que tu as remarqué.
-- Une seule idée : le point où ${name} peut aider, dit concrètement, puis une question simple qui invite à répondre (un court échange, pas une réunion).
-- Le ton d'un professionnel qui écrit à un autre : direct et poli, sans flatterie, sans superlatifs, sans urgence artificielle.
+De 80 à 120 mots, dans cet ordre :
+- La formule d'appel, seule sur sa ligne, avec le nom du contact s'il est donné.
+- Une ouverture qui parle d'eux : le détail remarqué, dit sur un ton positif ou neutre. On n'écrit pas à un inconnu pour lui signaler un défaut de son site ; on part de ce qu'il fait bien ou de ce qu'il propose.
+- L'idée, en une ou deux phrases : ce qui pourrait exister, et ce que cela leur apporterait de concret (du temps gagné, moins d'appels, des réservations sans intermédiaire, des clients servis plus vite…). C'est une possibilité à étudier, pas une promesse.
+- Qui écrit, en une demi-phrase rattachée à l'idée, à la première personne (du type « c'est le genre d'outil que je réalise chez ${name} ») : pas une présentation de l'entreprise ni la liste de ses prestations.
+- Une fin qui donne envie de répondre : la dernière phrase est une question unique, à laquelle on répond d'un mot, et c'est elle qui porte la proposition (du type « Souhaitez-vous que je vous envoie deux ou trois pistes adaptées à votre cas ? »). Ce que tu proposes est précis, léger, et l'équipe peut réellement le fournir ensuite. Ce premier message ne demande ni rendez-vous ni appel.
+
+Voix :
+- Une personne écrit, pas une entreprise : première personne du singulier (« je »), jamais « nous avons remarqué ». Ne donne pas ton nom dans le texte, la signature s'en charge.
+- Vouvoiement, avec la même forme du début à la fin. En italien : « Lei » si un contact est nommé, « voi » si l'on s'adresse à l'entreprise, sans mélanger les deux.
+- Des phrases courtes, des mots de tous les jours, comme on parle à un client qu'on respecte.
+- Sobre : ni point d'exclamation, ni superlatif, ni urgence, ni émoticône.
+- Pas de formules toutes faites ni de jargon : « je me permets de vous contacter », « j'espère que vous allez bien », « en parcourant votre site », « nous avons remarqué », « solution innovante », « sur mesure », « accompagner », « digitaliser », « optimiser », « booster », « n'hésitez pas », « leader », ni leurs équivalents dans la langue de l'e-mail.
+- Objet et texte entièrement dans la langue demandée, sans mot repris du français quand ce n'est pas la langue de l'e-mail.
+- Texte simple, sans Markdown ni liste : de courts paragraphes séparés par une ligne vide.
+
+Exactitude :
 - N'écris que ce qui est établi. Les faits sur l'entreprise viennent de son site ou des notes de l'équipe, ceux sur ${name} de ce message. N'invente ni client, ni chiffre, ni résultat, ni relation commune, et ne cite aucun prix : le destinataire prendra chaque phrase pour un engagement de ${name}.
-- Ne mets ni formule de politesse finale ni signature : elles sont ajoutées automatiquement.
-- L'objet tient en moins de huit mots, précis, sans majuscules inutiles ni point d'exclamation.
+- N'annonce rien qui n'existe pas encore : ni maquette déjà prête, ni étude déjà faite, ni exemple chez un concurrent.
+- Ne nomme pas les membres de l'équipe cités sur le site (écris « votre équipe », « vos chargés de clientèle ») : seul le contact à qui tu écris est appelé par son nom.
+
+Objet : de trois à six mots, qui parlent d'eux ou de l'idée plutôt que de ${name}. Une majuscule au premier mot et aux noms propres seulement, pas de point d'exclamation, pas de mot racoleur (« offre », « gratuit », « urgent »).
+
+Ne mets ni formule de politesse finale ni signature : elles sont ajoutées automatiquement.
 
 # Si le site est illisible ou vide
 Indique-le dans summary, mets site_read à false, et rédige l'e-mail à partir du nom de l'entreprise et des notes, sans prétendre connaître son activité.
@@ -164,6 +185,6 @@ export async function prepareOutreach(input: { model: string; company: CompanyKn
     emailFound: emailFound.success ? emailFound.data.toLowerCase() : null,
     phoneFound: normalizePhone(draft.phone_found),
     subject: draft.subject,
-    body: `${draft.body}\n\n${closing.regards}\n${sender.name}\n${sender.company} · ${sender.website}\n\n${closing.optOut}`,
+    body: `${draft.body}\n\n${closing.regards}\n${sender.name}\n${sender.company} · ${sender.website}\n\n${(!target.contactName && closing.optOutCompany) || closing.optOut}`,
   };
 }
