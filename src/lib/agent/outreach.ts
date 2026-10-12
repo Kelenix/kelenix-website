@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import { anthropic } from "./client";
+import { anthropic, filteredWebTools } from "./client";
 import type { CompanyKnowledge } from "./types";
 
 // Agent sortant : pour une entreprise à prospecter, il lit son site et prépare un e-mail personnalisé.
@@ -36,8 +36,7 @@ const MAX_PAGES = 4;
 const MAX_PAGE_TOKENS = 15_000;
 const MAX_TOKENS = 16_000;
 
-// La version de l'outil avec filtrage des pages n'existe que sur les modèles Opus, Sonnet et Fable.
-const webFetchType = (model: string) => (/^claude-(opus|sonnet|fable)/.test(model) ? "web_fetch_20260209" : "web_fetch_20250910");
+const webFetchType = (model: string) => (filteredWebTools(model) ? "web_fetch_20260209" : "web_fetch_20250910");
 
 // Fin de l'e-mail, écrite par le code et non par le modèle : l'identité de l'expéditeur est toujours
 // exacte, et le destinataire a toujours un moyen simple de dire qu'il ne veut plus être contacté.

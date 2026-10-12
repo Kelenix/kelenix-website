@@ -27,8 +27,8 @@ export function normalizeEmail(value: string | null | undefined): string | null 
 /** Nom de domaine sans « www. », pour repérer deux fois la même entreprise. */
 export const websiteHost = (website: string | null) => (website ? new URL(website).hostname.replace(/^www\./, "") : null);
 
-// Message montré dans l'admin quand la préparation échoue.
-function failureMessage(error: unknown) {
+// Message montré dans l'admin quand l'agent échoue (préparation d'un brouillon, recherche d'entreprises).
+export function failureMessage(error: unknown) {
   if (error instanceof Anthropic.AuthenticationError) return "Clé d'API Claude refusée : vérifiez ANTHROPIC_API_KEY.";
   if (error instanceof Anthropic.RateLimitError) return "Trop de demandes à la fois : réessayez dans une minute.";
   if (error instanceof Anthropic.APIConnectionError) return "Claude n'a pas répondu à temps : réessayez.";

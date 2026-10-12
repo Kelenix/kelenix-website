@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Copy, ExternalLink, Mail, Plus, RefreshCw, Sparkles, Target, Trash2, Upload } from "lucide-react";
+import { Check, ChevronDown, Copy, ExternalLink, Mail, Plus, RefreshCw, Search, Sparkles, Target, Trash2, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { Discovery, DiscoveryEvent } from "@/lib/agent/discovery";
 import { Avatar, Empty, PageHeader } from "@/components/admin/ui";
 import { btnGhost, btnPrimary, btnSmall, btnSmallDanger, card, input, label, pill } from "@/components/admin/styles";
 
@@ -75,6 +76,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
   const [prospects, setProspects] = useState(initial);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [adding, setAdding] = useState<"one" | "many" | null>(null);
+  const [discovering, setDiscovering] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   // Brouillons demandés d'un coup : préparés un par un, pour ne pas saturer l'API.
   const [queue, setQueue] = useState<string[]>([]);
@@ -140,6 +142,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
       const result = await api<{ created: number; duplicates: number }>("", "POST", { prospects: rows });
       setProspects(await api<Prospect[]>("", "GET"));
       setAdding(null);
+      setDiscovering(false);
       setFeedback(
         `${result.created} entreprise${result.created > 1 ? "s" : ""} ajoutée${result.created > 1 ? "s" : ""}` +
           (result.duplicates ? `, ${result.duplicates} déjà présente${result.duplicates > 1 ? "s" : ""} ignorée${result.duplicates > 1 ? "s" : ""}.` : ".")
@@ -168,7 +171,26 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
             <Sparkles size={16} /> Préparer les {waiting.length} en attente
           </button>
         )}
-        <button type="button" onClick={() => setAdding(adding ? null : "one")} className={btnPrimary}>
+        {configured && (
+          <button
+            type="button"
+            onClick={() => {
+              setDiscovering(!discovering);
+              setAdding(null);
+            }}
+            className={btnGhost}
+          >
+            <Search size={16} /> Trouver des entreprises
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            setAdding(adding ? null : "one");
+            setDiscovering(false);
+          }}
+          className={btnPrimary}
+        >
           <Plus size={16} /> Ajouter
         </button>
       </PageHeader>
@@ -186,6 +208,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
       {queue.length > 0 && <p className="mb-5 text-sm text-muted">Préparation en cours, un brouillon à la fois : encore {queue.length} en file. Gardez cette page ouverte.</p>}
 
       {adding && <AddForm mode={adding} setMode={setAdding} onAdd={add} />}
+      {discovering && <Discover onAdd={add} onClose={() => setDiscovering(false)} />}
 
       {prospects.length === 0 ? (
         <Empty icon={Target}>Aucune entreprise pour l&apos;instant. Ajoutez-en une avec son site web : l&apos;agent le lira et vous préparera un e-mail.</Empty>
@@ -336,6 +359,170 @@ function AddForm({ mode, setMode, onAdd }: { mode: "one" | "many"; setMode: (mod
   );
 }
 
+// Recherche d'entreprises : on décrit la cible, l'agent cherche sur le web et propose une liste.
+// Rien n'est ajouté tout seul : on coche celles que l'on veut prospecter.
+function Discover({ onAdd, onClose }: { onAdd: (rows: unknown[]) => void; onClose: () => void }) {
+  const [target, setTarget] = useState("");
+  const [count, setCount] = useState(5);
+  const [language, setLanguage] = useState<Language>("fr");
+  const [busy, setBusy] = useState(false);
+  const [searches, setSearches] = useState<string[]>([]);
+  const [result, setResult] = useState<Discovery | null>(null);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const search = async () => {
+    setBusy(true);
+    setError(null);
+    setResult(null);
+    setSearches([]);
+    try {
+      const response = await fetch("/api/admin/prospects/discover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target, count }),
+      });
+      if (!response.ok || !response.body) throw new Error((await response.json().catch(() => null))?.error ?? "Une erreur est survenue.");
+      // Une ligne JSON par événement ; une ligne peut arriver en plusieurs morceaux.
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line) continue;
+          const event = JSON.parse(line) as DiscoveryEvent;
+          if (event.type === "search") setSearches((current) => [...current, event.query]);
+          else if (event.type === "error") setError(event.message);
+          else if (event.type === "result") {
+            setResult(event);
+            setPicked(event.companies.map((company) => company.website));
+          }
+        }
+      }
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : "Une erreur est survenue.");
+    }
+    setBusy(false);
+  };
+
+  const toggle = (website: string) => setPicked((current) => (current.includes(website) ? current.filter((w) => w !== website) : [...current, website]));
+  const chosen = result?.companies.filter((company) => picked.includes(company.website)) ?? [];
+
+  return (
+    <div className={cn(card, "mb-5 space-y-4 p-4 sm:p-5")}>
+      <div>
+        <label htmlFor="discover-target" className={label}>
+          Quelles entreprises cherchez-vous ?
+        </label>
+        <textarea
+          id="discover-target"
+          rows={2}
+          maxLength={1000}
+          value={target}
+          onChange={(event) => setTarget(event.target.value)}
+          placeholder="Exemple : traiteurs et restaurants indépendants à Lyon qui livrent les entreprises"
+          className={cn(input, "resize-none")}
+        />
+        <p className="mt-1.5 text-xs text-muted">Précisez l&apos;activité et le lieu. L&apos;agent fait quelques recherches web : comptez 20 à 90 secondes.</p>
+      </div>
+      <div className="flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor="discover-count" className={label}>
+            Combien
+          </label>
+          <select id="discover-count" value={count} onChange={(event) => setCount(Number(event.target.value))} className={cn(input, "w-auto")}>
+            {[5, 10, 15].map((n) => (
+              <option key={n} value={n}>
+                {n} entreprises
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="discover-language" className={label}>
+            Langue des e-mails
+          </label>
+          <select id="discover-language" value={language} onChange={(event) => setLanguage(event.target.value as Language)} className={cn(input, "w-auto")}>
+            {Object.entries(LANGUAGES).map(([value, name]) => (
+              <option key={value} value={value}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="button" onClick={search} disabled={busy || target.trim().length < 10} className={btnPrimary}>
+          <Search size={16} /> {busy ? "Recherche en cours…" : "Chercher"}
+        </button>
+        <button type="button" onClick={onClose} className={btnGhost}>
+          Fermer
+        </button>
+      </div>
+
+      {busy && (
+        <ul role="status" className="space-y-1 rounded-xl bg-azure/[0.06] px-4 py-3 text-sm text-navy">
+          <li>L&apos;agent cherche sur le web…</li>
+          {searches.map((query, i) => (
+            <li key={i} className="text-muted">
+              Recherche : {query}
+            </li>
+          ))}
+        </ul>
+      )}
+      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+
+      {result && (
+        <>
+          {result.companies.length === 0 ? (
+            <p className="rounded-xl bg-mist px-4 py-3 text-sm text-navy">Aucune entreprise retenue. Essayez une cible plus précise (activité et ville).</p>
+          ) : (
+            <ul className="divide-y divide-line rounded-xl border border-line">
+              {result.companies.map((company) => (
+                <li key={company.website}>
+                  <label className="flex cursor-pointer items-start gap-3 px-4 py-3">
+                    <input type="checkbox" checked={picked.includes(company.website)} onChange={() => toggle(company.website)} className="mt-1 h-4 w-4 shrink-0 accent-azure" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-navy">
+                        {company.company}
+                        {company.location && <span className="font-normal text-muted"> · {company.location}</span>}
+                      </span>
+                      <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-azure hover:underline">
+                        {host(company.website)}
+                      </a>
+                      {company.email && <span className="text-xs text-muted"> · {company.email}</span>}
+                      <span className="mt-1 block text-sm leading-relaxed text-navy/80">{company.reason}</span>
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+          {(result.note || result.dropped > 0) && (
+            <p className="text-xs leading-relaxed text-muted">
+              {result.note}
+              {result.dropped > 0 && ` ${result.dropped} proposition${result.dropped > 1 ? "s" : ""} écartée${result.dropped > 1 ? "s" : ""} (site introuvable dans les résultats, annuaire ou déjà dans la liste).`}
+            </p>
+          )}
+          {result.companies.length > 0 && (
+            <button
+              type="button"
+              disabled={chosen.length === 0}
+              onClick={() => onAdd(chosen.map((company) => ({ company: company.company, website: company.website, email: company.email, language, notes: company.reason })))}
+              className={btnPrimary}
+            >
+              <Plus size={16} /> Ajouter {chosen.length > 0 ? `les ${chosen.length} cochée${chosen.length > 1 ? "s" : ""}` : ""}
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 function Details({
   prospect,
   configured,
@@ -393,9 +580,10 @@ function Details({
             E-mail
           </label>
           <input id={`email-${id}`} key={`email-${prospect.email}`} type="email" {...field("email")} className={input} />
-          {!prospect.email && prospect.emailFound && (
+          {/* Proposée quand l'e-mail manque, ou quand celui de la fiche n'est pas celui affiché sur le site. */}
+          {prospect.emailFound && prospect.emailFound !== prospect.email && (
             <p className="mt-1.5 text-xs text-muted">
-              Lue sur le site : {prospect.emailFound}{" "}
+              {prospect.email ? "Adresse différente lue sur le site" : "Lue sur le site"} : {prospect.emailFound}{" "}
               <button type="button" onClick={() => save(id, { email: prospect.emailFound })} className="cursor-pointer font-semibold text-azure hover:underline">
                 Utiliser
               </button>
