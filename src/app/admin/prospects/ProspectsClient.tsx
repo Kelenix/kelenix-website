@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, Copy, ExternalLink, Mail, Phone, Plus, RefreshCw, Search, Sparkles, Target, Trash2, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { countryLanguage, countryName, placeLabel } from "@/lib/agent/countries";
+import { FOLLOW_UP_AFTER_DAYS, MAX_FOLLOW_UPS, daysSince, followUpDue, followUpsSent, sentHistory } from "@/lib/agent/followup";
 import { Avatar, Empty, PageHeader } from "@/components/admin/ui";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { btnGhost, btnPrimary, btnSmall, btnSmallDanger, card, input, label, pill } from "@/components/admin/styles";
@@ -13,16 +14,34 @@ import { CountrySelect, LANGUAGES, LanguageSelect, STATUS, host, type Language, 
 // États que l'on choisit à la main une fois l'e-mail parti.
 const FOLLOW_UP = ["SENT", "REPLIED", "DECLINED", "DO_NOT_CONTACT"];
 
-// Onglets de la liste : où en est chaque entreprise.
-const GROUPS = [
-  { key: "all", label: "Toutes", statuses: null },
-  { key: "todo", label: "À préparer", statuses: ["NEW", "PREPARING", "FAILED"] },
-  { key: "ready", label: "À relire", statuses: ["READY"] },
-  { key: "sent", label: "Envoyés", statuses: ["SENT"] },
-  { key: "replied", label: "Réponses", statuses: ["REPLIED"] },
-  { key: "closed", label: "Clos", statuses: ["DECLINED", "DO_NOT_CONTACT"] },
-] as const;
-type GroupKey = (typeof GROUPS)[number]["key"];
+// Onglets de la liste : où en est chaque entreprise. « À relancer » regroupe les envois restés
+// sans réponse depuis quelques jours, tant qu'il reste une relance possible.
+type GroupKey = "all" | "todo" | "ready" | "sent" | "due" | "replied" | "closed";
+const GROUPS: { key: GroupKey; label: string; match: (p: Prospect) => boolean }[] = [
+  { key: "all", label: "Toutes", match: () => true },
+  { key: "todo", label: "À préparer", match: (p) => ["NEW", "PREPARING", "FAILED"].includes(p.status) },
+  { key: "ready", label: "À relire", match: (p) => p.status === "READY" },
+  { key: "sent", label: "Envoyés", match: (p) => p.status === "SENT" },
+  { key: "due", label: "À relancer", match: followUpDue },
+  { key: "replied", label: "Réponses", match: (p) => p.status === "REPLIED" },
+  { key: "closed", label: "Clos", match: (p) => ["DECLINED", "DO_NOT_CONTACT"].includes(p.status) },
+];
+
+// « aujourd'hui », « hier », « il y a 5 jours ».
+const ago = (date: Date | string) => {
+  const days = daysSince(date);
+  return days <= 0 ? "aujourd'hui" : days === 1 ? "hier" : `il y a ${days} jours`;
+};
+
+// État affiché sur la ligne, précisé par les relances : « Relance à relire », « À relancer », « Relancé 1 fois ».
+function stage(prospect: Prospect) {
+  const base = STATUS[prospect.status] ?? STATUS.NEW;
+  const followUps = followUpsSent(prospect);
+  if (prospect.status === "READY" && sentHistory(prospect).length > 0) return { ...base, label: "Relance à relire" };
+  if (followUpDue(prospect)) return { label: "À relancer", tone: "bg-gold/25 text-navy" };
+  if (prospect.status === "SENT" && followUps > 0) return { ...base, label: `Relancé ${followUps} fois` };
+  return base;
+}
 
 const CONTACT_FILTERS = {
   "": "Toutes les coordonnées",
@@ -121,6 +140,12 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
     starting.current = false;
   };
 
+  // « Marquer comme envoyé » : le brouillon relu, tel qu'il est à l'écran, rejoint l'historique des envois.
+  const markSent = (prospect: Prospect) =>
+    api<Prospect>(`/${prospect.id}/sent`, "POST", { subject: prospect.subject, body: prospect.body })
+      .then(replace)
+      .catch(fail);
+
   const preparing = prospects.filter((p) => p.status === "PREPARING").length;
 
   // Tant qu'un brouillon se prépare, on relit la liste : seuls les prospects qui viennent de finir
@@ -180,12 +205,10 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
       hasContact[contact](p) &&
       (!words || [p.company, p.website, p.email, p.phone, p.contactName, p.city].some((value) => value?.toLowerCase().includes(words)))
   );
-  const inGroup = (key: GroupKey) => {
-    const statuses: readonly string[] | null = GROUPS.find((g) => g.key === key)!.statuses;
-    return statuses ? narrowed.filter((p) => statuses.includes(p.status)) : narrowed;
-  };
+  const inGroup = (key: GroupKey) => narrowed.filter(GROUPS.find((g) => g.key === key)!.match);
   const visible = inGroup(group);
   const waiting = visible.filter((p) => p.status === "NEW");
+  const due = prospects.filter(followUpDue).length;
   const filtered = group !== "all" || Boolean(words) || Boolean(country) || Boolean(contact);
   const resetFilters = () => {
     setGroup("all");
@@ -201,11 +224,16 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
     <div>
       <PageHeader
         title="Prospection"
-        lead={`${prospects.length} entreprise${prospects.length > 1 ? "s" : ""} · ${count("READY")} brouillon${count("READY") > 1 ? "s" : ""} à relire · ${count("SENT")} envoyé${count("SENT") > 1 ? "s" : ""}`}
+        lead={`${prospects.length} entreprise${prospects.length > 1 ? "s" : ""} · ${count("READY")} brouillon${count("READY") > 1 ? "s" : ""} à relire · ${count("SENT")} envoyé${count("SENT") > 1 ? "s" : ""}${due > 0 ? ` · ${due} à relancer` : ""}`}
       >
         {configured && waiting.length > 1 && (
           <button type="button" onClick={() => setQueue(waiting.map((p) => p.id))} disabled={preparing > 0 || queue.length > 0} className={btnGhost}>
             <Sparkles size={16} /> Préparer les {waiting.length} en attente
+          </button>
+        )}
+        {configured && group === "due" && visible.length > 1 && (
+          <button type="button" onClick={() => setQueue(visible.map((p) => p.id))} disabled={preparing > 0 || queue.length > 0} className={btnGhost}>
+            <Sparkles size={16} /> Préparer les {visible.length} relances
           </button>
         )}
         {configured && (
@@ -313,7 +341,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
             <ul className="space-y-3">
               {visible.map((prospect) => {
                 const open = expanded === prospect.id;
-                const status = STATUS[prospect.status] ?? STATUS.NEW;
+                const status = stage(prospect);
                 return (
                   <li key={prospect.id} className={card}>
                     <button type="button" onClick={() => setExpanded(open ? null : prospect.id)} aria-expanded={open} className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left sm:gap-4 sm:px-5">
@@ -327,6 +355,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
                             prospect.email ?? "e-mail manquant",
                             prospect.phone,
                             LANGUAGES[prospect.language as Language],
+                            prospect.status === "SENT" && prospect.sentAt && `envoyé ${ago(prospect.sentAt)}`,
                           ]
                             .filter(Boolean)
                             .join(" · ")}
@@ -335,7 +364,7 @@ export default function ProspectsClient({ initial, configured }: { initial: Pros
                       <span className={cn(pill, "shrink-0", status.tone)}>{status.label}</span>
                       <ChevronDown size={16} className={cn("shrink-0 text-muted transition-transform", open && "rotate-180")} />
                     </button>
-                    {open && <Details prospect={prospect} configured={configured} edit={edit} save={save} prepare={prepare} remove={setRemoving} />}
+                    {open && <Details prospect={prospect} configured={configured} edit={edit} save={save} prepare={prepare} markSent={markSent} remove={setRemoving} />}
                   </li>
                 );
               })}
@@ -506,6 +535,7 @@ function Details({
   edit,
   save,
   prepare,
+  markSent,
   remove,
 }: {
   prospect: Prospect;
@@ -513,12 +543,19 @@ function Details({
   edit: (id: string, changes: Partial<Prospect>) => void;
   save: (id: string, changes: Partial<Prospect>) => void;
   prepare: (id: string) => void;
+  markSent: (prospect: Prospect) => void;
   remove: (prospect: Prospect) => void;
 }) {
   const [copied, setCopied] = useState(false);
   const { id, status } = prospect;
-  const hasDraft = prospect.body !== null;
   const blocked = status === "DO_NOT_CONTACT";
+  // Ce qui est déjà parti (premier e-mail, puis relances) et ce qui attend d'être relu.
+  const sent = sentHistory(prospect);
+  const followUps = Math.max(sent.length - 1, 0);
+  const drafting = status === "READY";
+  const isFollowUp = sent.length > 0;
+  const canFollowUp = status === "SENT" && followUps < MAX_FOLLOW_UPS;
+  const due = followUpDue(prospect);
 
   // Un champ de la fiche s'enregistre quand on le quitte, s'il a changé. Sa clé le recrée quand
   // le serveur a mis la valeur au propre (un site complété en « https://… », par exemple).
@@ -608,22 +645,59 @@ function Details({
         </div>
       </div>
 
-      {status === "PREPARING" && <p className="rounded-xl bg-azure/[0.06] px-4 py-3 text-sm text-navy">L&apos;agent lit le site et rédige l&apos;e-mail. Cela prend de 20 à 60 secondes ; la page se met à jour toute seule.</p>}
-      {status === "FAILED" && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">La préparation a échoué. {prospect.error}</p>}
+      {status === "PREPARING" && (
+        <p className="rounded-xl bg-azure/[0.06] px-4 py-3 text-sm text-navy">
+          {isFollowUp ? "L'agent rédige la relance. Cela prend quelques secondes ; la page se met à jour toute seule." : "L'agent lit le site et rédige l'e-mail. Cela prend de 20 à 60 secondes ; la page se met à jour toute seule."}
+        </p>
+      )}
+      {prospect.error && status !== "PREPARING" && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">La préparation a échoué. {prospect.error}</p>}
 
-      {hasDraft && status !== "PREPARING" && (
-        <>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-mist p-3.5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted">Ce que l&apos;agent a compris</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-navy">{prospect.summary}</p>
-            </div>
-            <div className="rounded-xl bg-mist p-3.5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted">Pourquoi les contacter</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-navy">{prospect.angle}</p>
-            </div>
+      {prospect.summary && status !== "PREPARING" && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl bg-mist p-3.5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted">Ce que l&apos;agent a compris</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-navy">{prospect.summary}</p>
           </div>
+          <div className="rounded-xl bg-mist p-3.5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted">Pourquoi les contacter</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-navy">{prospect.angle}</p>
+          </div>
+        </div>
+      )}
 
+      {sent.length > 0 && (
+        // Déplié tant qu'aucun brouillon n'attend : c'est alors la seule chose à lire.
+        <details open={!drafting} className="rounded-xl border border-line">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-navy">
+            {sent.length} message{sent.length > 1 ? "s" : ""} envoyé{sent.length > 1 ? "s" : ""}
+          </summary>
+          <ol className="divide-y divide-line border-t border-line">
+            {sent.map((email, i) => (
+              <li key={email.sentAt} className="px-4 py-3.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                  {i === 0 ? "Premier e-mail" : `Relance n° ${i}`} · {new Date(email.sentAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+                <p className="mt-1.5 text-sm font-semibold text-navy">{email.subject}</p>
+                <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-navy/80">{email.body}</p>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+
+      {status === "SENT" && prospect.sentAt && (
+        <p className="text-sm text-muted">
+          Dernier envoi {ago(prospect.sentAt)}.{" "}
+          {!canFollowUp
+            ? `Les ${MAX_FOLLOW_UPS} relances prévues sont parties. Sans réponse, classez l'entreprise en « Pas intéressé » dans le suivi.`
+            : due
+              ? "Toujours pas de réponse : c'est le moment de relancer."
+              : `Sans réponse au bout de ${FOLLOW_UP_AFTER_DAYS} jours, elle passera dans l'onglet « À relancer ».`}
+        </p>
+      )}
+
+      {drafting && (
+        <>
           <div>
             <label htmlFor={`subject-${id}`} className={label}>
               Objet
@@ -632,15 +706,15 @@ function Details({
           </div>
           <div>
             <label htmlFor={`body-${id}`} className={label}>
-              E-mail (relisez et corrigez avant d&apos;envoyer)
+              {`${isFollowUp ? `Relance n° ${sent.length}` : "E-mail"} (relisez et corrigez avant d'envoyer)`}
             </label>
-            <textarea id={`body-${id}`} rows={14} {...draftField("body")} className={cn(input, "leading-relaxed")} />
+            <textarea id={`body-${id}`} rows={isFollowUp ? 10 : 14} {...draftField("body")} className={cn(input, "leading-relaxed")} />
           </div>
         </>
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        {hasDraft && !blocked && status !== "PREPARING" && (
+        {drafting && !blocked && (
           <>
             {prospect.email ? (
               <>
@@ -657,11 +731,9 @@ function Details({
             <button type="button" onClick={copy} className={btnGhost}>
               {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "Copié" : "Copier"}
             </button>
-            {status === "READY" && (
-              <button type="button" onClick={() => save(id, { status: "SENT" })} className={btnGhost}>
-                <Check size={16} /> Marquer comme envoyé
-              </button>
-            )}
+            <button type="button" onClick={() => markSent(prospect)} className={btnGhost}>
+              <Check size={16} /> Marquer comme envoyé
+            </button>
           </>
         )}
         {prospect.phone && !blocked && (
@@ -669,9 +741,19 @@ function Details({
             <Phone size={16} /> Appeler
           </a>
         )}
-        {configured && !blocked && status !== "PREPARING" && (
-          <button type="button" onClick={() => prepare(id)} className={hasDraft ? btnSmall : btnPrimary}>
-            {hasDraft ? <RefreshCw size={13} /> : <Sparkles size={16} />} {hasDraft ? "Refaire le brouillon" : "Préparer l'e-mail"}
+        {configured && !blocked && (status === "NEW" || status === "FAILED") && (
+          <button type="button" onClick={() => prepare(id)} className={btnPrimary}>
+            <Sparkles size={16} /> Préparer l&apos;e-mail
+          </button>
+        )}
+        {configured && drafting && (
+          <button type="button" onClick={() => prepare(id)} className={btnSmall}>
+            <RefreshCw size={13} /> {isFollowUp ? "Refaire la relance" : "Refaire le brouillon"}
+          </button>
+        )}
+        {configured && canFollowUp && (
+          <button type="button" onClick={() => prepare(id)} className={due ? btnPrimary : btnGhost}>
+            <Sparkles size={16} /> Préparer une relance
           </button>
         )}
       </div>

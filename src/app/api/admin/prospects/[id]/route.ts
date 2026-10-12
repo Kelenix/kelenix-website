@@ -46,7 +46,8 @@ export async function PUT(request: Request, { params }: Props) {
         ...(country !== undefined && { country: normalizeCountry(country) }),
         ...(city !== undefined && { city: city || null }),
         ...(notes !== undefined && { notes: notes || null }),
-        ...(status && { status, ...(status === "SENT" && { sentAt: new Date() }) }),
+        // Un envoi s'enregistre par la route « sent » (date et historique) ; ici, on corrige seulement l'état.
+        ...(status && { status }),
       },
     });
     if (count === 0) return NextResponse.json({ error: "Prospect introuvable" }, { status: 404 });

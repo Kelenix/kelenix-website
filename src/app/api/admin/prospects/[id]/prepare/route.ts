@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { agentConfigured } from "@/lib/agent/config";
+import { MAX_FOLLOW_UPS, sentHistory } from "@/lib/agent/followup";
 import { DEFAULT_TENANT } from "@/lib/agent/tenants";
 import { prepareProspect } from "@/lib/agent/prospects";
 
@@ -21,11 +22,16 @@ export async function POST(_request: Request, { params }: Props) {
   const prospect = await prisma.prospect.findFirst({ where: { id, tenant: DEFAULT_TENANT } });
   if (!prospect) return NextResponse.json({ error: "Prospect introuvable" }, { status: 404 });
   if (prospect.status === "DO_NOT_CONTACT") return NextResponse.json({ error: "Cette entreprise ne doit plus être contactée." }, { status: 409 });
+  if (prospect.status === "REPLIED" || prospect.status === "DECLINED") return NextResponse.json({ error: "Cette entreprise a déjà répondu : pas de relance." }, { status: 409 });
   if (prospect.status === "PREPARING" && Date.now() - prospect.updatedAt.getTime() < STALE_AFTER) {
     return NextResponse.json(prospect, { status: 202 });
   }
+  // Rien d'envoyé : l'agent prépare le premier e-mail. Sinon, une relance, dans la limite prévue.
+  const sent = sentHistory(prospect);
+  if (sent.length > MAX_FOLLOW_UPS) return NextResponse.json({ error: "Le nombre maximal de relances est atteint pour cette entreprise." }, { status: 409 });
 
-  const preparing = await prisma.prospect.update({ where: { id }, data: { status: "PREPARING", error: null } });
+  // L'historique est fixé ici : pour un prospect envoyé avant l'arrivée des relances, il ne vivait que dans le brouillon, que la relance va remplacer.
+  const preparing = await prisma.prospect.update({ where: { id }, data: { status: "PREPARING", error: null, sentEmails: sent } });
   // L'e-mail est signé du nom de la personne connectée, qui le relira et l'enverra.
   const senderName = session.user.name || "L'équipe";
   after(() => prepareProspect(id, senderName));

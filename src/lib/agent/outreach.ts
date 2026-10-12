@@ -176,7 +176,6 @@ export async function prepareOutreach(input: { model: string; company: CompanyKn
   if (!parsed.success) throw new Error("Brouillon illisible renvoyé par le modèle.");
   const draft = parsed.data;
 
-  const closing = CLOSING[target.language];
   const emailFound = z.string().email().safeParse(draft.email_found);
   return {
     siteRead: draft.site_read,
@@ -185,6 +184,110 @@ export async function prepareOutreach(input: { model: string; company: CompanyKn
     emailFound: emailFound.success ? emailFound.data.toLowerCase() : null,
     phoneFound: normalizePhone(draft.phone_found),
     subject: draft.subject,
-    body: `${draft.body}\n\n${closing.regards}\n${sender.name}\n${sender.company} · ${sender.website}\n\n${(!target.contactName && closing.optOutCompany) || closing.optOut}`,
+    body: sign(draft.body, sender, target),
   };
+}
+
+// Ajoute la formule de politesse, la signature et le post-scriptum au texte rédigé par le modèle.
+function sign(text: string, sender: OutreachSender, target: OutreachTarget) {
+  const closing = CLOSING[target.language];
+  return `${text}\n\n${closing.regards}\n${sender.name}\n${sender.company} · ${sender.website}\n\n${(!target.contactName && closing.optOutCompany) || closing.optOut}`;
+}
+
+// ─── Relance ──────────────────────────────────────────────────────────────────
+
+const FOLLOW_UP_SCHEMA = {
+  type: "object",
+  properties: {
+    body: { type: "string", description: "Texte de la relance dans la langue demandée, de la formule d'appel à la question finale, sans formule de politesse ni signature." },
+  },
+  required: ["body"],
+  additionalProperties: false,
+};
+
+function followUpPrompt(company: CompanyKnowledge) {
+  const { name } = company;
+  return `Tu écris la relance d'un e-mail de prospection pour ${name}. Le message précédent est resté sans réponse. La relance est relue puis envoyée par la même personne, sous son nom.
+
+# Ce que fait ${name}
+${company.pitch}
+
+Prestations :
+${list(company.services.map((service) => `${service.title} : ${service.summary}`))}
+
+# L'état d'esprit
+Le destinataire n'a sans doute pas vu le premier message, ou pas eu le temps d'y répondre. On ne lui reproche rien, on ne s'excuse pas d'écrire, et on ne répète pas le premier e-mail : une relance qui n'apporte rien de neuf ne fait qu'insister.
+
+# La relance
+De 40 à 70 mots, dans cet ordre :
+- La formule d'appel, seule sur sa ligne, comme dans le message précédent.
+- Une phrase qui rappelle de quoi il s'agissait, sans supposer qu'il a encore le premier message sous les yeux.
+- Quelque chose de neuf : une précision concrète sur l'idée, un autre avantage pour eux, ou une façon plus simple de commencer. Cela doit rester cohérent avec ce qui a déjà été écrit.
+- Pour finir, une question unique à laquelle on répond d'un mot, puis une courte phrase, dite avec naturel, qui met à l'aise pour refuser (du type « Si ce n'est pas d'actualité, dites-le-moi simplement »).
+
+Quand la demande indique que c'est la dernière relance : 30 à 50 mots. Dis simplement que c'est ton dernier message à ce sujet, résume l'idée en une phrase, et laisse la porte ouverte.
+
+Voix :
+- La même personne écrit : première personne du singulier, même forme de politesse que dans les messages précédents, du début à la fin.
+- Des phrases courtes, des mots de tous les jours. Sobre : ni point d'exclamation, ni urgence, ni reproche, ni flatterie.
+- Pas de formules de relance toutes faites : « je me permets de vous relancer », « je reviens vers vous », « sauf erreur de ma part », « n'ayant pas eu de retour », « je sais que vous êtes très occupé », ni leurs équivalents dans la langue de l'e-mail.
+- Texte entièrement dans la langue demandée, simple, sans Markdown ni liste : de courts paragraphes séparés par une ligne vide.
+
+Exactitude :
+- N'écris que ce qui est établi : les faits viennent des messages précédents, des notes de l'équipe et de ce message. N'invente ni client, ni chiffre, ni résultat, et ne cite aucun prix.
+- N'annonce rien qui n'existe pas encore, et ne prétends pas qu'il y a eu un échange s'il n'y en a pas eu.
+
+Ne mets ni formule de politesse finale ni signature : elles sont ajoutées automatiquement.`;
+}
+
+const dayMonth = (date: string) => new Date(date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
+/**
+ * Rédige la relance d'un prospect resté sans réponse, à partir de ce qui lui a déjà été envoyé.
+ * Pas de nouvelle lecture du site : le résumé et l'angle du premier e-mail suffisent.
+ */
+export async function prepareFollowUp(input: {
+  model: string;
+  company: CompanyKnowledge;
+  sender: OutreachSender;
+  target: OutreachTarget;
+  summary: string | null;
+  angle: string | null;
+  /** Messages déjà envoyés, du plus ancien au plus récent. */
+  sent: { subject: string; body: string; sentAt: string }[];
+  /** Vrai quand aucune autre relance ne suivra celle-ci. */
+  last: boolean;
+}): Promise<{ subject: string; body: string }> {
+  const { target, sent } = input;
+  const request = [
+    `Entreprise : ${target.company}`,
+    `Contact : ${target.contactName ?? "inconnu"}`,
+    `Ce que l'on sait d'elle : ${input.summary ?? "rien de plus que les messages ci-dessous"}`,
+    `Raison du premier contact : ${input.angle ?? "voir le premier message"}`,
+    `Notes de l'équipe : ${target.notes ?? "aucune"}`,
+    `Langue de la relance : ${OUTREACH_LANGUAGES[target.language]}`,
+    `Date du jour : ${dayMonth(new Date().toISOString())}`,
+    `Relance n° ${sent.length} — dernière relance : ${input.last ? "oui" : "non"}`,
+    "",
+    ...sent.map((email, i) => `--- Message ${i + 1}, envoyé le ${dayMonth(email.sentAt)} ---\nObjet : ${email.subject}\n\n${email.body}`),
+  ].join("\n");
+
+  const response = await anthropic()
+    .messages.stream({
+      model: input.model,
+      max_tokens: 8000,
+      output_config: { effort: "high", format: { type: "json_schema", schema: FOLLOW_UP_SCHEMA } },
+      system: [{ type: "text", text: followUpPrompt(input.company), cache_control: { type: "ephemeral" } }],
+      messages: [{ role: "user", content: request }],
+    })
+    .finalMessage();
+
+  if (response.stop_reason === "refusal") throw new Error("Le modèle a refusé de rédiger cette relance.");
+  if (response.stop_reason !== "end_turn") throw new Error(`Réponse incomplète (${response.stop_reason}).`);
+  const text = response.content.filter((block): block is Anthropic.TextBlock => block.type === "text").pop()?.text;
+  const parsed = z.object({ body: z.string().trim().min(20) }).safeParse(text ? JSON.parse(text) : null);
+  if (!parsed.success) throw new Error("Relance illisible renvoyée par le modèle.");
+
+  // Même objet que le premier message : les messageries regroupent ainsi les deux dans le même fil.
+  return { subject: sent[0].subject, body: sign(parsed.data.body, input.sender, target) };
 }

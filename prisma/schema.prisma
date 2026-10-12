@@ -253,7 +253,10 @@ model Prospect {
   body        String?        @db.Text
   // Raison du dernier échec de préparation.
   error       String?        @db.Text
+  // Date du dernier envoi, et tous les messages déjà partis (premier e-mail puis relances),
+  // du plus ancien au plus récent : [{ subject, body, sentAt }]. `subject` et `body` portent le brouillon en cours.
   sentAt      DateTime?
+  sentEmails  Json           @default("[]")
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 

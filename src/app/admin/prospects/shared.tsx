@@ -24,6 +24,9 @@ export type Prospect = {
   subject: string | null;
   body: string | null;
   error: string | null;
+  sentAt: Date | string | null;
+  /** Messages déjà envoyés (premier e-mail puis relances) ; à lire avec `sentHistory`. */
+  sentEmails: unknown;
 };
 
 export const LANGUAGES: Record<Language, string> = { fr: "Français", it: "Italien", en: "Anglais" };
