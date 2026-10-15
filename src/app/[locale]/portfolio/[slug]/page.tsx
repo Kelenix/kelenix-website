@@ -52,12 +52,11 @@ function parseTechnologies(raw: string): string[] {
 }
 
 // Lien saisi dans l'admin, complété en « https://… » s'il a été écrit sans ; null s'il n'a pas la forme d'une adresse.
-function projectLink(raw: string | null): { href: string; host: string } | null {
+function projectLink(raw: string | null): { href: string } | null {
   const value = raw?.trim();
   if (!value) return null;
   try {
-    const url = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`);
-    return { href: url.toString(), host: url.hostname.replace(/^www\./, "") };
+    return { href: new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`).toString() };
   } catch {
     return null;
   }
@@ -118,6 +117,12 @@ export default async function ProjectDetailPage({ params }: Props) {
 
       <section className={`bg-white ${section}`}>
         <div className={container}>
+          {project.coverImage && (
+            <div className="relative mb-10 aspect-[16/10] overflow-hidden rounded-3xl bg-mist sm:mb-14 lg:aspect-[21/9]">
+              <Image src={project.coverImage} alt={title} fill sizes="(max-width: 1280px) 100vw, 1240px" className="object-cover" priority />
+            </div>
+          )}
+
           {description.length > 0 && (
             <div className="mb-10 grid gap-4 sm:mb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12">
               <p className="text-sm font-semibold uppercase tracking-wider text-azure">{isEn ? "About the project" : "Le projet"}</p>
@@ -127,18 +132,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                     {paragraph}
                   </p>
                 ))}
-                {link && (
-                  <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-azure hover:underline">
-                    {link.host} <ArrowUpRight size={16} />
-                  </a>
-                )}
               </div>
-            </div>
-          )}
-
-          {project.coverImage && (
-            <div className="relative mb-10 aspect-[16/10] overflow-hidden rounded-3xl bg-mist sm:mb-14 lg:aspect-[21/9]">
-              <Image src={project.coverImage} alt={title} fill sizes="(max-width: 1280px) 100vw, 1240px" className="object-cover" priority />
             </div>
           )}
 
