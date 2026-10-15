@@ -141,6 +141,39 @@ export default function PortfolioForm({ project }: { project?: ProjectData }) {
         </div>
       </div>
 
+      {/* Les trois cartes de la page publique : chaque bloc rempli s'affiche, les blocs vides sont masqués. */}
+      <div className="space-y-4 rounded-2xl border border-line bg-mist/50 p-4 sm:p-5">
+        <div>
+          <p className="text-sm font-semibold text-navy">Problématique, solution et résultats</p>
+          <p className="mt-0.5 text-xs text-muted">Facultatif. Chaque bloc rempli apparaît dans une carte sur la page du projet.</p>
+        </div>
+        {(
+          [
+            ["problem", "Problématique"],
+            ["solution", "Solution"],
+            ["results", "Résultats"],
+          ] as const
+        ).map(([key, name]) => (
+          <div key={key} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {(["Fr", "En"] as const).map((lang) => (
+              <div key={lang}>
+                <label htmlFor={`${key}${lang}`} className="mb-1.5 block text-sm font-medium text-navy">
+                  {name} {lang.toUpperCase()}
+                </label>
+                <textarea
+                  id={`${key}${lang}`}
+                  name={`${key}${lang}`}
+                  value={form[`${key}${lang}`]}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-navy transition placeholder:text-muted/60 focus:border-azure focus:outline-none focus:ring-4 focus:ring-azure/10 resize-none"
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
           <label className="mb-1.5 block text-sm font-medium text-navy">Image de couverture *</label>

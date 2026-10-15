@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { decodeSlug } from "@/lib/utils";
 import Image from "next/image";
-import { Target, Lightbulb, BarChart3 } from "lucide-react";
+import { ArrowUpRight, Target, Lightbulb, BarChart3 } from "lucide-react";
 import PageHero from "@/components/site/PageHero";
 import CtaBand from "@/components/site/CtaBand";
-import { body, card, chip, container, h2, iconTile, section } from "@/components/site/styles";
+import { body, btnPrimary, card, chip, container, h2, iconTile, lead, section } from "@/components/site/styles";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -51,6 +51,21 @@ function parseTechnologies(raw: string): string[] {
   }
 }
 
+// Lien saisi dans l'admin, complété en « https://… » s'il a été écrit sans ; null s'il n'a pas la forme d'une adresse.
+function projectLink(raw: string | null): { href: string; host: string } | null {
+  const value = raw?.trim();
+  if (!value) return null;
+  try {
+    const url = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`);
+    return { href: url.toString(), host: url.hostname.replace(/^www\./, "") };
+  } catch {
+    return null;
+  }
+}
+
+// Une carte par bloc rempli : la grille s'adapte au nombre de cartes.
+const OUTCOME_COLUMNS = ["", "md:grid-cols-1", "md:grid-cols-2", "md:grid-cols-3"];
+
 function parseGallery(raw: string): string[] {
   try {
     return JSON.parse(raw) as string[];
@@ -71,12 +86,19 @@ export default async function ProjectDetailPage({ params }: Props) {
   const isEn = locale === "en";
 
   const title = isEn ? project.titleEn : project.titleFr;
-  const problem = isEn ? project.problemEn : project.problemFr;
-  const solution = isEn ? project.solutionEn : project.solutionFr;
-  const results = isEn ? project.resultsEn : project.resultsFr;
+  // La description saisie dans l'admin, un paragraphe par ligne.
+  const description = (isEn ? project.descEn : project.descFr).split(/\n+/).map((line) => line.trim()).filter(Boolean);
+  const link = projectLink(project.link);
   const technologies = parseTechnologies(project.technologies);
   const gallery = parseGallery(project.gallery);
   const category = tWork.has(`categories.${project.category}`) ? tWork(`categories.${project.category}`) : project.category;
+
+  // Problématique, solution, résultats : facultatifs dans l'admin, seuls les blocs remplis sont affichés.
+  const outcomes = [
+    { key: "problem", label: isEn ? "The problem" : "La problématique", text: isEn ? project.problemEn : project.problemFr, Icon: Target, highlight: false, tint: true },
+    { key: "solution", label: isEn ? "Our solution" : "Notre solution", text: isEn ? project.solutionEn : project.solutionFr, Icon: Lightbulb, highlight: false, tint: false },
+    { key: "results", label: isEn ? "Results" : "Résultats", text: isEn ? project.resultsEn : project.resultsFr, Icon: BarChart3, highlight: true, tint: false },
+  ].filter((outcome) => outcome.text.trim());
 
   return (
     <>
@@ -86,39 +108,63 @@ export default async function ProjectDetailPage({ params }: Props) {
         eyebrow={category}
         title={title}
         lead={project.client}
-      />
+      >
+        {link && (
+          <a href={link.href} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
+            {isEn ? "Visit the project" : "Voir le projet en ligne"} <ArrowUpRight size={18} />
+          </a>
+        )}
+      </PageHero>
 
       <section className={`bg-white ${section}`}>
         <div className={container}>
+          {description.length > 0 && (
+            <div className="mb-10 grid gap-4 sm:mb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12">
+              <p className="text-sm font-semibold uppercase tracking-wider text-azure">{isEn ? "About the project" : "Le projet"}</p>
+              <div className="space-y-4">
+                {description.map((paragraph, i) => (
+                  <p key={i} className={`${lead} text-navy/80`}>
+                    {paragraph}
+                  </p>
+                ))}
+                {link && (
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-azure hover:underline">
+                    {link.host} <ArrowUpRight size={16} />
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           {project.coverImage && (
             <div className="relative mb-10 aspect-[16/10] overflow-hidden rounded-3xl bg-mist sm:mb-14 lg:aspect-[21/9]">
               <Image src={project.coverImage} alt={title} fill sizes="(max-width: 1280px) 100vw, 1240px" className="object-cover" priority />
             </div>
           )}
 
-          <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
-            <div className={`bg-mist/70 p-6 sm:p-8 ${card}`}>
-              <span className={`mb-5 bg-white ${iconTile}`}>
-                <Target size={22} />
-              </span>
-              <h2 className="text-xl font-semibold text-navy">{isEn ? "The problem" : "La problématique"}</h2>
-              <p className={`mt-3 ${body}`}>{problem}</p>
+          {outcomes.length > 0 && (
+            <div className={`grid gap-4 sm:gap-5 ${OUTCOME_COLUMNS[outcomes.length]}`}>
+              {outcomes.map(({ key, label, text, Icon, highlight, tint }) =>
+                highlight ? (
+                  <div key={key} className="rounded-3xl bg-linear-to-br from-azure to-[#1580EE] p-6 text-white sm:p-8">
+                    <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-white/18">
+                      <Icon size={22} />
+                    </span>
+                    <h2 className="text-xl font-semibold">{label}</h2>
+                    <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-white/90 sm:text-base">{text}</p>
+                  </div>
+                ) : (
+                  <div key={key} className={`p-6 sm:p-8 ${card} ${tint ? "bg-mist/70" : ""}`}>
+                    <span className={`mb-5 ${iconTile} ${tint ? "bg-white" : ""}`}>
+                      <Icon size={22} />
+                    </span>
+                    <h2 className="text-xl font-semibold text-navy">{label}</h2>
+                    <p className={`mt-3 whitespace-pre-line ${body}`}>{text}</p>
+                  </div>
+                )
+              )}
             </div>
-            <div className={`p-6 sm:p-8 ${card}`}>
-              <span className={`mb-5 ${iconTile}`}>
-                <Lightbulb size={22} />
-              </span>
-              <h2 className="text-xl font-semibold text-navy">{isEn ? "Our solution" : "Notre solution"}</h2>
-              <p className={`mt-3 ${body}`}>{solution}</p>
-            </div>
-            <div className="rounded-3xl bg-linear-to-br from-azure to-[#1580EE] p-6 text-white sm:p-8">
-              <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-white/18">
-                <BarChart3 size={22} />
-              </span>
-              <h2 className="text-xl font-semibold">{isEn ? "Results" : "Résultats"}</h2>
-              <p className="mt-3 text-[15px] leading-relaxed text-white/90 sm:text-base">{results}</p>
-            </div>
-          </div>
+          )}
 
           {technologies.length > 0 && (
             <div className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12">
