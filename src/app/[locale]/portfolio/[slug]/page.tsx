@@ -124,8 +124,8 @@ export default async function ProjectDetailPage({ params }: Props) {
           )}
 
           {description.length > 0 && (
-            <div className="mb-10 grid gap-4 sm:mb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12">
-              <p className="text-sm font-semibold uppercase tracking-wider text-azure">{isEn ? "About the project" : "Le projet"}</p>
+            <div className="mb-10 max-w-4xl sm:mb-14">
+              <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-azure">{isEn ? "About the project" : "Le projet"}</p>
               <div className="space-y-4">
                 {description.map((paragraph, i) => (
                   <p key={i} className={`${lead} text-navy/80`}>
